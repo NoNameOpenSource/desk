@@ -1,0 +1,2294 @@
+/* tmp for apple san francisco font */
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 100;
+  src: url("/system/desk/tmp/System-San-Francisco-Display-Ultralight.ttf");
+}
+
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 200;
+  src: url("/system/desk/tmp/System-San-Francisco-Display-Thin.ttf");
+}
+
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 400;
+  src: url("/system/desk/tmp/System-San-Francisco-Display-Regular.ttf");
+}
+
+@font-face {
+  font-family: "San Francisco";
+  font-weight: 700;
+  src: url("/system/desk/tmp/System-San-Francisco-Display-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Dejavu Sans Mono";
+  src: url("/System/Desk/Fonts/DejaVuSansMono.ttf");
+}
+
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
+::-webkit-scrollbar {
+    max-width: 8px;
+	border-left: 1px solid #444;
+	max-height: 8px;
+}
+ 
+::-webkit-scrollbar-track {
+	background-color:#f1f1f1;
+}
+ 
+:-webkit-scrollbar-track:hover {
+	background-color:#e8e8e8;
+}
+ 
+::-webkit-scrollbar-thumb {
+	background-color:#c2c2c2;
+	outline: 1px solid slategrey;
+}
+ 
+::-webkit-scrollbar-thumb:hover {
+	background-color:#aaa;
+}
+
+html {
+	overflow: hidden;
+	font-family:San Francisco;
+	background-color:#f1f1f1;
+}
+
+#header {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 28px;
+	background: rgba(0,0,0,0.8);
+	/* box-shadow: 0px 2px 4px 0px #888888; */
+	z-index: 99999;
+}
+
+#headerRight {
+	float: right;
+	height: 24px;
+	margin-top: 2px;
+	margin-right: 5px;
+}
+
+#headerLogo {
+	height: 100%;
+	width: 60px;
+	transition: .3s ease;
+}
+
+#headerLogo:hover {
+	background: rgba(255,255,255,1);
+}
+
+#headerLogo:hover>svg {
+	fill: #000;
+	stroke: #000;
+}
+
+#headerLogo>img {
+	margin: 2px 0 -3px 3px;
+	height: 24px;
+}
+
+#headerLogo>svg {
+	margin: 2px 0 -3px -26px;
+	height: 24px;
+	transition: .3s ease;
+}
+
+#WorkSpaceDock {
+	left: 0;
+	top: 28px;
+	width: 64px;
+	height: calc(100% - 28px);
+	background: rgba(44,62,80,0.8);
+	transition: left .3s ease;
+	-webkit-user-select: none;
+}
+
+#body {
+	position: absolute;
+	top: 28px;
+	bottom: 0px;
+	left: 65px;
+	right: 0px;
+	overflow-x: scroll;
+	transition: left .3s ease;
+}
+
+DIWindow {
+	position: absolute;
+	overflow: hidden;
+	/*
+	background-color: #F4F4F4;
+	border: 1px solid #A7A7A7;
+	border-radius: 5px;
+	box-shadow:  0px 0px 12px 2px rgba(0,0,0,0.3);
+	*/
+	height: 100%;
+	transition: left .3s ease;
+}
+
+DIWindow>DIView {
+	height: calc(100% - 26px);
+}
+
+DIWindowBorder {
+	position: absolute;
+	min-width: 3px;
+	min-height: 3px;
+	background: transparent;
+}
+
+.DIWindowBorder0 {left:0;top:0;right:0;}
+.DIWindowBorder1 {top:0;right:0;bottom:0;}
+.DIWindowBorder2 {left:0;right:0;bottom:0;}
+.DIWindowBorder3 {top:0;left:0;bottom:0;}
+
+.DIWindowTitleBar {
+	position: absolute;
+	/* background: linear-gradient(#eee, #ddd); */
+	background: rgba(41,128,185 ,0.8);
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+.DIWindowTitle {
+	position: absolute;
+	/* left: 50%; transform: translateX(-50%); */
+	left: 25%;
+	width: 50%;
+	line-height: 26px;
+	height: 26px;
+	text-align: center;
+}
+
+.DIWindowTitle>p {
+	transform-origin: left;
+	margin: 0;
+	font-size: 16px;
+	color: #E8E8E8;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	height: 26px;
+}
+
+.DIWindowButton {
+	width: 26px;
+	height: 26px;
+}
+
+.DIWindowButton>IMG {
+	width: 26px;
+	height: 26px;
+}
+
+DIView {
+	position: absolute;
+	display: inline-block;
+}
+
+.DIScrollView {
+	overflow:scroll;
+}
+
+.DIButton>button {
+	padding: 6px 10px;
+	width: 100%;
+	outline: none;
+	border: none;
+	background-color: #2A8BFF;
+	color: #f1f1f1;
+	font-size: 18px;
+	transition: background-color .3s ease;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+.DIButton>button:hover {
+	background-color: #0066A2;
+}
+
+.DIAlertView {
+	max-width: 460px;
+	left: 20px;
+	right: 20px;
+	background-color: #F2F2F2;
+	z-index: 101;
+}
+
+.DIAlertViewContent {
+	width: calc(100% - 30px);
+	left: 15px;
+	top: 0;
+	font-size: 16px;
+	word-break:break-word;
+}
+
+.DIAlertViewButton {
+	bottom: 10px;
+}
+
+.DIAlertViewButton>button {
+	padding: 5px 10px;
+	outline: none;
+	width: 120px;
+	cursor: pointer;
+	font-size: 18px;
+	color: #181818;
+	background-color: #F4F4F4;
+	border: 2px solid #c0c0c0;
+	border-radius: 5px;
+	transition: background-color .3s ease;
+	cursor: default;
+}
+
+.DIAlertViewButton>button:hover {
+	background-color: #CCC;
+}
+
+.DITextField>p {
+	word-break:break-all;
+}
+
+.DIComboBoxArrow {
+	position: absolute;
+	right: 0;
+	cursor: default;
+	background-color: #2A8BFF;
+	border-radius: 15%;
+	transition: background-color .3s ease;
+	z-index: 10;
+}
+
+.DIComboBoxArrow:hover {
+	background-color: #0066A2;
+}
+
+.DIComboBoxDropDown {
+	width: 100%;
+	left: 0;
+	z-index: 8;
+	background-color: #F4F4F4;
+	cursor:default;
+	overflow-y: scroll;
+	-webkit-user-select: none;
+}
+
+.DIPopUpCell {
+	position: static;
+	display: block;
+	width: 100%;
+}
+
+.DIPopUpCell>DIView {
+	width: 100%;
+}
+
+.DIPopUpCellSelected {
+	position: static;
+	display: block;
+	width: 100%;
+	background-color: #2A8BFF;
+	color: #f1f1f1;
+}
+
+.DIPopUpCellSelected>DIView {
+	width: 100%;
+}
+
+.DILabel>p {
+	margin: 0;
+}
+
+.DIProgressView {
+    height: 16px;
+    border: 1px solid #666;
+	width: 94px;
+	background-color: #FFF;
+	z-index: 100;
+}
+
+.DIProgressView>div {
+    background-color: #999;
+    height: 16px;
+	transition: width .5s;
+}
+
+.WorkSpace {
+	min-width: 100%;
+	height: 100%;
+}
+
+.ListWindow {
+	width: 180px;
+	height: 100%;
+}
+
+.ListViewContainer {
+	width: 180px;
+	height: 100%;
+	border-right: 1px solid #444;
+	overflow-x: hidden;
+	background: rgba(253,253,253,0.8);
+	
+}
+
+.ListView {
+	-webkit-user-select: none;
+}
+
+.DINavigatorBackButton {
+	width: 33px;
+	height: 33px;
+	overflow: hidden;
+	color: #f1f1f1;
+	font-size: 18px;
+	transition: background .3s ease;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+.DINavigatorBackButton:hover {
+	background: rgba(42,139,255,0.8);
+}
+
+.DINavigatorIcon {
+	height: 33px;
+	left: 0;
+	position: absolute;
+}
+
+.DIListCell {
+	position: static;
+	display: block;
+	cursor: default;
+	width: 148px;
+	padding: 7px 7px;
+	margin: 0 5px;
+	border-bottom: 1px solid #A7A7A7;
+	color: #555;
+	font-size: 15px;
+}
+
+.DIListCell>diview {
+	position: static;
+}
+
+.DIListCell>diview>p {
+	position: static;
+	margin: 0;
+}
+
+.DIListCellSelected {
+	position: static;
+	display: block;
+	cursor: default;
+	width: 148px;
+	padding: 7px 12px;
+	border-bottom: 1px solid #d0d0d0;
+	background-color: #2A8BFF;
+	color: #fff;
+	font-size: 15px;
+}
+
+.DIListCellSelected>diview {
+	position: static;
+}
+
+.DIListCellSelected>diview>p {
+	position: static;
+	margin: 0;
+}
+
+.DIToolbar {
+	z-index: 10;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 33px;
+	background: rgba(52,152,219, 0.8);
+}
+
+.DIToolbarItem {
+	width: 33px;
+	height: 33px;
+	transition: background-color .3s ease;
+}
+
+.DIToolbarItem:hover {
+	background: rgba(42,139,255,0.8);
+}
+
+.SlideInAnimation {
+	left: 100%;
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    100% { left: 0; }
+}
+
+.SlideOutAnimation {
+	z-index: 1;
+	left: 0;
+    animation: slideOut 0.5s forwards;
+}
+
+@keyframes slideOut {
+    100% { left: 100%; }
+}
+
+.CutOutAnimation {
+	overflow-x: hidden;
+    animation: cutOut 0.5s forwards;
+}
+
+@keyframes cutOut {
+    100% { width: 0;}
+}
+
+.CutInAnimation {
+	overflow-x: hidden;
+	width: 0;
+    animation: cutIn 0.5s forwards;
+}
+
+@keyframes cutIn {
+    100% { width: 100%;}
+}
+
+.DIListSearchView {
+	width: 100%;
+	height: 33px;
+	background-color: #A7A7A7;
+}
+
+.DIListSearchField {
+	width: calc(100% - 16px);
+	left: 4px;
+	height: 23px;
+	top: 5px;
+	border-radius: 5px;
+	padding: 0 3px;
+	background-color: #F2F2F2;
+	overflow: hidden;
+}
+
+.DIListSearchField>input {
+	border: none;
+	outline: none;
+	width: 100%;
+	height: 100%;
+	font-size: 14px;
+	color: #555;
+	background-color: #F2F2F2;
+}
+
+.DIListSearchImage {
+	left: calc(50% - 9px);
+	top: calc(50% - 9px);
+}
+
+.DIListSearchImage>IMG {
+	width: 17px;
+}
+
+.StudentInfoWindow #StudentFace {
+	width: 100px;
+	height: 100px;
+	overflow: hidden;
+	text-align: center;
+	border-radius: 50%;
+	background-color: #ccc;
+	left:0;
+	top:0;
+}
+
+.StudentInfoWindow #StudentFace>img {
+	width: auto;
+	height: 100%;
+}
+
+.StudentInfoWindow .ContactName {
+	height: 100px;
+	width: calc(50% - 65px);
+}
+
+.StudentInfoWindow .ContactName>input {
+	color: #000;
+  	position: relative;
+  	top: 50%;
+  	transform: translateY(-50%);
+	font-size: 26px;
+	margin: 0;
+	outline: none;
+	border: none;
+	background:none;
+	cursor: text;
+	width: 100%;
+	padding: 0;
+}
+
+.StudentInfoWindow #StudentName {
+	left: 115px;
+}
+
+.StudentInfoWindow #ParentName {
+	left: calc(50% + 65px);
+}
+
+.StudentInfoWindow .ContactClass {
+	color: #2A8BFF;
+	font-size: 16px;
+	border-bottom: 1px solid #2A8BFF;
+	width: calc(33% - 15px);
+}
+
+.StudentInfoWindow .ContactClass>p {
+	margin: 0;
+}
+
+.StudentInfoWindow .ContactItem {
+	width: calc(33% - 15px);
+}
+
+.StudentInfoWindow .ContactItem>input {
+	width: 100%;
+	color: #555;
+	margin: 0;
+	font-size: 16px;
+	outline: none;
+	border: none;
+	background:none;
+	cursor: text;
+	padding:0;
+}
+
+.StudentInfoWindow #StudentCellClass {
+	top: 220px;
+}
+
+.StudentInfoWindow #StudentCellItem {
+	top: 250px;
+}
+
+.StudentInfoWindow #ParentCellClass {
+	left:33%;
+	top: 220px;
+}
+
+.StudentInfoWindow #ParentCellItem {
+	left:33%;
+	top: 250px;
+}
+
+.StudentInfoWindow #HomePhoneClass {
+	left:66%;
+	top: 220px;
+}
+
+.StudentInfoWindow #HomePhoneItem {
+	left:66%;
+	top: 250px;
+}
+
+.StudentInfoWindow #SchoolClass {
+	top: 150px;
+}
+
+.StudentInfoWindow #SchoolItem {
+	cursor: text;
+	top: 180px;
+	width: calc(33% - 15px);
+	height: 19px;
+	color: #555;
+	z-index:10;
+}
+
+.StudentInfoWindow #SchoolItemInput {
+	margin: 0;
+	font-size: 16px;
+	outline: none;
+	border: none;
+	background:none;
+	padding:0;
+	display: inline;
+	z-index: 10;
+}
+
+.StudentInfoWindow #SchoolItemSelected {
+	margin: 0;
+	font-size: 16px;
+	outline: none;
+	border: none;
+	background-color: #a8d4f9;
+	padding:0;
+	display: inline;
+	z-index: 10;
+}
+
+.StudentInfoWindow #GradeClass {
+	top: 150px;
+	left: 33%;
+}
+
+.StudentInfoWindow #GradeItem {
+	cursor: text;
+	top: 180px;
+	width: calc(33% - 15px);
+	height: 19px;
+	color: #555;
+	left: 33%;
+	z-index:10;
+}
+
+.StudentInfoWindow #GradeItemInput {
+	margin: 0;
+	font-size: 16px;
+	outline: none;
+	border: none;
+	background:none;
+	padding:0;
+	display: inline;
+	z-index: 10;
+}
+
+.StudentInfoWindow #GradeItemSelected {
+	margin: 0;
+	font-size: 16px;
+	outline: none;
+	border: none;
+	background-color: #a8d4f9;
+	padding:0;
+	display: inline;
+	z-index: 10;
+}
+
+.StudentInfoWindow #GenderClass {
+	left:66%;
+	top: 150px;
+}
+
+.StudentInfoWindow #GenderItem {
+	cursor: text;
+	top: 180px;
+	width: calc(33% - 15px);
+	height: 19px;
+	color: #555;
+	left:66%;
+	z-index:10;
+}
+
+.StudentInfoWindow #GenderItemInput {
+	margin: 0;
+	font-size: 16px;
+	outline: none;
+	border: none;
+	background:none;
+	padding:0;
+	display: inline;
+	z-index: 10;
+}
+
+.StudentInfoWindow #GenderItemSelected {
+	margin: 0;
+	font-size: 16px;
+	outline: none;
+	border: none;
+	background-color: #a8d4f9;
+	padding:0;
+	display: inline;
+	z-index: 10;
+}
+
+.StudentInfoWindow #HomeAddressClass {
+	top: 290px;
+	width: calc(100% - 15px);
+}
+
+.StudentInfoWindow #HomeAddressItem {
+	top: 320px;
+	width: calc(100% - 15px);
+}
+
+.StudentInfoWindow .FieldTitle {
+	top: 0;
+	color: #555;
+	font-size: 14px;
+}
+
+.StudentInfoWindow .FieldTitle>p {
+	margin:0;
+}
+
+.StudentInfoWindow #ParentField {
+	left: calc(50% + 65px);
+}
+
+.StudentInfoWindow #EditButton {
+	right: 0;
+}
+
+.WorkSpaceIcon {
+	height: 64px;
+	width: 64px;
+	transition: background .3s ease;
+}
+
+.WorkSpaceIcon>IMG {
+	z-index: 3;
+	position: absolute;
+	width: 64px;
+	height: 64px;
+}
+
+.WorkSpaceIconMark {
+	z-index: 2;
+	width: 3px;
+	height: 100%;
+	left: 0;
+	background-color: #54AcD2;
+}
+
+.DIResListCell {
+	position: static;
+	display: block;
+	cursor: default;
+	width: 328px;
+	height: 66px;
+	padding: 7px 12px;
+	border-bottom: 1px solid #d0d0d0;
+	color: #555;
+	font-size: 15px;
+}
+
+.DIResListCell>diview {
+	position: static;
+}
+
+.DIResListCell>diview>p {
+	position: static;
+	margin: 0;
+}
+
+.DIResListCellSelected {
+	position: static;
+	display: block;
+	cursor: default;
+	width: 328px;
+	height: 66px;
+	padding: 7px 12px;
+	border-bottom: 1px solid #d0d0d0;
+	background-color: #2A8BFF;
+	color: #fff;
+	font-size: 15px;
+}
+
+.DIResListCellSelected>diview {
+	position: static;
+}
+
+.DIResListCellSelected>diview>p {
+	position: static;
+	margin: 0;
+}
+
+.DrawerViewContainer {
+	width: 100%;
+	height: calc(100% - 66px);
+	border-right: 1px solid #444;
+	overflow-x: hidden;
+	background: rgba(253,253,253,0.8);
+	-webkit-user-select: none;
+}
+
+.DrawerListCell {
+	display: block;
+	cursor: default;
+	width: 328px;
+	height: 33px;
+	padding: 3px 0;
+	margin: 0 10px;
+	border-bottom: 1px solid #A7A7A7;
+	color: #555;
+	font-size: 15px;
+}
+
+.DrawerListCell>diview {
+	position: static;
+	vertical-align: middle;
+	max-height: 32px;
+}
+
+.DrawerListString {
+	padding-left: 8px;
+}
+
+.DrawerListString>P {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/* white-space: nowrap; */
+	white-space: pre;
+	position: static;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: #555;
+	font-size: 15px;
+}
+
+.DrawerListStringEnd {
+	/* padding-left: 8px; */
+}
+
+.DrawerListStringEnd>P {
+	position: static;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: #555;
+	font-size: 15px;
+}
+
+.DrawerListCell>diview>img {
+	width: 32px;
+	height: 32px;
+}
+
+.DrawerListCellSelected {
+	display: block;
+	cursor: default;
+	width: 328px;
+	height: 33px;
+	padding: 3px 0;
+	margin: 0 10px;
+	border-bottom: 1px solid #d0d0d0;
+	background-color: #2A8BFF;
+}
+
+.DrawerListCellSelected>diview {
+	position: static;
+	vertical-align: middle;
+	max-height: 32px;
+}
+
+.DrawerListCellSelected>diview>P {
+	position: static;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: #fff;
+	font-size: 15px;
+}
+
+.DrawerListCellSelected>diview>img {
+	width: 32px;
+	height: 32px;
+}
+
+.DINavigatorAddButton {
+	right: 0;
+	width: 33px;
+	height: 33px;
+	overflow: hidden;
+	color: #f1f1f1;
+	font-size: 18px;
+	transition: background .3s ease;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+.DINavigatorAddButton:hover {
+	background: rgba(42,139,255,0.8);
+}
+
+.DIContextMenu {
+	background-color: #F2F2F2;
+	border: 1px solid #d0d0d0;
+	z-index: 100;
+	box-shadow:  0px 0px 12px 2px rgba(0,0,0,0.3);
+}
+
+
+
+.DIContextMenuCell {
+	position: static;
+	display: block;
+	cursor: default;
+	width: 148px;
+	padding: 3px 12px 4px 22px;
+	color: #555;
+	font-size: 15px;
+}
+
+.DIContextMenuCell:hover {
+	position: static;
+	display: block;
+	cursor: default;
+	width: 148px;
+	padding: 3px 12px 4px 22px;
+	background-color: #2A8BFF;
+	color: #fff;
+	font-size: 15px;
+}
+
+.DIContextMenuCell>diview {
+	position: static;
+}
+
+.DIContextMenuCell>diview>p {
+	position: static;
+	margin: 0;
+}
+
+.DIContextMenuCellSelected {
+	position: static;
+	display: block;
+	cursor: default;
+	width: 148px;
+	padding: 3px 12px 4px 22px;
+	color: #555;
+	font-size: 15px;
+}
+
+.DIContextMenuCellSelected>diview {
+	position: static;
+}
+
+.DIContextMenuCellSelected>diview>p {
+	position: static;
+	margin: 0;
+}
+
+.DILoading {
+	width: 100%;
+	height: 100%;
+	background-color: #A7A7A7;
+	opacity: 0.5;
+	z-index: 97;
+}
+
+.loading {
+	position: absolute;
+	border-top: 8px solid #2A8BFF;
+	border-right: 8px solid #fff;
+	border-bottom: 8px solid #fff;
+	border-left: 8px solid #2A8BFF;
+	border-radius: 100%;
+	animation: spin .5s infinite linear;
+	z-index: 98;
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	} to {
+		transform: rotate(359deg);
+	}
+}
+
+.DrawerRenameView {
+	left: 20px;
+	right: 20px;
+	height: 135px;
+	background-color: #F2F2F2;
+	top: calc(50% - 67px);
+	z-index: 100;
+}
+
+.DrawerRenameField {
+	top: 50px;
+	left: 15px;
+	right: 15px;
+}
+
+.DrawerRenameField>INPUT {
+	width: calc(100% - 5px);
+	font-size: 16px;
+}
+
+.DrawerAlert {
+	left: 20px;
+	right: 20px;
+	background-color: #F2F2F2;
+	top: calc(50% - 67px);
+	z-index: 101;
+}
+
+.DrawerUploadButton {
+	right: 33px;
+	width: 33px;
+	height: 33px;
+	overflow: hidden;
+	color: #f1f1f1;
+	font-size: 18px;
+	transition: background .3s ease;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+.DrawerUploadButton:hover {
+	background: rgba(42,139,255,0.8);
+}
+
+.DrawerUploadProgress {
+	width: 32px;
+	height: 32px;
+}
+
+.DrawerUploadProgress>SVG {
+	transform: rotate(-90deg);
+	border-radius: 50%;
+	background: transparent;
+}
+
+.DrawerUploadProgress>SVG>circle {
+	fill: transparent;
+	stroke: #2A8BFF;
+	stroke-width: 16;
+	stroke-dasharray: 0 158;
+	transition: stroke-dasharray .3s ease;
+}
+
+.DIAlertViewTextArea {
+	bottom: 67px;
+	width: calc(100% - 38px);
+	height: 170px;
+	left: 15px;
+	heightL 170px;
+	border: 2px solid #c0c0c0;
+	padding: 2px;
+	overflow: scroll;
+	font-size: 13px;
+}
+
+.DIListNavigator {
+	width: 100%;
+	height: 33px;
+	background: rgba(52,152,219, 0.8);
+}
+
+.DISmallAlertView {
+	max-width: 460px;
+	left: 7px;
+	right: 7px;
+	background-color: #F2F2F2;
+	z-index: 101;
+}
+
+.DISmallAlertViewButton {
+	width: 100%;
+}
+
+.DISmallAlertViewButton>button {
+	padding: 5px 10px;
+	outline: none;
+	width: 100%;
+	cursor: pointer;
+	font-size: 18px;
+	color: #181818;
+	background-color: #F4F4F4;
+	border: none;
+	border-top: 2px solid #c0c0c0;
+	transition: background-color .3s ease;
+	cursor: default;
+}
+
+.DISmallAlertViewButton>button:hover {
+	background-color: #CCC;
+}
+
+.StudentInfoNoSelection {
+	z-index: 99;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background: rgba(41,128,185 ,1);
+	cursor: default;
+}
+
+.StudentInfoNoSelection>p {
+	margin: 0;
+	position: absolute;
+	font-size: 26px;
+	color: #E8E8E8;
+	top: calc(50% - 17px);
+	left: calc(50% - 122px);
+	-webkit-user-select: none;
+}
+
+.DINoSelection {
+	z-index: 99;
+	width: 100%;
+	height: 100%;
+	background: rgba(41,128,185 ,1);
+	cursor: default;
+}
+
+.DINoSelection>p {
+	margin: 0;
+	position: absolute;
+	font-size: 26px;
+	color: #E8E8E8;
+	top: calc(50% - 17px);
+	left: calc(50% - 122px);
+	-webkit-user-select: none;
+}
+
+.LectureResCell {
+	display: block;
+	cursor: default;
+	width: 328px;
+	height: 43px;
+	padding: 3px 10px;
+	border-bottom: 1px solid #d0d0d0;
+	color: #555;
+	font-size: 15px;
+}
+
+.LectureResCell>diview {
+	vertical-align: middle;
+	max-height: 32px;
+}
+
+.LectureResName {
+	left:42px;
+	top: 7px;
+}
+
+.LectureResType {
+	left:42px;
+	top: 27px;
+}
+
+.LectureResCell>diview>P {
+	position: static;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: #555;
+	font-size: 15px;
+}
+
+.LectureResCell>diview>img {
+	width: 32px;
+	height: 32px;
+}
+
+.LectureResCellSelected {
+	display: block;
+	cursor: default;
+	width: 328px;
+	height: 43px;
+	padding: 3px 10px;
+	border-bottom: 1px solid #d0d0d0;
+	background-color: #2A8BFF;
+}
+
+.LectureResCellSelected>diview {
+	vertical-align: middle;
+	max-height: 32px;
+}
+
+.LectureResCellSelected>diview>P {
+	position: static;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: #fff;
+	font-size: 15px;
+}
+
+.LectureResCellSelected>diview>img {
+	width: 32px;
+	height: 32px;
+}
+
+.LectureResEdit {
+	left: 20px;
+	right: 20px;
+	height: 135px;
+	background-color: #F2F2F2;
+	top: calc(50% - 67px);
+	z-index: 100;
+}
+
+.DLectureResRenameField {
+	top: 50px;
+	left: 15px;
+	right: 15px;
+}
+
+.DLectureResRenameField>INPUT {
+	width: calc(100% - 5px);
+	font-size: 16px;
+}
+
+.LectureResTypeSelect {
+	top: 50px;
+	left: 15px;
+	right: 15px;
+}
+
+.LectureResTypeSelect>SELECT {
+	height: 24px;
+	width: 100%;
+	font-size: 16px;
+}
+
+.DIWallpaper {
+	/* filter: blur(30px); */
+	left: -10px;
+	top: -10px;
+}
+
+.DeskDebug {
+	margin: 0;
+	position: absolute;
+	color: #FFF;
+	top: 0;
+	font-size: 20px;
+}
+
+.DrawerFileMerge {
+    animation: fileMerge .3s forwards;
+}
+
+@keyframes fileMerge {
+    100% { top: 0; }
+}
+
+.DISettingView {
+	left: 20px;
+	right: 20px;
+	height: 135px;
+	background-color: #F2F2F2;
+	top: calc(50% - 67px);
+	z-index: 100;
+}
+
+.DISmallSettingView {
+	max-width: 460px;
+	left: 7px;
+	right: 7px;
+	background-color: #F2F2F2;
+	z-index: 101;
+	overflow: hidden;
+}
+
+.DISwitch>label {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.DISwitch>label>input {
+	display:none;
+}
+
+.DISwitchSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .3s;
+  transition: .3s;
+  border-radius: 34px;
+}
+
+.DISwitchSlider:before {
+  position: absolute;
+  content: "";
+  height: 30px;
+  width: 30px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .3s;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .DISwitchSlider {
+  background-color: #2A8BFF;
+}
+
+input:focus + .DISwitchSlider {
+  box-shadow: 0 0 1px #2A8BFF;
+}
+
+input:checked + .DISwitchSlider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.DISmallSwitch>label {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 30px;
+}
+
+.DISmallSwitch>label>input {
+	display:none;
+}
+
+.DISmallSwitchSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .3s;
+  transition: .3s;
+  border-radius: 30px;
+}
+
+.DISmallSwitchSlider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .3s;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .DISmallSwitchSlider {
+  background-color: #2A8BFF;
+}
+
+input:focus + .DISmallSwitchSlider {
+  box-shadow: 0 0 1px #2A8BFF;
+}
+
+input:checked + .DISmallSwitchSlider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+.DISettingLabel {
+	padding-left: 10px;
+	height: 34px;
+	width: calc(100% - 10px);
+	background-color: #FFF;
+}
+
+.DISettingLabel>P {
+	font-size: 18px;
+	vertical-align: middle;
+	line-height: 34px;
+	margin: 0;
+}
+
+.DISettingTitle {
+	width: 100%;
+	color: #f1f1f1;
+	background: rgb(52,152,219);
+	height: 40px;
+}
+
+.DISettingTitle>P {
+	margin: 0;
+	line-height: 40px;
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+	
+}
+
+.PreviewPlayerController {
+    position: absolute;
+    height: 60px;
+    width: 340px;
+    background-color:rgba(80,80,80,0.7);
+    /* border-radius: 7px; */
+	left: calc(50% - 170px);
+	bottom: 10%;
+	z-index: 50;
+}
+
+.PreviewPlayerPlay {
+	position: absolute;
+    width: 32px;
+    height: 32px;
+    top: 5px;
+    left: calc(50% - 16px);
+}
+
+.PreviewPlayerProgress {
+    position: absolute;
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+    left: 75px;
+    top: 37px;
+    background: transparent;
+    height: 17px;
+    width: calc(100% - 150px);
+    cursor: default;
+}
+
+.PreviewPlayerProgress focus {
+    outline: none;
+}
+
+.PreviewPlayerProgress::-webkit-slider-runnable-track {
+    width: 100%;
+    height:3px;
+    background: #666;
+    border: none;
+    cursor: default;
+}
+
+.PreviewPlayerProgress::-webkit-slider-thumb {
+    border: none;
+    height: 15px;
+    width: 15px;
+    border-radius: 100%;
+    background: #F0F0F0;
+    margin-top: -6px;
+    -webkit-appearance: none;
+}
+
+.PreviewPlayerProgress:focus::-webkit-slider-runnable-track {
+    background: #666;
+}
+
+.PreviewPlayerFullScreen {
+	position: absolute;
+    width: 24px;
+    height: 24px;
+    top: 5px;
+    right: 5px;
+}
+
+.PreviewPlayerTime {
+	left: 6px;
+	position: absolute;
+	font-size: 18px;
+	color: #f1f1f1;
+	z-index: 100;
+	text-align: center;
+	bottom: 14px;
+	margin: 0;
+	width: 67px;
+}
+
+.PreviewPlayer {
+  	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+  	background: transparent;
+}
+
+.PreviewImage {
+  	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+  	background: transparent;
+}
+
+.PreviewImage>IMG {
+	width: 100%;
+	height: 100%;
+}
+
+.PreviewPDF {
+	top: 50%;
+  	transform: translateY(-50%);
+	width: 100%;
+	height: 100%;
+}
+
+.PreviewPDF>embed {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+.PreviewText {
+	width: 100%;
+	height: 100%;
+}
+
+.PreviewText>textarea {
+	width: 100%;
+	height: 100%;
+	font-size: 12px;
+	background: transparent;
+	color: #FFF;
+	outline: none;
+	border: none;
+}
+
+/* Problems */
+
+.PBViewController {
+	width: 100%;
+	height: calc(100% - 26px);
+	border-right: 1px solid #444;
+	overflow-x: hidden;
+	background: #EEEEEE;
+	-webkit-user-select: none;
+}
+
+.PBToolbarView {
+	width: 100%;
+	height: 33px;
+	background: #6BBC57;
+	border-bottom: 1px;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+/* WorkSheets */
+
+.WSViewController {
+	width: 100%;
+	height: calc(100% - 26px);
+	border-right: 1px solid #444;
+	overflow-x: hidden;
+	background: #EEEEEE;
+	-webkit-user-select: none;
+}
+
+.WSToolbarView {
+	width: 100%;
+	height: 33px;
+	background: #f39c12;
+	border-bottom: 1px;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+.WSToolbarItem {
+	height: 33px;
+	width: 33px;
+	transition: background-color .3s ease;
+}
+
+.WSToolbarItem:hover {
+	background-color: #e67e22;
+}
+
+.WSTZoom {
+	height: 33px;
+	transition: background-color .3s ease;
+	line-height: 33px;
+	width: 50px;
+	text-align: center;
+}
+
+.WSTZoom:hover {
+	background-color: #e67e22;
+}
+
+.WSTZoom>P {
+	margin: 0;
+	display: inline-block;
+	font-size: 12px;
+	color: #EEEEEE;
+}
+
+.WSTZoom>IMG {
+	width: 15px;
+	vertical-align: text-bottom;
+}
+
+#caret {
+	border-left: 1px solid #000;
+	border-right: none;
+	width: 0;
+	z-index: 100;
+}
+
+#carethold {
+	border-left: 1px solid #000;
+	border-right: none;
+	width: 0;
+}
+
+.WSEditorView {
+	width: calc(100% - 270px);
+	height: calc(100% - 33px);
+	top: 33px;
+	overflow: auto;
+}
+
+.WSZoomView {
+	top: 0;
+	transform: scale(1.25);
+}
+
+.WSPagesContainer {
+	position: absolute;
+	/*
+	transform-origin: 0 0;
+	-moz-transform-origin: 0 0;
+	-ms-transform-origin: 0 0;
+	-o-transform-origin: 0 0;
+	-webkit-transform-origin: 0 0;
+	*/
+}
+
+.WSPage {
+	box-shadow:  0px 0px 12px 2px rgba(0,0,0,0.3);
+}
+
+.WSPGreyArea {
+	width: 100%;
+	height: 100%;
+	background: rgba(167,167,167,0.5);
+	z-index: 11;
+}
+
+.WSPFocusedArea {
+	border-radius: 10px;
+	z-index: 12;
+}
+
+.WSEProblemBox {
+}
+
+.WSEParagraph {
+	z-index: 10;
+}
+
+.WSELine {
+	position: relative;
+}
+
+.WSELineContent {
+	position:absolute;
+	white-space: pre;
+}
+
+.WSELineContent>SPAN {
+	vertical-align: super;
+}
+
+.WSELineBackground {
+}
+
+.WSESelectionView {
+}
+
+.WSResizer {
+	width: 5px;
+	height: 5px;
+	border: 1px solid #000;
+	z-index: 100;
+	background: #FFF;
+}
+
+.WSUnityper {
+	vertical-align: sub;
+}
+
+.WSUnityper>DIV {
+	border: none;
+	outline: none;
+	padding: 0;
+	font-size: 16px;
+	background: rgba(255,255,255,0);
+	word-break: break-word;
+	/* caret-color: rgba(0,0,0,0); */
+}
+
+.WSSelection {
+	z-index: 0;
+}
+
+.WSSelectionLine {
+	background: rgba(126,188,255,0.7);
+}
+
+.WSPilcrow {
+	background: rgba(126,188,255,0.7);
+	font-size: 9px;
+	font-family: "Times New Roman";
+	width: 6px;
+	color: #3988ec;
+}
+
+#WSFunctionEditor {
+	transform: translateY(-50%);
+	top: 50%;
+	max-width: 100%;
+	left: 50px;
+	right: 50px;
+	background-color: #F2F2F2;
+	z-index: 101;
+	overflow: hidden;
+}
+
+.WSWindowTitle {
+	width: 100%;
+	color: #f1f1f1;
+	background: rgb(52,152,219);
+	height: 40px;
+}
+
+.WSWindowTitle>P {
+	margin: 0;
+	line-height: 40px;
+	font-size: 20px;
+	width: 100%;
+	text-align: center;
+}
+
+#WSFETextArea {
+	left: 20px;
+	right: 26px;
+}
+
+#WSFETextArea>textarea {
+	width: 100%;
+	outline: none;
+	resize: none;
+}
+
+#WSFEPreview {
+	position: absolute;
+	top: 55px;
+	left: 20px;
+}
+
+.WSTemplateView {
+	transform: translate(-50%, -50%);
+	top: 50%;
+	left: 50%;
+	max-width: 100%;
+	background-color: rgba(0, 0, 0, 0.8);
+	z-index: 101;
+	overflow: hidden;
+}
+
+.WSTemplateItem {
+	height: 210px;
+	width: 160px;
+}
+
+.WSTemplateImage {
+	transform: translateX(-50%);
+	top: 0;
+	left: 50%;
+}
+
+.WSTemplateImage>img {
+	width: 120px;
+	height: 160px;
+}
+
+.WSTemplateLabel {
+	text-align: center;
+	width: 100%;
+	bottom: 0;
+	color: #FFF;
+}
+
+.WSInspector {
+	width: 270px;
+	right: 0;
+	top: 33px;
+	height: calc(100% - 33px);
+}
+
+.WSIView {
+	width: 100%;
+	height: 100%;
+	border-left: 1px solid #c2c2c2;
+}
+
+.WSIBlankViewLabel {
+	width: 100%;
+	text-align: center;
+	transform: translateY(-50%);
+	top: 50%;
+	color: #999;
+	font-size: 16px;
+}
+
+.WSITitle {
+	border-bottom: 1px solid #c2c2c2;
+	width: 100%;
+}
+
+.WSITitle>P {
+	color: #999;
+	text-align: center;
+	margin: 0;
+	line-height: 24px;
+	font-size: 14px;
+}
+
+.WSISectionTitle {
+	font-size: 14px;
+}
+
+.WSISectionTitle>P {
+	margin: 0;
+	color: #555;
+	font-weight: 700;
+}
+
+.WSISectionLabel {
+	font-size: 14px;
+}
+
+.WSISectionLabel>P {
+	text-align: right;
+	width: 70px;
+	margin: 0;
+	color: #777;
+}
+
+.WSEScreen {
+	width: calc(100% - 270px);
+	height: calc(100% - 147px);
+	top: 147px;
+}
+
+.WSSTabView {
+	top: 75px;
+	position: absolute;
+	width: calc(100% - 320px);
+	left: 10px;
+	padding: 5px 15px;
+	height: 40px;
+	background-color: #FFF;
+	box-shadow: 0px 2px 4px 0px #888888;
+	overflow: hidden;
+}
+
+.WSSTItemScrollContainer {
+	overflow: hidden;
+	height: 100%;
+	width: 100%;
+}
+
+.WSSTItemScroll {
+	height: 48px;
+	overflow-x: scroll;
+}
+
+.WSSTItemContainer {
+	height: 100%;
+	display: inline-flex;
+	-webkit-user-select: none;
+}
+
+.WSESTItem {
+	height: 40px;
+	width: 40px;
+	margin-right: 10px;
+	text-align: center;
+	line-height: 40px;
+	font-size: 18px;
+	border-radius: 100%;
+	transition: background .3s ease;
+	cursor: pointer;
+}
+
+.WSESTItem:hover {
+	background-color: #CCC;
+	color: #f1f1f1;
+}
+
+.WSESTItemSelected {
+	height: 40px;
+	width: 40px;
+	margin-right: 10px;
+	text-align: center;
+	line-height: 40px;
+	background-color: #A7A7A7;
+	color: #fff;
+	border-radius: 100%;
+	font-size: 18px;
+	cursor: pointer;
+}
+
+.WSSPage {
+	width: 100%;
+	height: 100%;
+	margin-top: -10px;
+}
+
+.WSSElementContainer {
+	width: calc(100% - 60px);
+	padding: 20px;
+	margin: 10px;
+	background-color: #FFF;
+	box-shadow: 0px 2px 4px 0px #888888;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+/* Terminal */
+.CMDView {
+	width: 100%;
+	height: 100%;
+}
+
+.CMDTyper {
+	position: fixed;
+	border: none;
+	outline: none;
+	padding: 0;
+	background: rgba(255, 255, 255, 0);
+	word-break: break-word;
+	caret-color: rgba(0, 0, 0, 0);
+}
+
+.CMDLineContainer {
+	width: 100%;
+}
+
+.CMDLine {
+	position: relative;
+	width: 100%;
+	font-family: Dejavu Sans Mono;
+	font-size: 11px;
+	/* -webkit-font-smoothing: none; */
+	vertical-align: top;
+	word-break: break-all;
+	background: transparent;
+	color: #FFF;
+	outline: none;
+	border: none;
+	line-height: 18px;
+}
+
+.CMDLine>span {
+	outline: none;
+	caret-color: rgba(0,0,0,0);
+}
+
+.CMDLineCurser {
+	position: relative;
+	vertical-align: top;
+	border: 1px solid #9d9d9d;
+	outline: none;
+	width: 5px;
+	height: 11px;
+	margin-top: 2px;
+}
+
+/* TextEditor */
+.TextEditorArea {
+	width: 100%;
+	height: calc(100% - 33px);
+}
+
+.TextEditorArea>textarea {
+	outline: none;
+	font-size: 12px;
+	width: calc(100% - 6px);
+	height: calc(100% - 6px);
+}
+
+.TEOpenButton {
+	left: 0;
+	width: 33px;
+	height: 33px;
+	overflow: hidden;
+	color: #f1f1f1;
+	font-size: 18px;
+	transition: background .3s ease;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+.TEOpenButton:hover {
+	background: rgba(42,139,255,0.8);
+}
+
+.TESaveButton {
+	left: 33px;
+	width: 33px;
+	height: 33px;
+	overflow: hidden;
+	color: #f1f1f1;
+	font-size: 18px;
+	transition: background .3s ease;
+	cursor: default;
+	-webkit-user-select: none;
+}
+
+.TESaveButton:hover {
+	background: rgba(42,139,255,0.8);
+}
+
+/* DocReader */
+.DocReaderView {
+	overflow: hidden;
+	background: rgba(253,253,253,0.8);
+}
+
+.DRSelectionRect {
+	border: 1px dotted #000;
+	z-index: 0;
+}
+
+.DRPageOCRBar {
+	width: 0;
+	height: 20px;
+	display: block;
+	margin-left: -6px;
+	background: rgb(52,152,219);
+	margin-top: -22px;
+	position: relative;
+}
+
+
+.DRPageOCRBox {
+	width: 88px;
+	height: 20px;
+	display: block;
+	margin-left: -8px;
+	border: 2px solid #000;
+	background: rgba(160, 160, 160, 0.5);
+	margin-top: -76px;
+	position: relative;
+}
+
+.DRToolbar {
+	z-index: 10;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 33px;
+	background: #f1f1f1;
+}
+
+.DRToolbarItem {
+	width: 33px;
+	height: 33px;
+	transition: background-color .3s ease;
+}
+
+.DRToolbarItem:hover {
+	background-color: #CCC;
+}
+
+.DRToolbarItem>IMG {
+	fill: black;
+}
+
+.DRToolbox {
+	z-index: 10;
+	left: 0;
+	top: 0;
+	width: 33px;
+	top: 33px;
+	bottom: 0px;
+	background: #f1f1f1;
+}
+
+.DRToolboxItem {
+	width: 33px;
+	height: 33px;
+	transition: background-color .3s ease;
+}
+
+.DRToolboxItem:hover {
+	background-color: #CCC;
+}
+
+.DRToolboxItem>IMG {
+	fill: black;
+}
+
+.DRInfoView {
+	z-index: 10;
+	right: 0;
+	width: 260px;
+	top: 33px;
+	bottom: 0px;
+	background: #f1f1f1;
+}
+
+.DRScrollView {
+	left: 33px;
+	right: 260px;
+	top: 33px;
+	bottom: 0px;
+	overflow: scroll;
+}
+
+.DRViewContainer {
+	transform-origin: top left;
+}
+.DRImage {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.DRImage>IMG {
+	width: 100%;
+	height: 100%;
+}
+
+.DRWordBox {
+	border: 1px solid #000;
+}
+
+/* DrawerPanel */
+.DrawerPanel {
+	background: rgba(167, 167, 167, 0.5);
+	width: 100%;
+	height: 100%;
+}
+
+.DrawerPanelContainer {
+	background-color: #A7A7A7;
+	height: calc(100% - 333px);
+	top: 60px;
+}
+
+.DrawerNameField {
+	background-color: #F2F2F2;
+	left: 10px;
+	right: 10px;
+	height: 33px;
+}
+
+.DrawerNameField>INPUT {
+	margin-top: 5px;
+	margin-left: 10px;
+	width: calc(100% - 25px);
+	font-size: 16px;
+}
+
+/* desk menu */
+#DeskMenu {
+	height: 100%;
+	background: rgba(0, 0, 0, 0.8);
+	transition: left .3s ease;
+}
+
+
+
+.DeskMenuViewContainer {
+	width: 100%;
+	height: calc(100% - 66px);
+	bottom: 0;
+	border-right: 1px solid #444;
+	overflow-x: hidden;
+	background: transparent;
+	-webkit-user-select: none;
+}
+
+.DeskMenuListCell {
+	display: block;
+	cursor: default;
+	width: 328px;
+	height: 33px;
+	padding: 3px 0;
+	margin: 0 10px;
+	border-bottom: 1px solid #A7A7A7;
+	color: #FFF;
+	font-size: 15px;
+}
+
+.DeskMenuListCell>diview {
+	position: static;
+	vertical-align: middle;
+	max-height: 32px;
+}
+
+.DeskMenuListString {
+	padding-left: 8px;
+}
+
+.DeskMenuListString>P {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/* white-space: nowrap; */
+	white-space: pre;
+	position: static;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: #FFF;
+	font-size: 15px;
+}
+
+.DeskMenuListStringEnd {
+	/* padding-left: 8px; */
+}
+
+.DeskMenuListStringEnd>P {
+	position: static;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: #FFF;
+	font-size: 15px;
+}
+
+.DeskMenuListCell>diview>img {
+	width: 32px;
+	height: 32px;
+}
+
+.DeskMenuListCellSelected {
+	display: block;
+	cursor: default;
+	width: 328px;
+	height: 33px;
+	padding: 3px 0;
+	margin: 0 10px;
+	border-bottom: 1px solid #d0d0d0;
+	background-color: #2A8BFF;
+}
+
+.DeskMenuListCellSelected>diview {
+	position: static;
+	vertical-align: middle;
+	max-height: 32px;
+}
+
+.DeskMenuListCellSelected>diview>P {
+	position: static;
+	margin: 0;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	color: #fff;
+	font-size: 15px;
+}
+
+.DeskMenuListCellSelected>diview>img {
+	width: 32px;
+	height: 32px;
+}
