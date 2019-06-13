@@ -29,6 +29,7 @@ class DIViewController {
 	
 	setChildView(child)  {
 		this.view = child;
+		this.view._controller = this;
 		child.parent = this;
 		child.didMoveToParent();
 		return true;

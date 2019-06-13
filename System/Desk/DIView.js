@@ -22,6 +22,7 @@ class DIView {
 		this._width;
 		this._height;
 		this._inSleep;
+		this._controller = null;
 		this.onDesk = false;
 		
 		// init
