@@ -1423,6 +1423,29 @@ input:checked + .DISmallSwitchSlider:before {
 	
 }
 
+.DITableView>table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	display: table;
+	border: 1px solid #a7a7a7;
+}
+
+.DITableView th {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+.DITableView tr {
+	border-bottom: 1px solid #a7a7a7;
+}
+
+.DITableView tr:nth-child(odd) {
+	background: rgba(253, 253, 253, 0.7);
+}
+
+.DITableCell {
+	position: relative;
+}
+
 .PreviewPlayerController {
     position: absolute;
     height: 60px;
