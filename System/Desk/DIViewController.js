@@ -13,10 +13,11 @@
 
 class DIViewController {
 	constructor(view) {
-		this.view;
+		this.app;
+		this._view;
 		
 		if(view)
-			this.setChildView(view);
+			this.view = view;
 	}
 	
 	putInSleep() {
@@ -26,25 +27,17 @@ class DIViewController {
 	wakeUp() {
 		this.view.wakeUp();
 	}
-	
-	setChildView(child)  {
-		this.view = child;
-		this.view._controller = this;
-		child.parent = this;
-		child.didMoveToParent();
-		return true;
+
+	get view() {
+		return this._view;
 	}
 	
-	removeChildView(child) {
-		this.view = null;
-	}
-	
-	didMoveToParent() {
-		this.view.didMoveToParent();
-	}
-	
-	didMoveToDesk() {
-		this.view.didMoveToDesk();
+	set view(view)  {
+		this._view = view;
+		if(view != null) {
+			this.view._controller = this;
+			view.parent = this;
+		}
 	}
 	
 	delete() {
