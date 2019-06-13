@@ -15,6 +15,7 @@ class DIViewController {
 	constructor(view) {
 		this.app;
 		this._view;
+		this._child;
 		
 		if(view)
 			this.view = view;
@@ -26,6 +27,18 @@ class DIViewController {
 	
 	wakeUp() {
 		this.view.wakeUp();
+	}
+
+	get child() {
+		return this._child;
+	}
+
+	set child(vc) {
+		this._child = vc;
+		if(vc != null) {
+			this._child.app = this.app;
+			//this._child.parent = this;
+		}
 	}
 
 	get view() {
