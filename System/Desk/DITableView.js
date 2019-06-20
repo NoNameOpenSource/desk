@@ -46,4 +46,17 @@ class DITableView extends DIView {
 		let tr = document.createElement("tr");
 		this.tableBody.appendChild(tr);
 	}
+
+	cellClicked(cell) {
+		if(!this.delegate || !this.delegate.tableCellClicked) { return true; }
+		return this.delegate.tableViewCellClicked(cell);
+	}
+
+	cellUpdated(cell) {
+		if(!this.delegate || !this.delegate.tableCellUpdated) { return true; }
+		return this.delegate.tableCellUpdated(cell);
+	}
+
+	mouseDown(evt) {
+	}
 }
