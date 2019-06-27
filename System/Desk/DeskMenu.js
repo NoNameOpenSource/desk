@@ -18,10 +18,14 @@ class DeskMenu extends DIView {
 		this.listView.reloadData();
 	}
 
+	reloadData() {
+		this.listView.reloadData();
+	}
+
 	// ListView Delegate Section
 	numberOfRows(listView) {
 		if(listView==this.listView)
-			return 3;
+			return Secretary.appList.length;
 		if(listView==this.contextMenu)
 			return this.contextList.length;
 	}
@@ -30,16 +34,8 @@ class DeskMenu extends DIView {
 		if(listView == this.listView) {
 			var cell = new DeskMenuListViewCell();
 			cell.width = this.width - 32;
-			if(row == 0) {
-				cell.name.stringValue = "Drawer";
-				cell.icon.imageSource = "/System/Secretary/AppIcon/Drawer.png";
-			} else if(row == 1) {
-				cell.name.stringValue = "Preview";
-				cell.icon.imageSource = "/System/Secretary/AppIcon/Preview.png";
-			} else if(row == 2) {
-				cell.name.stringValue = "WorkSheets";
-				cell.icon.imageSource = "/System/Secretary/AppIcon/worksheets.png";
-			}
+			cell.name.stringValue = Secretary.appList[row];
+			cell.icon.imageSource = "/System/Secretary/AppIcon/" + Secretary.appList[row] + ".png";
 			return cell;
 		}
 	}
@@ -48,13 +44,7 @@ class DeskMenu extends DIView {
 		if(listView==this.listView) {
 			if(index>=0) {
 				listView.deselectAll()
-				if(index == 0) {
-					Secretary.mainWorkSpace.loadApp("Drawer", [])
-				} else if(index == 1) {
-					Secretary.mainWorkSpace.loadApp("Preview", [])
-				} else if(index == 2) {
-					Secretary.mainWorkSpace.loadApp("WorkSheets", [])
-				}
+				Secretary.mainWorkSpace.loadApp(Secretary.appList[index], []);
 			}
 		}
 	}

@@ -23,6 +23,7 @@ var Secretary = new function () {
 	this.browser = "unknown browser";
 	this.browserVersion = "0";
 	this.ESVersion;
+	this.appList = new Array();
 	
 	this.init = function() {
 		// Init based on the server
@@ -86,6 +87,29 @@ var Secretary = new function () {
 		
 		// load plugins
 		this.loadPlugins();
+
+		// load side menu app list
+		this.appList;
+		req = new RequestServer('ProgramList');
+		req.addEventListener('load', function(evt) {
+			// Analysis received data
+			var tmp
+			try {
+				tmp = JSON.parse(evt.target.responseText);
+			}
+			catch(err) {
+				// the system errors should be handled with a new way
+				Secretary.alertError("Failed to load ProgramList with following error from server:", evt.target.responseText);
+				return -1;
+			}
+			if(tmp.DataBlockStatus == 0) {
+				Secretary.appList = tmp.ProgramList;
+			}
+			
+			// reload desk menu
+			Desk.deskMenu.reloadData();
+		});
+		req.send();
 	}
 	
 	this.setMainWorkSpace = function(workSpace) {
