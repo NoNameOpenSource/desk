@@ -65,8 +65,7 @@ class DIDragListView extends DIListView {
 			this.events.splice(this.moveEvent, 2);
 			
 			var body = this.body.getBoundingClientRect();
-			var y = (evt.clientY<body.bottom)? ((evt.clientY>body.top)? evt.clientY : body.top) : (body.bottom - 1);
-			var index = Math.floor((this.body.scrollTop+y-body.top)/this.cellHeight);
+			var index = Math.floor((this.body.scrollTop+evt.clientY-body.top)/this.cellHeight);
 			if(index == this.selectedIndex) {
 				this.didSelectRowAtIndex(this.selectedIndex);
 			} else {
