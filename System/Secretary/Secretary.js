@@ -350,12 +350,13 @@ var Secretary = new function () {
 	** 	-htmlFileObject	: HTML file object
 	** 	-file			: DeskFileUpload object
 	**	-onCompletion	: callback function (file, error)
+	**	-onProgress		: callback function (file, loaded, total)
 	** 
 	** errorType
 	** 	1 : server error
 	**
 	*/
-	this.uploadFile = function(htmlFileObject, file, onCompletion) {
+	this.uploadFile = function(htmlFileObject, file, onCompletion, onProgress) {
 		var req = new RequestServer('FileUpload', true);
 		req.addData('File', htmlFileObject);
 		req.addData('FileId', file.id);
@@ -395,6 +396,12 @@ var Secretary = new function () {
 			}
 			onCompletion(file, null);
 		}.bind(this));
+		req.addEventListener('progress', function(evt) {
+			file.progress = evt.loaded / evt.total;
+			if(onProgress) {
+				onProgress(file, evt.loaded, evt.total);
+			}
+		});
 		req.send();
 	}
 	/*

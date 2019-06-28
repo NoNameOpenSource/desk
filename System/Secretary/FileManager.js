@@ -412,7 +412,7 @@ class FileManager {
 	** parameters
 	** 	-files			: HTML file objects (Array)
 	**	-onCompletion	: callback function (file, error) // call back function will be called for each file
-	**	-onProgress		: callback function (loaded, total)
+	**	-onProgress		: callback function (file, loaded, total) // call back function will be called when progress updates for each file
 	** 
 	** errorType
 	** 	1 : server error
@@ -466,17 +466,12 @@ class FileManager {
 					var file = new DeskFileUpload(json.fileIds[i], names[i]);
 					file.size = htmlFileObjects[i].size;
 					if(file.size < 1000000000) // file approximately less than 1GB
-						Secretary.uploadFile(htmlFileObjects[i], file, onCompletion);
+						Secretary.uploadFile(htmlFileObjects[i], file, onCompletion, onProgress);
 					else
-						Secretary.uploadBigFile(htmlFileObjects[i], file, onCompletion);
+						Secretary.uploadBigFile(htmlFileObjects[i], file, onCompletion, onProgress);
 				}
 			}
 		}.bind(this));
-		req.addEventListener('progress', function(evt) {
-			if(onProgress) {
-				onProgress(evt.loaded, evt.total);
-			}
-		});
 		r0eq.send();
 	}
 
