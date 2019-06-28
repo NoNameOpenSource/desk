@@ -412,6 +412,7 @@ class FileManager {
 	** parameters
 	** 	-files			: HTML file objects (Array)
 	**	-onCompletion	: callback function (file, error) // call back function will be called for each file
+	**	-onProgress		: callback function (loaded, total)
 	** 
 	** errorType
 	** 	1 : server error
@@ -419,7 +420,7 @@ class FileManager {
 	**	3 : invalid location
 	**
 	*/
-	uploadFiles(htmlFileObjects, location, onCompletion) {
+	uploadFiles(htmlFileObjects, location, onCompletion, onProgress) {
 		if(!onCompletion)
 			return;
 		var names = new Array();
@@ -471,7 +472,12 @@ class FileManager {
 				}
 			}
 		}.bind(this));
-		req.send();
+		req.addEventListener('progress', function(evt) {
+			if(onProgress) {
+				onProgress(evt.loaded, evt.total);
+			}
+		});
+		r0eq.send();
 	}
 
 	/*
