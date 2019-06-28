@@ -160,13 +160,18 @@ class DIDragListView extends DIListView {
 		var length = this.dataSource.numberOfRows(this);
 		for(var i=0; i<length; i++) {
 			if(this.reloadTicket == ticket) {
-				this.addChildView(this.dataSource.cellAtRow(this,i));
-				this.children[this.children.length-1].y = i*this.cellHeight;
+				let cell = this.dataSource.cellAtRow(this,i);
+				this.addCell(cell);
 			} else
 				break;
 		}
 		if(this.reloadTicket == ticket)
 			this.body.scrollTop = scrollPos;
+	}
+
+	addCell(cell) {
+		cell.y = i * this.cellHeight;
+		this.addChildView(cell);
 	}
 	
 	didSelectRowAtIndex(index) {
