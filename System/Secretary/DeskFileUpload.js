@@ -18,7 +18,7 @@ class DeskFileUpload extends DeskFile {
 	set progress(newValue) {
 		this._progress = newValue;
 		for(let callback in this.listeners) {
-			callback(this.progress);
+			callback(this, this.progress);
 		}
 	}
 
