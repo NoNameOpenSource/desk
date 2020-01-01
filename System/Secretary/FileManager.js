@@ -473,7 +473,7 @@ class FileManager {
 				}
 			}
 		}.bind(this));
-		r0eq.send();
+		req.send();
 	}
 
 	/*
