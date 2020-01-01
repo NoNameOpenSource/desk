@@ -170,7 +170,7 @@ class DIDragListView extends DIListView {
 	}
 
 	addCell(cell) {
-		cell.y = i * this.cellHeight;
+		cell.y = this.children.length * this.cellHeight;
 		this.addChildView(cell);
 	}
 	
