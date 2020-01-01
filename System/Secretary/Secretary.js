@@ -61,21 +61,16 @@ var Secretary = new function () {
 
 		// Load WorkSpaces
 		req = new RequestServer('WorkSpaces');
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var tmp
-			try {
-				tmp = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
+		req.addEventListener('load', function(response, err) {
+			if(err) {
 				// the system errors should be handled with a new way
-				Secretary.alertError("Failed to load WorkSpaces with following error from server:", evt.target.responseText);
+				Secretary.alertError("Failed to load WorkSpaces with following error from server:", evt.detail);
 				return -1;
 			}
-			if(tmp.DataBlockStatus == 0) {
+			if(response.DataBlockStatus == 0) {
 				var i = 0;
-				for(;i<tmp.WorkSpaces.length;i++) {
-					var tmpWS = new WorkSpace(tmp.WorkSpaces[i].name, "/System/Secretary/AppIcon/".concat(tmp.WorkSpaces[i].icon,".png"), tmp.WorkSpaces[i].apps, tmp.WorkSpaces[i].settings);
+				for(;i<response.WorkSpaces.length;i++) {
+					var tmpWS = new WorkSpace(response.WorkSpaces[i].name, "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon,".png"), response.WorkSpaces[i].apps, response.WorkSpaces[i].settings);
 					Secretary.workSpaces.push(tmpWS);
 				}
 			}
@@ -91,19 +86,14 @@ var Secretary = new function () {
 		// load side menu app list
 		this.appList;
 		req = new RequestServer('ProgramList');
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var tmp
-			try {
-				tmp = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
+		req.addEventListener('load', function(response, err) {
+			if(err) {
 				// the system errors should be handled with a new way
-				Secretary.alertError("Failed to load ProgramList with following error from server:", evt.target.responseText);
+				Secretary.alertError("Failed to load ProgramList with following error from server:", evt.detail);
 				return -1;
 			}
-			if(tmp.DataBlockStatus == 0) {
-				Secretary.appList = tmp.ProgramList;
+			if(response.DataBlockStatus == 0) {
+				Secretary.appList = response.ProgramList;
 			}
 			
 			// reload desk menu
@@ -305,25 +295,20 @@ var Secretary = new function () {
 		var req = new RequestServer('FileInFolder');
 		req.addData('Folder', folderId);
 		req.addData('File', fileName);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json
-			try {
-				json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({"titleText" : "Failed to load file with following error from server:",
-												"errMsg" : evt.target.responseText });
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({"titleText" : "Failed to load file with following error from server:",
+												"errMsg" : responseErr.detail });
 				onCompletion(null, err);
 				return -1;
 			}
-			if(json.DataBlockStatus == 0) {
-				if(json.FileInFolder.status == 0) {
+			if(response.DataBlockStatus == 0) {
+				if(response.FileInFolder.status == 0) {
 					// file found
-					Secretary.loadFileWithId(json.FileInFolder.file.id, onCompletion);
-				} else if(json.FileInFolder.status == 1) {
+					Secretary.loadFileWithId(response.FileInFolder.file.id, onCompletion);
+				} else if(response.FileInFolder.status == 1) {
 					// 404 not found!
-					var err = Object.freeze({"titleText" : "File does not exist"});
+					let err = Object.freeze({"titleText" : "File does not exist"});
 				}
 			}
 		});
@@ -361,33 +346,29 @@ var Secretary = new function () {
 		req.addData('File', htmlFileObject);
 		req.addData('FileId', file.id);
 		this.uploads.push(file);
-		req.addEventListener('load', function(evt) {
+		req.addEventListener('load', function(response, responseErr) {
 			file.didFinishUpload();
 			var index = this.uploads.indexOf(file);
 			this.uploads.splice(index, 1);
 			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
+			if(responseErr) {
 				var err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(file, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
+			if(response.DataBlockStatus != 0) {
 				var err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'FileUpload'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'FileUpload'" });
 				onCompletion(file, err);
 				return;
 			}
-			json = json.FileUpload;
-			if(json.UpdateResult != 0) { // file did not uploaded with an error
-				var err = Object.freeze({ type : json.UpdateResult + 2,
-									   message : "Failed to upload file '" + fileName + "' (Error Code: " + (json.UpdateResult + 2) + ")"});
+			response = response.FileUpload;
+			if(response.UpdateResult != 0) { // file did not uploaded with an error
+				var err = Object.freeze({ type : response.UpdateResult + 2,
+									   message : "Failed to upload file '" + fileName + "' (Error Code: " + (response.UpdateResult + 2) + ")"});
 				onCompletion(file, err);
 				return;
 			}

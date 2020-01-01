@@ -102,24 +102,19 @@ class FileManager {
 		var req = new RequestServer('FileInFolder');
 		req.addData('Folder', folderId);
 		req.addData('File', fileName)
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json
-			try {
-				json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
 				var err = Object.freeze({ type : 1,
 									   message : "Failed to load file with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, err);
 				return;
 			}
-			if(json.DataBlockStatus == 0) {
-				if(json.FileInFolder.status == 0) {
+			if(response.DataBlockStatus == 0) {
+				if(response.FileInFolder.status == 0) {
 					// file found
-					Secretary.loadFileWithId(json.FileInFolder.file.id, onCompletion);
-				} else if(json.FileInFolder.status == 1) {
+					Secretary.loadFileWithId(response.FileInFolder.file.id, onCompletion);
+				} else if(response.FileInFolder.status == 1) {
 					// 404 not found!
 					var err = Object.freeze({ type : 2,
 										   message : "File does not exist" });
@@ -153,34 +148,29 @@ class FileManager {
 		} else {
 			req.addData('Path', folder.path);
 		}
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to load list data with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, null, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to load list data with data with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'FileList'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'FileList'" });
 				onCompletion(null, null, err);
 				return;
 			}
-			if(!json.FileList.Location) {
-				var err = Object.freeze({ type : 1,
+			if(!response.FileList.Location) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to load list data with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, null, err);
 				return;
 			}
-			json = json.FileList;
+			response = response.FileList;
 			var files = new Array();
 			if(folder.id == 0) {
 				// home folder
@@ -192,12 +182,12 @@ class FileManager {
 			if(path[path.length - 1] == "/") {
 				path = path.slice(0, path.length - 1);
 			}
-			for (var i = 0; i < json.FileList.length; i++) {
-				var file = DeskFile.initWithFile(json.FileList[i]);
+			for (var i = 0; i < response.FileList.length; i++) {
+				var file = DeskFile.initWithFile(response.FileList[i]);
 				file.path = path + "/" + file.name;
 				files.push(file);
 			}
-			var location = DeskFile.initWithFile(json.Location);
+			var location = DeskFile.initWithFile(response.Location);
 			if(location.path == null)
 				location.path = folder.path;
 			onCompletion(files, location, null);
@@ -223,49 +213,44 @@ class FileManager {
 			return;
 		var req = new RequestServer('FileByPath');
 		req.addData('Path', path);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to get file with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to get file with data with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'FileByPath'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'FileByPath'" });
 				onCompletion(null, err);
 				return;
 			}
-			json = json.FileByPath;
-			if(json.Error) {
-				var errorCode = json.Error
+			response = response.FileByPath;
+			if(response.Error) {
+				var errorCode = response.Error
 				if(errorCode == 1) { // file does not exist
-					var err = Object.freeze({ type : 3,
+					let err = Object.freeze({ type : 3,
 										   message : "File does not exist"});
 					onCompletion(null, err);
 					return;
 				}
 				if(errorCode == 2) { // database error
-					var err = Object.freeze({ type : 1,
+					let err = Object.freeze({ type : 1,
 										   message : "Failed to add new folder with database error from server"});
 					onCompletion(null, err);
 					return;
 				}
 				if(errorCode == 3) { // permission is not given to view list
-					var err = Object.freeze({ type : 2,
+					let err = Object.freeze({ type : 2,
 										   message : "Unauthorized request"});
 					onCompletion(null, err);
 					return;
 				}
 			}
-			var file = DeskFile.initWithFile(json.File);
+			var file = DeskFile.initWithFile(response.File);
 			file.path = path;
 			onCompletion(file, null);
 		}.bind(this));
@@ -298,40 +283,35 @@ class FileManager {
 		}
 		req.addData('Name', folderName);
 		req.addData('Location', folder.id);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'AddDirectory'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'AddDirectory'" });
 				onCompletion(null, err);
 				return;
 			}
-			json = json.AddDirectory;
-			if(json.UpdateResult == 1) { // already same name exist
-				var err = Object.freeze({ type : 2,
+			response = response.AddDirectory;
+			if(response.UpdateResult == 1) { // already same name exist
+				let err = Object.freeze({ type : 2,
 									   message : "'" + folderName + "'이름이 이미 사용중 입니다."});
 				onCompletion(null, err);
 				return;
 			}
-			if(json.UpdateResult == 2) { // database error
-				var err = Object.freeze({ type : 1,
+			if(response.UpdateResult == 2) { // database error
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with database error from server"});
 				onCompletion(null, err);
 				return;
 			}
-			onCompletion(json.FolderId, null);
+			onCompletion(response.FolderId, null);
 		}.bind(this));
 		req.send();
 	}
@@ -354,50 +334,45 @@ class FileManager {
 			return;
 		var req = new RequestServer('RemoteDrive');
 		req.addData('UserId', userId);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to load list data with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, null, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to load list data with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'RemoteDrive'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'RemoteDrive'" });
 				onCompletion(null, null, err);
 				return;
 			}
-			json = json.RemoteDrive;
-			if(json.UpdateResult == 1) { // remote location does not exist
-				var err = Object.freeze({ type : 2,
+			response = response.RemoteDrive;
+			if(response.UpdateResult == 1) { // remote location does not exist
+				let err = Object.freeze({ type : 2,
 									   message : "Unauthorized request"});
 				onCompletion(null, null, err);
 				return;
 			}
-			if(json.UpdateResult == 2) { // database error
-				var err = Object.freeze({ type : 1,
+			if(response.UpdateResult == 2) { // database error
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to load list data with database error from server"});
 				onCompletion(null, null, err);
 				return;
 			}
-			if(json.UpdateResult == 3) { // permission is not given to view list
-				var err = Object.freeze({ type : 2,
+			if(response.UpdateResult == 3) { // permission is not given to view list
+				let err = Object.freeze({ type : 2,
 									   message : "Unauthorized request"});
 				onCompletion(null, null, err);
 				return;
 			}
-			var location = DeskFile.initWithFile(json.Location);
+			var location = DeskFile.initWithFile(response.Location);
 			location.path = this.networkFolder.path + "/" + location.name;
 			var files = new Array();
-			for (var i = 0; i < json.FileList.length; i++) {
-				var file = DeskFile.initWithFile(json.FileList[i]);
+			for (var i = 0; i < response.FileList.length; i++) {
+				var file = DeskFile.initWithFile(response.FileList[i]);
 				file.path = location.path + "/" + file.name;
 				files.push(file);
 			}
@@ -435,35 +410,30 @@ class FileManager {
 		var req = new RequestServer('FileUploadRequest');
 		req.addData('Location', location);
 		req.addData('Names[]', names);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
+			if(response.DataBlockStatus != 0) {
 				var err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'FileUploadRequest'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'FileUploadRequest'" });
 				onCompletion(null, err);
 				return;
 			}
-			json = json.FileUploadRequest;
+			response = response.FileUploadRequest;
 			var errors = new Array();
-			for(var i = 0; i < json.fileIds.length; i++) {
-				if(json.fileIds[i] < 0) { // name already exist
+			for(var i = 0; i < response.fileIds.length; i++) {
+				if(response.fileIds[i] < 0) { // name already exist
 					var err = Object.freeze({ type : 2,
 										   message : "'" + names[i] + "'이름이 이미 사용중 입니다. 업로드에 실패하였습니다."});
 					onCompletion(null, err);
 				} else {
-					var file = new DeskFileUpload(json.fileIds[i], names[i]);
+					var file = new DeskFileUpload(response.fileIds[i], names[i]);
 					file.location = location;
 					file.size = htmlFileObjects[i].size;
 					if(file.size < 1000000000) // file approximately less than 1GB
@@ -496,29 +466,24 @@ class FileManager {
 		req.addData('Name', name);
 		req.addData('File', file.id);
 		req.addData('Type', file.type);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'RenameFile'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'RenameFile'" });
 				onCompletion(err);
 				return;
 			}
-			json = json.RenameFile;
-			if(json.UpdateResult == 1) { // already same name exist
-				var err = Object.freeze({ type : 2,
+			response = response.RenameFile;
+			if(response.UpdateResult == 1) { // already same name exist
+				let err = Object.freeze({ type : 2,
 									   message : "'" + folderName + "'이름이 이미 사용중 입니다."});
 				onCompletion(err);
 				return;
@@ -547,34 +512,29 @@ class FileManager {
 		var req = new RequestServer('AddBlankFile');
 		req.addData('Name', name);
 		req.addData('Location', folder.id);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
 				var err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
+			if(response.DataBlockStatus != 0) {
 				var err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'AddBlankFile'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'AddBlankFile'" });
 				onCompletion(null, err);
 				return;
 			}
-			json = json.AddBlankFile;
-			if(json.UpdateResult == 1) { // already same name exist
+			response = response.AddBlankFile;
+			if(response.UpdateResult == 1) { // already same name exist
 				var err = Object.freeze({ type : 2,
 									   message : "'" + name + "'이름이 이미 사용중 입니다."});
 				onCompletion(null, err);
 				return;
 			}
-			var file = new DeskFile(json.FileId, name, 'BIN');
+			var file = new DeskFile(response.FileId, name, 'BIN');
 			onCompletion(file ,null);
 		}.bind(this));
 		req.send();
@@ -604,34 +564,29 @@ class FileManager {
 		}
 		req.addData('FileList[]', fileIds);
 		req.addData('Location', folder.id);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to copy files with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to copy files with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'CopyFiles'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'CopyFiles'" });
 				onCompletion(null, err);
 				return;
 			}
-			json = json.CopyFiles;
-			if(json.UpdateResult == 1) { // already same name exist
-				var err = Object.freeze({ type : 2,
+			response = response.CopyFiles;
+			if(response.UpdateResult == 1) { // already same name exist
+				let err = Object.freeze({ type : 2,
 									   message : "Can not copy files into this location"});
 				onCompletion(null, err);
 				return;
 			}
-			if(json.UpdateResult == 2) { // database error
+			if(response.UpdateResult == 2) { // database error
 				var err = Object.freeze({ type : 1,
 									   message : "Failed to copy files with database error from server"});
 				onCompletion(null, err);
@@ -639,9 +594,9 @@ class FileManager {
 			}
 			// check conflicted files
 			var conflictedFiles = new Array();
-			for (var i = 0; i < json.ConflictFiles.length; i++) {
+			for (var i = 0; i < response.ConflictFiles.length; i++) {
 				for (var j = 0; j < files.length; j++) {
-					if(files[j].name == json.ConflictFiles[i].name) {
+					if(files[j].name == response.ConflictFiles[i].name) {
 						conflictedFiles.push(files[j]);
 						break;
 					}
@@ -677,44 +632,39 @@ class FileManager {
 		}
 		req.addData('FileList[]', fileIds);
 		req.addData('Location', folder.id);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to move files with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(null, err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to move files with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'MoveFiles'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'MoveFiles'" });
 				onCompletion(null, err);
 				return;
 			}
-			json = json.MoveFiles;
-			if(json.UpdateResult == 1) { // already same name exist
-				var err = Object.freeze({ type : 2,
+			response = response.MoveFiles;
+			if(response.UpdateResult == 1) { // already same name exist
+				let err = Object.freeze({ type : 2,
 									   message : "Can not move the files into this location"});
 				onCompletion(null, err);
 				return;
 			}
-			if(json.UpdateResult == 2) { // database error
-				var err = Object.freeze({ type : 1,
+			if(response.UpdateResult == 2) { // database error
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to move files with database error from server"});
 				onCompletion(null, err);
 				return;
 			}
 			// check conflicted files
 			var conflictedFiles = new Array();
-			for (var i = 0; i < json.ConflictFiles.length; i++) {
+			for (var i = 0; i < response.ConflictFiles.length; i++) {
 				for (var j = 0; j < files.length; j++) {
-					if(files[j].name == json.ConflictFiles[i].name) {
+					if(files[j].name == response.ConflictFiles[i].name) {
 						conflictedFiles.push(files[j]);
 						break;
 					}
@@ -745,23 +695,18 @@ class FileManager {
 			fileIds.push(files[i].id);
 		}
 		req.addData('FileList[]', fileIds);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to trash files with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to trash files with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'TrashFiles'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'TrashFiles'" });
 				onCompletion(err);
 				return;
 			}
@@ -792,29 +737,24 @@ class FileManager {
 			fileIds.push(files[i].id);
 		}
 		req.addData('FileList[]', fileIds);
-		req.addEventListener('load', function(evt) {
-			// Analysis received data
-			var json;
-			try {
-					json = JSON.parse(evt.target.responseText);
-			}
-			catch(err) {
-				var err = Object.freeze({ type : 1,
+		req.addEventListener('load', function(response, responseErr) {
+			if(responseErr) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to delete files with following error from server",
-										detail : evt.target.responseText });
+										detail : responseErr.detail });
 				onCompletion(err);
 				return;
 			}
-			if(json.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+			if(response.DataBlockStatus != 0) {
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to delete files with following error from server",
-										detail : "Server returned DataBlockStatus = " + json.DataBlockStatus + " with datablock 'DeleteFiles'" });
+										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'DeleteFiles'" });
 				onCompletion(err);
 				return;
 			}
-			json = json.DeleteFiles;
-			if(json.UpdateResult == 2) { // database error
-				var err = Object.freeze({ type : 1,
+			response = response.DeleteFiles;
+			if(response.UpdateResult == 2) { // database error
+				let err = Object.freeze({ type : 1,
 									   message : "Failed to delete files with database error from server"});
 				onCompletion(err);
 				return;
