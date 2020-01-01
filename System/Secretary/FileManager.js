@@ -464,6 +464,7 @@ class FileManager {
 					onCompletion(null, err);
 				} else {
 					var file = new DeskFileUpload(json.fileIds[i], names[i]);
+					file.location = location;
 					file.size = htmlFileObjects[i].size;
 					if(file.size < 1000000000) // file approximately less than 1GB
 						Secretary.uploadFile(htmlFileObjects[i], file, onCompletion, onProgress);

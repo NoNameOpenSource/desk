@@ -361,9 +361,6 @@ var Secretary = new function () {
 		req.addData('File', htmlFileObject);
 		req.addData('FileId', file.id);
 		this.uploads.push(file);
-		req.ajax.upload.addEventListener('progress', function(evt) { // Progress handler
-			file.progress = Math.round((evt.loaded / evt.total) * 100);
-		}.bind(this));
 		req.addEventListener('load', function(evt) {
 			file.didFinishUpload();
 			var index = this.uploads.indexOf(file);
@@ -394,12 +391,20 @@ var Secretary = new function () {
 				onCompletion(file, err);
 				return;
 			}
+			let name = file.name.match(/.+\./)[0];
+			if(!name) { name = file.name; }
+			else {
+				let ext = file.name.match(/\.[^\.]+$/)[0];
+				file.ext = ext.slice(1);
+				file.name = name.slice(0, name.length - 1);
+			}
 			onCompletion(file, null);
 		}.bind(this));
-		req.addEventListener('progress', function(evt) {
+		req.ajax.upload.addEventListener('progress', function(evt) { // Progress handler
+			console.log(`progress event called with ${evt.loaded} / ${evt.total}`);
 			file.progress = evt.loaded / evt.total;
 			if(onProgress) {
-				onProgress(file, evt.loaded, evt.total);
+				onProgress(file, file.progress);
 			}
 		});
 		req.send();
