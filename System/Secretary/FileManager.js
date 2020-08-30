@@ -83,6 +83,47 @@ class FileManager {
 	}
 
 	/*
+	** Request server to get contents of text file
+	** 
+	** parameters
+	** 	-fileIds		: id of the file
+	**	-onCompletion	: callback function (Blob data, error)
+	**
+	*/
+	loadFileTextWithId(fileId, onCompletion) {
+		var xhr = new XMLHttpRequest();
+		xhr.open('GET', Secretary.urlForFileId(fileId));
+		xhr.responseType = "text";
+		xhr.addEventListener('load', function(evt) {
+			if(evt.target.status == 200) {
+				// .OK
+				onCompletion(evt.target.response, null);
+			} else if(evt.target.status == 404) {
+				// .notFound
+				var err = Object.freeze({ message : "Failed to find file"});
+				onCompletion(null, err);
+			} else if(evt.target.status == 400) {
+				// .badRequest
+				var err = Object.freeze({ message : "Server responsed with bad request"});
+				onCompletion(null, err);
+			} else if(evt.traget.status == 500) {
+				// .internalServerError
+				var err = Object.freeze({ message : "Server responsed with internal server error"});
+				onCompletion(null, err);
+			} else if(evt.target.status == 401) {
+				// .unauthorized
+				var err = Object.freeze({ message : "Server responsed with unauthorized request"});
+				onCompletion(null, err);
+			} else {
+				// .unknown error
+				var err = Object.freeze({ message : "Unknown error occured"});
+				onCompletion(null, err);
+			}
+		});
+		xhr.send();
+	}
+
+	/*
 	** Request server to get contents of the file in the folder
 	** 
 	** parameters
