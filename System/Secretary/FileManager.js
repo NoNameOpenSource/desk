@@ -219,18 +219,22 @@ class FileManager {
 				files.push(this.trashcan);
 				files.push(this.networkFolder);
 			}
-			var path = folder.path
-			if(path[path.length - 1] == "/") {
-				path = path.slice(0, path.length - 1);
-			}
-			for (var i = 0; i < response.FileList.length; i++) {
-				var file = DeskFile.initWithFile(response.FileList[i]);
-				file.path = path + "/" + file.name;
-				files.push(file);
-			}
 			var location = DeskFile.initWithFile(response.Location);
 			if(location.path == null)
 				location.path = folder.path;
+
+			var path = folder.path ? folder.path : location.path;
+			if(path) {
+				if(path[path.length - 1] == "/") {
+					path = path.slice(0, path.length - 1);
+				}
+			}
+			for (var i = 0; i < response.FileList.length; i++) {
+				var file = DeskFile.initWithFile(response.FileList[i]);
+				if(path)
+					file.path = path + "/" + file.name;
+				files.push(file);
+			}
 			onCompletion(files, location, null);
 		}.bind(this));
 		req.send();
