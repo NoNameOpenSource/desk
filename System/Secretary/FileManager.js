@@ -436,7 +436,7 @@ class FileManager {
 	**	3 : invalid location
 	**
 	*/
-	uploadFiles(htmlFileObjects, location, onCompletion, onProgress) {
+	uploadFiles(htmlFileObjects, location, onCompletion, onProgress, altNames) {
 		if(!onCompletion)
 			return;
 		var names = new Array();
@@ -444,7 +444,11 @@ class FileManager {
 			if(htmlFileObjects[i].size >= 4294967296) { // 4GB files
 				// can't upload file bigger than 4GB
 			} else {
-				names.push(htmlFileObjects[i].name);
+				if(altNames) {
+					names.push(altNames[i]);
+				} else {
+					names.push(htmlFileObjects[i].name);
+				}
 			}
 		}
 		// request server to get place to upload the files
