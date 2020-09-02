@@ -59,6 +59,9 @@ var Secretary = new function () {
 		// Detect ECMAScript Version
 		this.ESVersion = this.checkESVersion();
 
+		// Load UserInfo
+		this.loadUserInfo();
+
 		// Load WorkSpaces
 		req = new RequestServer('WorkSpaces');
 		req.addEventListener('load', function(response, err) {
@@ -98,6 +101,20 @@ var Secretary = new function () {
 			
 			// reload desk menu
 			Desk.deskMenu.reloadData();
+		});
+		req.send();
+	}
+
+	this.loadUserInfo = function() {
+		let req = new RequestServer('UserInfo');
+		req.addEventListener('load', function(response, err) {
+			if(err) {
+				Secretary.alertError("Failed to load UserInfo with following error from server:", evt.detail);
+				return -1;
+			}
+			if(response.DataBlockStatus == 0) {
+				Secretary.user = response.UserInfo;
+			}
 		});
 		req.send();
 	}
