@@ -252,6 +252,9 @@ var Secretary = new function () {
 	}
 
 	this.urlForFile = function(file) {
+		if(typeof file == "number") {
+			return this.urlForFileId(file);
+		}
 		if(file.id) {
 			return this.urlForFileId(file.id);
 		}
