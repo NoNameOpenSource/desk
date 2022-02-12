@@ -27,7 +27,7 @@ class FileManager {
 			else
 				return false;
 		}
-		var components = folder.split("/");
+		var components = folder.path.split("/");
 		if(components.length == 3) {
 			if(components[1] == "Users") {
 				return true;
@@ -39,6 +39,14 @@ class FileManager {
 			}
 		}
 		return false;
+	}
+
+	isSameFile(a, b) {
+		if(a.id != null) {
+			return a.id == b.id;
+		} else {
+			return a.path == b.path;
+		}
 	}
 
 	/*
@@ -184,10 +192,9 @@ class FileManager {
 			return;
 		}
 		var req = new RequestServer('FileList');
+		req.addData('Path', folder.path);
 		if(folder.id != null && folder.id != -1) {
 			req.addData('Location', folder.id);
-		} else {
-			req.addData('Path', folder.path);
 		}
 		req.addEventListener('load', function(response, responseErr) {
 			if(responseErr) {

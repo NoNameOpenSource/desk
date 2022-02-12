@@ -20,7 +20,7 @@ var Secretary = new function () {
 	this.uploads = new Array();
 	this.currentUser;
 	this.users = new Array();
-	this.browser = "unknown browser";
+	this.browser;
 	this.browserVersion = "0";
 	this.ESVersion;
 	this.appList = new Array();
@@ -34,27 +34,7 @@ var Secretary = new function () {
 		}
 
 		// Detect Browser
-		if(navigator.userAgent.indexOf("Chrome") != -1) {
-			this.browser = "Chrome";
-		} else if(navigator.userAgent.indexOf("Safari") != -1) {
-			this.browser = "Safari";
-		} else if(navigator.userAgent.indexOf("Firefox") != -1) {
-			if(navigator.userAgent.indexOf("Seamonkey") == -1)
-				this.browser = "Firefox";
-		} else if(navigator.userAgent.indexOf("Opera") != -1) {
-			this.browser = "Opera";
-		}
-
-		if(this.browser != "unknown borwser") {
-			var index = navigator.userAgent.indexOf(this.browser);
-			var versionStr = navigator.userAgent.slice(index + this.browser.length + 1);
-			index = versionStr.indexOf(" ");
-			if(index == -1) {
-				index = versionStr.length;
-			}
-			versionStr = versionStr.slice(0, index);
-			this.browserVersion = versionStr;
-		}
+		this.browser = this.checkBrowser();
 
 		// Detect ECMAScript Version
 		this.ESVersion = this.checkESVersion();
@@ -146,8 +126,8 @@ var Secretary = new function () {
 			return new Students(workSpace, appName, appSetting);
 		} else if(appName == 'StudentInfo') {
 			return new StudentInfo(workSpace, appName, appSetting);
-		} else if(appName == 'ClassList') {
-			return new ClassList(workSpace, appName, appSetting);
+		} else if(appName == 'Classes') {
+			return new Classes(workSpace, appName, appSetting);
 		} else if(appName == 'LectureList') {
 			return new LectureList(workSpace, appName, appSetting);
 		} else if(appName == 'LectureResList') {
@@ -245,6 +225,35 @@ var Secretary = new function () {
 		// the minimum supported version of this program is 6
 		// so assume the current version is at least 6
 		return 6;
+	}
+	
+	this.checkBrowser = function () {
+		let browser = {};
+		if(navigator.userAgent.indexOf("Chrome") != -1) {
+			browser.name = "Chrome";
+		} else if(navigator.userAgent.indexOf("Safari") != -1) {
+			browser.name = "Safari";
+		} else if(navigator.userAgent.indexOf("Firefox") != -1) {
+			if(navigator.userAgent.indexOf("Seamonkey") == -1)
+				browser.name = "Firefox";
+		} else if(navigator.userAgent.indexOf("Opera") != -1) {
+			browser.name = "Opera";
+		}
+		
+		if(!browser.name) {
+			browser.name = "unknown borwser";
+			return browser;
+		}
+		
+		var index = navigator.userAgent.indexOf(browser.name);
+		var versionStr = navigator.userAgent.slice(index + browser.name.length + 1);
+		index = versionStr.indexOf(" ");
+		if(index == -1) {
+			index = versionStr.length;
+		}
+		versionStr = versionStr.slice(0, index);
+		browser.version = versionStr;
+		return browser;
 	}
 
 	this.alertError = function(titleText, errorMsg, func) {
