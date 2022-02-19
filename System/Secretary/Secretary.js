@@ -43,30 +43,30 @@ var Secretary = new function () {
 		this.loadUserInfo();
 
 		// Load WorkSpaces
-		req = new RequestServer('WorkSpaces');
-		req.addEventListener('load', function(response, err) {
-			if(err) {
-				// the system errors should be handled with a new way
-				Secretary.alertError("Failed to load WorkSpaces with following error from server:", evt.detail);
-				return -1;
-			}
-			if(response.DataBlockStatus == 0) {
-				var i = 0;
-				for(;i<response.WorkSpaces.length;i++) {
-					var tmpWS = new WorkSpace(response.WorkSpaces[i].name, "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon,".png"), response.WorkSpaces[i].apps, response.WorkSpaces[i].settings);
-					Secretary.workSpaces.push(tmpWS);
-				}
-			}
-			
-			// Set first work space as main space
-			Secretary.setMainWorkSpace(Secretary.workSpaces[0]);
-		});
-		req.send();
+		this.loadWorkSpaces();
 		
 		// load plugins
 		this.loadPlugins();
 
 		// load side menu app list
+		this.loadAppList();
+	}
+
+	this.loadUserInfo = function() {
+		let req = new RequestServer('UserInfo');
+		req.addEventListener('load', function(response, err) {
+			if(err) {
+				Secretary.alertError("Failed to load UserInfo with following error from server:", evt.detail);
+				return -1;
+			}
+			if(response.DataBlockStatus == 0) {
+				Secretary.user = response.UserInfo;
+			}
+		});
+		req.send();
+	}
+
+	this.loadAppList = function() {
 		this.appList;
 		req = new RequestServer('ProgramList');
 		req.addEventListener('load', function(response, err) {
@@ -85,16 +85,24 @@ var Secretary = new function () {
 		req.send();
 	}
 
-	this.loadUserInfo = function() {
-		let req = new RequestServer('UserInfo');
+	this.loadWorkSpaces = function() {
+		req = new RequestServer('WorkSpaces');
 		req.addEventListener('load', function(response, err) {
 			if(err) {
-				Secretary.alertError("Failed to load UserInfo with following error from server:", evt.detail);
+				// the system errors should be handled with a new way
+				Secretary.alertError("Failed to load WorkSpaces with following error from server:", evt.detail);
 				return -1;
 			}
 			if(response.DataBlockStatus == 0) {
-				Secretary.user = response.UserInfo;
+				var i = 0;
+				for(;i<response.WorkSpaces.length;i++) {
+					var tmpWS = new WorkSpace(response.WorkSpaces[i].name, "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon,".png"), response.WorkSpaces[i].apps, response.WorkSpaces[i].settings);
+					Secretary.workSpaces.push(tmpWS);
+				}
 			}
+			
+			// Set first work space as main space
+			Secretary.setMainWorkSpace(Secretary.workSpaces[0]);
 		});
 		req.send();
 	}
