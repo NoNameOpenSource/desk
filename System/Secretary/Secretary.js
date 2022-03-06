@@ -204,35 +204,6 @@ var Secretary = new function () {
 	}
 	
 	this.loadPlugins = function() {
-		// MathJax
-		var idx = this.pluginFrames.push(document.createElement("IFRAME")) - 1;
-		var mathJaxFrame = this.pluginFrames[idx];
-		mathJaxFrame.setAttribute("src", "/System/Plugins/MathJax.html");
-		mathJaxFrame.onload = function() {
-			this.plugins.MathJax = mathJaxFrame.contentWindow.MathJax;
-			this.plugins.MathJax.buffer = mathJaxFrame.contentWindow.document.getElementById("buffer");
-		}.bind(this);
-		Desk.addPluginFrame(mathJaxFrame);
-		mathJaxFrame.style.display = ""; // MathJax does not work with 'display: none'
-		mathJaxFrame.style.position = "absolute";
-		mathJaxFrame.style.left = "100%";
-		mathJaxFrame.style.top = "100%";
-		// Tesseract.js
-		idx = this.pluginFrames.push(document.createElement("IFRAME")) - 1;
-		var tesseractFrame = this.pluginFrames[idx];
-		tesseractFrame.setAttribute("src", "/System/Plugins/Tesseract.js.html");
-		tesseractFrame.onload = function() {
-			this.plugins.Tesseract = tesseractFrame.contentWindow.Tesseract;
-		}.bind(this);
-		Desk.addPluginFrame(tesseractFrame);
-		// pdf.js
-		idx = this.pluginFrames.push(document.createElement("IFRAME")) - 1;
-		var pdfFrame = this.pluginFrames[idx];
-		pdfFrame.setAttribute("src", "/System/Plugins/pdf.js.html");
-		pdfFrame.onload = function() {
-			this.plugins.PDFJS = pdfFrame.contentWindow.pdfjsLib;
-		}.bind(this);
-		Desk.addPluginFrame(pdfFrame);
 	}
 
 	this.checkESVersion = function() {
