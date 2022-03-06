@@ -46,7 +46,7 @@ export class DIAlertView extends DIView {
     useTextArea(text: string) {
         if (!this._useTextArea) {
             this.textArea = new DIView("DIAlertViewTextArea");
-			// @ts-ignore TODO: bug
+            // @ts-ignore TODO: bug
             this.textArea.textBody = document.createElement("DIV");
             this.textArea.textBody.innerHTML = text;
             this.textArea.body.appendChild(this.textArea.textBody);
@@ -55,7 +55,7 @@ export class DIAlertView extends DIView {
         }
     }
 
-    addButton(text, evt) {
+    addButton(text: string, evt: any) {
         var id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DIAlertViewButton"));
         //this.buttons[id].y = 10;

@@ -3,11 +3,6 @@ import { DIView } from "./DIView";
 
 /**
  * This is simple button for the system
- *
- * -x				: x coordinate
- * -y				: y coordinate
- * -body			: Body of the view as HTML element
- * -child			: Array of child views of this view
  */
 export class DIButton extends DIView {
     event: any;
@@ -36,7 +31,7 @@ export class DIButton extends DIView {
         super.wakeUp();
     }
 
-    setButtonEvent(evt) {
+    setButtonEvent(evt: DeskEvent) {
         if (this.event) this.event.delete();
         this.event = new DeskEvent(this.buttonBody, "click", evt);
     }

@@ -1,7 +1,7 @@
 /**
  * View class for the items that will be displayed on the screen
  */
- export class DIView {
+export class DIView {
     textBody: HTMLInputElement;
 
     canHaveChild = true;

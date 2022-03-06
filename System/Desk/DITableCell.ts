@@ -1,53 +1,57 @@
 import { DeskEvent } from "../Secretary/DeskEvent";
 
 export class DITableCell {
-	body: HTMLTableCellElement;
-	table: any;
-	editable: boolean;
-	event: any;
-	blurEvent: any;
-	oldValue: any;
-	
-	constructor(className?: string, idName?: string) {
-		if(!className)
-			className='DITableView';
-		this.body = document.createElement("td");
-		this.table;
-		this.editable = true;
-		this.event = new DeskEvent(this.body, "dblclick", this.dblclick.bind(this));
-	}
+    body: HTMLTableCellElement;
+    table: any;
+    editable: boolean;
+    event: any;
+    blurEvent: any;
+    oldValue: any;
 
-	dblclick(evt) {
-		let result = true;
-		if(this.table) {
-			result = this.table.cellClicked(this);
-		}
-		if(result && this.editable) {
-			this.beginEdit();
-		}
-	}
+    constructor(className?: string, idName?: string) {
+        if (!className) className = "DITableView";
+        this.body = document.createElement("td");
+        this.table;
+        this.editable = true;
+        this.event = new DeskEvent(this.body, "dblclick", this.dblclick.bind(this));
+    }
 
-	beginEdit() {
-		this.blurEvent = new DeskEvent(this.body, "blur", this.endEdit.bind(this));
-		this.oldValue = this.text;
-		this.body.setAttribute("contentEditable", undefined);
-		this.body.focus();
-	}
+    /**
+     * @todo remove or use evt
+     */
+    dblclick(evt: any) {
+        let result = true;
+        if (this.table) {
+            result = this.table.cellClicked(this);
+        }
+        if (result && this.editable) {
+            this.beginEdit();
+        }
+    }
 
-	endEdit() {
-		this.blurEvent.delete();
-		this.blurEvent = null;
-		this.body.removeAttribute("contentEditable");
+    beginEdit() {
+        this.blurEvent = new DeskEvent(this.body, "blur", this.endEdit.bind(this));
+        this.oldValue = this.text;
+        this.body.setAttribute("contentEditable", undefined);
+        this.body.focus();
+    }
 
-		if(!this.table && this.oldValue == this.text) { return; }
-		this.table.cellUpdated(this);
-	}
+    endEdit() {
+        this.blurEvent.delete();
+        this.blurEvent = null;
+        this.body.removeAttribute("contentEditable");
 
-	get text() {
-		return this.body.innerText;
-	}
+        if (!this.table && this.oldValue == this.text) {
+            return;
+        }
+        this.table.cellUpdated(this);
+    }
 
-	set text(newValue) {
-		this.body.innerText = newValue;
-	}
+    get text() {
+        return this.body.innerText;
+    }
+
+    set text(newValue) {
+        this.body.innerText = newValue;
+    }
 }

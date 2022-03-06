@@ -1,12 +1,12 @@
+import { DILabel } from "./DILabel";
 import { DIView } from "./DIView";
-import { DILabel } from './DILabel'
 
 /**
  * Cell for the view
  */
 export class DIListViewCell extends DIView {
     selected: boolean;
-	name: DILabel;
+    name: DILabel;
 
     /**
      * @param listCell Class that will be used for make cells

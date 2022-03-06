@@ -1,0 +1,32 @@
+{
+    "name": "@no-name-open-source/desk",
+    "private": true,
+    "version": "1.0.0",
+    "description": "Desk User Interface",
+    "main": "dist/index.js",
+    "scripts": {
+        "compile": "rm -rf dist && tsc",
+        "watch": "rm -rf dist && tsc -w true",
+        "lint": "eslint --ext ts src/*",
+        "fix": "prettier --config .prettierrc.yml 'src/**/*.ts' --write"
+    },
+    "config": {
+        "fund": false
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sw-tools/check-in-service.git"
+    },
+    "author": "NoNameOpenSource Team",
+    "bugs": {
+        "url": "https://github.com/NoNameOpenSource/desk/issues"
+    },
+    "homepage": "https://github.com/NoNameOpenSource/desk#readme",
+    "devDependencies": {
+        "@tsconfig/node16": "^1.0.2"
+    },
+    "engines": {
+        "node": "16",
+        "npm": "8"
+    }
+}

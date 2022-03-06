@@ -9,7 +9,7 @@ export class DeskFile {
     path: any;
     secretary: Secretary;
 
-    constructor(id, name, type, owner?, data = null) {
+    constructor(id: any, name: string, type: string, owner?: any, data: any = null) {
         this.secretary = Secretary.getInstance();
         this.id = id;
         this.name = name;
@@ -21,13 +21,13 @@ export class DeskFile {
         if (this.type == "BIN" || this.type == "PKG") {
             // getting extension if file
             var index = ((name.lastIndexOf(".") - 1) >>> 0) + 2;
-			// @ts-ignore TODO: bug
+            // @ts-ignore TODO: bug
             this.ext = name.slice(index);
             this.name = name.slice(0, index - 1);
         }
     }
 
-    initFromPath(path) {
+    initFromPath(path: string) {
         this.path = path;
         var components = path.split("/");
         this.name = components[components.length - 1];
@@ -36,24 +36,23 @@ export class DeskFile {
         this.owner = null;
     }
 
-    static initWithFile(file) {
+    static initWithFile(file: File) {
         var newFile = new DeskFile(file.id, file.name, file.type, file.ownerId, file.data);
         return newFile;
     }
 
-    /*
-     ** Request server to get contents of file
-     **
-     ** parameters
-     **	-onCompletion	: callback function (error)
-     **
-     ** errorType
-     ** 	1 : server error
-     **	2 : file does not exist
-     **	3 : invalid location
-     **
+    /**
+     * Request server to get contents of file
+     *
+     * onCompletion errorType
+     *     1 : server error
+     *     2 : file does not exist
+     *     3 : invalid location
+     *
+     * @param onCompletion callback function (error)
+     * @returns
      */
-    loadData(onCompletion) {
+    loadData(onCompletion: (errorType: number) => void) {
         if (!onCompletion) return;
 
         if (this.data) {
@@ -62,22 +61,27 @@ export class DeskFile {
         }
         if (this.type != "BIN") {
             let error = Object.freeze({ type: 1, message: "File is a directory" });
-			// @ts-ignore TODO: maybe error?
+            // @ts-ignore TODO: maybe error?
             onCompletion(err);
             return;
         }
 
         if (this.id != null) {
-            this.secretary.fileManager.loadFileDataWithId(
-                this.id,
-                function (data, error) {
-                    if (error) {
-                        onCompletion(error);
-                    }
-                    this.data = data;
-                    onCompletion(null);
-                }.bind(this)
-            );
+            this.secretary.fileManager.loadFileDataWithId(this.id, (data: any, error: any) => {
+                if (error) {
+                    onCompletion(error);
+                }
+                this.data = data;
+                onCompletion(null);
+            });
         }
     }
+}
+
+interface File {
+    id: string;
+    name: string;
+    type: string;
+    ownerId: string;
+    data: any;
 }

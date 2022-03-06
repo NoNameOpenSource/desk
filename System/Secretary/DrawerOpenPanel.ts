@@ -1,3 +1,4 @@
+import { DIButton } from "../Desk/DIButton";
 import { DIView } from "../Desk/DIView";
 
 export class DrawerOpenPanel extends DIView {
@@ -8,9 +9,9 @@ export class DrawerOpenPanel extends DIView {
     openButton: any;
     delegate: any;
 
-	/**
-	 * @todo use or remove folder parameter
-	 */
+    /**
+     * @todo use or remove folder parameter
+     */
     constructor(delegate: any, folder: any) {
         super("DrawerPanel");
 
@@ -19,7 +20,7 @@ export class DrawerOpenPanel extends DIView {
         this.drawerPanelContainer = new DIView("DrawerPanelContainer");
         this.drawerPanelContainer.x = 10;
         this.drawerPanelContainer.width = 340;
-		// @ts-ignore TODO: what is Drawer?
+        // @ts-ignore TODO: what is Drawer?
         this.drawer = new Drawer(Secretary.mainWorkSpace, "DrawerPanel", { drawerType: "openPanel" });
         this.drawer.window.closeButton.hidden = true;
         this.drawer.window.minButton.hidden = true;

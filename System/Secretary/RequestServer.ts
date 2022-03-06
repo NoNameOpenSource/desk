@@ -1,4 +1,3 @@
-import { DeskEvent } from "./DeskEvent";
 import { Secretary } from "./Secretary";
 
 /**
@@ -26,7 +25,7 @@ export class RequestServer {
 
     /**
      * @todo type dataBlock
-	 * @todo use or remove sync parameter
+     * @todo use or remove sync parameter
      */
     constructor(dataBlock: any, useMultipart?: boolean, sync?: boolean) {
         this.secretary = Secretary.getInstance();
@@ -56,7 +55,7 @@ export class RequestServer {
         }
     }
 
-    responseFromServer(evt: DeskEvent) {
+    responseFromServer(evt: any) {
         if (evt.target.status == 200) {
             // .OK
             var json;

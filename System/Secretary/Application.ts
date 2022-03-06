@@ -1,7 +1,7 @@
 /**
  * Object that handles css animations
  */
- export class DeskAnimation {
+export class DeskAnimation {
     target: any;
     animation: any;
     type: any;
@@ -20,9 +20,9 @@
         // init animation
         this.target.classList.add(animation);
         if (type == 0) {
-            this.func = function () {
+            this.func = () => {
                 this.delete();
-            }.bind(this);
+            };
             this.target.addEventListener("animationend", this.func);
         }
     }

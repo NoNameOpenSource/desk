@@ -1,4 +1,4 @@
-import { Desk } from "../Desk/desk";
+import { Desk } from "../Desk/Desk";
 import { DIImageView } from "../Desk/DIImageView";
 import { DIView } from "../Desk/DIView";
 import { DeskEvent } from "./DeskEvent";
@@ -24,7 +24,7 @@ export class WorkSpace {
     resizeEnd: DeskEvent;
     desk: Desk;
 
-    constructor(spaceName: string, iconName: string, appList: string, appSettings: any[]) {
+    constructor(spaceName: string, iconName: string, appList: string, appSettings?: any[]) {
         this.desk = Desk.getInstance();
         this.name = spaceName;
         this.icon = new DIImageView(iconName, "WorkSpaceIcon");
@@ -138,45 +138,37 @@ export class WorkSpace {
         app.resizeStart();
 
         // TODO: use arrow function instead of .bind(this)
-        this.resizeEvent = new DeskEvent(
-            document,
-            "mousemove",
-            function (evt: DeskEvent) {
-                // @ts-ignore TODO: bug
-                var width = app.resizeWidth(this.desk.body.body.scrollLeft + evt.clientX - this.desk.body.x - app.window.x + diff);
-                if (width != false) {
-                    var change = this.lastWidth - width;
-                    var i = index;
-                    for (; i < this.apps.length; i++) {
-                        this.apps[i].window.x -= change;
-                        if (this.apps[i].resizable) {
-                            this.apps[i].rightBorder.x -= change;
-                        }
-                    }
-                    this.width += change;
-                    this.body.width += change;
-                    this.lastWidth = width;
-                }
-            }.bind(this)
-        );
-
-        this.resizeEnd = new DeskEvent(
-            window,
-            "mouseup",
-            function (evt: DeskEvent) {
-                this.resizeEvent.evtFunc(evt);
-                this.resizeEvent.delete();
-                app.resizeEnd();
-                app.rightBorder.x = app.window.x + app.window.width;
+        this.resizeEvent = new DeskEvent(document, "mousemove", (evt: DeskEvent) => {
+            // @ts-ignore TODO: bug
+            var width = app.resizeWidth(this.desk.body.body.scrollLeft + evt.clientX - this.desk.body.x - app.window.x + diff);
+            if (width != false) {
+                var change = this.lastWidth - width;
                 var i = index;
                 for (; i < this.apps.length; i++) {
-                    this.apps[i].window.body.style.transition = "";
+                    this.apps[i].window.x -= change;
+                    if (this.apps[i].resizable) {
+                        this.apps[i].rightBorder.x -= change;
+                    }
                 }
-                this.resizeEnd.delete();
-                this.resizeEvent = null;
-                this.resizeEnd = null;
-            }.bind(this)
-        );
+                this.width += change;
+                this.body.width += change;
+                this.lastWidth = width;
+            }
+        });
+
+        this.resizeEnd = new DeskEvent(window, "mouseup", (evt: DeskEvent) => {
+            this.resizeEvent.evtFunc(evt);
+            this.resizeEvent.delete();
+            app.resizeEnd();
+            app.rightBorder.x = app.window.x + app.window.width;
+            var i = index;
+            for (; i < this.apps.length; i++) {
+                this.apps[i].window.body.style.transition = "";
+            }
+            this.resizeEnd.delete();
+            this.resizeEvent = null;
+            this.resizeEnd = null;
+        });
     }
 
     dataUpdated(str: string, data: any, sender: any) {

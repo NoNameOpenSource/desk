@@ -1,7 +1,7 @@
 /**
  * Represents and handles an event
  */
- export class DeskEvent {
+export class DeskEvent {
     /**
      * target element
      */
@@ -19,7 +19,7 @@
 
     stopped: boolean;
 
-    constructor(target, method, evtFunc, init = true) {
+    constructor(target: any, method: any, evtFunc: any, init = true) {
         this.target = target;
         this.method = method;
         this.evtFunc = evtFunc;

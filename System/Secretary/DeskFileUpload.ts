@@ -6,7 +6,7 @@ export class DeskFileUpload extends DeskFile {
     size: number;
     listeners: (() => void)[];
 
-    constructor(id, name) {
+    constructor(id: string, name: string) {
         super(id, name, "UPD", null);
         this._progress = 0.0;
         this.size = 0;
