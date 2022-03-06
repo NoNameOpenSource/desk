@@ -50,6 +50,13 @@ var Secretary = new function () {
 
 		// load side menu app list
 		this.loadAppList();
+
+		if(Secretary.clientMode == "SingleApplication") {
+			Desk.hideTopMenuBar();
+			Desk.hideWorkSpaceDock();
+			Desk.hideWallpaper();
+			this.workSpaces[0].fullScreen(this.workSpaces[0].apps[0].window);
+		}
 	}
 
 	this.loadUserInfo = function() {
@@ -68,6 +75,11 @@ var Secretary = new function () {
 
 	this.loadAppList = function() {
 		this.appList;
+		if(Secretary.clientMode == "SingleApplication") {
+			Secretary.appList = [Secretary.application];
+			return;
+		}
+	
 		req = new RequestServer('ProgramList');
 		req.addEventListener('load', function(response, err) {
 			if(err) {
@@ -86,6 +98,13 @@ var Secretary = new function () {
 	}
 
 	this.loadWorkSpaces = function() {
+		if(Secretary.clientMode == "SingleApplication") {
+			let workSpace = new WorkSpace("main", null, [Secretary.application], []);
+			Secretary.workSpaces.push(workSpace);
+			Secretary.setMainWorkSpace(Secretary.workSpaces[0]);
+			return;
+		}
+
 		req = new RequestServer('WorkSpaces');
 		req.addEventListener('load', function(response, err) {
 			if(err) {
@@ -160,6 +179,8 @@ var Secretary = new function () {
 			return new DocReader(workSpace, appName, appSetting);
 		} else if(appName == 'Debugger') {
 			return new Debugger(workSpace, appName, appSetting);
+		} else if(appName == 'BeatApp') {
+			return new BeatApp(workSpace, appName, appSetting);
 		}
 	}
 	

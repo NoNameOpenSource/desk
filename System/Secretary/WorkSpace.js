@@ -93,6 +93,12 @@ class WorkSpace {
 		if(this.contextMenu) {
 		}
 	}
+
+	fullScreen(window) {
+		window.x = 0;
+		window.titleBar.hidden = true;
+		window.width = this.body.body.getBoundingClientRect().width;
+	}
 	
 	addWindow(window) {
 		window.y = 0;
