@@ -9,7 +9,8 @@
     "ignoreWords": [
         "DIPDF",
         "Tesseract",
-        "datablock"
+        "datablock",
+        "nonameopensource"
     ],
     "import": []
 }

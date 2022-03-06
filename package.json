@@ -1,7 +1,7 @@
 {
-    "name": "@no-name-open-source/desk",
+    "name": "@nonameopensource/desk",
     "private": true,
-    "version": "1.0.0",
+    "version": "0.0.0",
     "description": "Desk User Interface",
     "main": "dist/index.js",
     "scripts": {
