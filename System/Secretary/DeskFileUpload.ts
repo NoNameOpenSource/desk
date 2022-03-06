@@ -1,28 +1,37 @@
-class DeskFileUpload extends DeskFile {
-	constructor(id, name) {
-		super(id, name, 'UPD', null);
-		this._progress = 0.0;
-		this.size = 0;
-		this.listeners = [];
-	}
+import { DeskFile } from "./DeskFile";
 
-	listen(callback) {
-		this.listeners.push(callback);
-	}
+export class DeskFileUpload extends DeskFile {
+    location: string;
+    private _progress: number;
+    size: number;
+    listeners: (() => void)[];
 
-	didFinishUpload() {
-		this.progress = 1.0;
-		this.listeners = [];
-	}
+    constructor(id, name) {
+        super(id, name, "UPD", null);
+        this._progress = 0.0;
+        this.size = 0;
+        this.listeners = [];
+    }
 
-	set progress(newValue) {
-		this._progress = newValue;
-		for(let callback in this.listeners) {
-			callback(this, this.progress);
-		}
-	}
+    listen(callback: () => void) {
+        this.listeners.push(callback);
+    }
 
-	get progress() {
-		return this._progress;
-	}
+    didFinishUpload() {
+        this.progress = 1.0;
+        this.listeners = [];
+    }
+
+    set progress(newValue) {
+        this._progress = newValue;
+        // TODO: of instead of in?
+        for (let callback in this.listeners) {
+            // @ts-ignore
+            callback(this, this.progress);
+        }
+    }
+
+    get progress() {
+        return this._progress;
+    }
 }
