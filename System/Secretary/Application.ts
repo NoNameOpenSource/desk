@@ -8,7 +8,10 @@
     stopped: boolean;
     func: any;
 
-    constructor(target, animation, type, func) {
+    /**
+     * @todo remove func or use it
+     */
+    constructor(target: any, animation: any, type: any, func: () => void) {
         this.target = target;
         this.animation = animation;
         this.type = type;
