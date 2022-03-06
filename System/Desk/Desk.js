@@ -58,8 +58,7 @@ var Desk = new function() {
 		this.loadLogoAsInline();
 		
 		// Draw top menu
-		this.topMenu = new DIView(false, 'topMenu');
-		this.header.addChildView(this.topMenu);
+		this.initTopMenu();
 		
 		this.screenHeight = document.documentElement.clientHeight;
 		this.screenWidth = document.documentElement.clientWidth;
@@ -77,17 +76,41 @@ var Desk = new function() {
 		this.canvas.style.display = "none";
 
 		// Init desk menu
+		this.initDeskMenu();
+
+		// Init alert screen
+		this.alertScreen = new DIView("DILoading");
+		document.body.appendChild(this.alertScreen.body);
+		this.alertScreen.hidden = true;
+	}
+
+	this.initTopMenu = function() {
+		this.topMenu = new DIView(false, 'topMenu');
+		this.header.addChildView(this.topMenu);
+	}
+
+	this.initDeskMenu = function() {
 		this.deskMenu = new DeskMenu(this);
 		this.deskMenu.width = 200;
 		this.deskMenu.x = -1*this.deskMenu.width;
 		this.deskMenu.y = 28;
 		this.headerLogo.events.push(new DeskEvent(this.headerLogo.body, 'click', this.launchDeskMenu.bind(this)));
 		document.body.appendChild(this.deskMenu.body);
+	}
 
-		// Init alert screen
-		this.alertScreen = new DIView("DILoading");
-		document.body.appendChild(this.alertScreen.body);
-		this.alertScreen.hidden = true;
+	this.hideTopMenuBar = function() {
+		this.body.y = 0;
+		this.workSpaceDock.y = 0;
+		this.header.hidden = true;
+	}
+
+	this.hideWorkSpaceDock = function() {
+		this.body.x = 0;
+		this.workSpaceDock.hidden = true;
+	}
+
+	this.hideWallpaper = function() {
+		this.wallpaper.hidden = true;
 	}
 	
 	//	Context Menu
