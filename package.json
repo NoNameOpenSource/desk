@@ -1,7 +1,6 @@
 {
     "name": "@nonameopensource/desk",
-    "private": true,
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "Desk User Interface",
     "main": "dist/index.js",
     "scripts": {
@@ -15,7 +14,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/sw-tools/check-in-service.git"
+        "url": "git+https://github.com/NoNameOpenSource/desk.git"
     },
     "author": "NoNameOpenSource Team",
     "bugs": {
