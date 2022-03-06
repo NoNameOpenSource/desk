@@ -1,31 +1,61 @@
-/*
-** 생성자
-**
-** -dataBaseType	: 데이터베이스로 사용될 프로그램의 종류
-**		-MySQL	: 1
-*/
-var Secretary = new function () {
-	this.applications = new Array();
-	this.windows = new Array();
-	this.serverProtocol = "";
-	this.serverName = "";
-	this.version = "";
-	this.getVariables = new Object();
-	this.serverType = "";
-	this.dataManagerURL = "";
-	this.workSpaces = new Array();
-	this.mainWorkSpace = null;
-	this.plugins = new Object();
-	this.pluginFrames = new Array();
-	this.uploads = new Array();
-	this.currentUser;
-	this.users = new Array();
-	this.browser;
-	this.browserVersion = "0";
-	this.ESVersion;
-	this.appList = new Array();
-	
-	this.init = function() {
+import { Desk } from "../Desk/Desk";
+
+/**
+ * 생성자
+ * 
+ * Singleton.
+ * 
+ * -dataBaseType	: 데이터베이스로 사용될 프로그램의 종류
+ *      -MySQL	: 1
+ * 
+ * @todo use fetch api throughout
+ */
+export class Secretary {
+	private static instance: Secretary;
+
+	applications = new Array();
+	windows = new Array();
+	serverProtocol = "";
+	serverName = "";
+	version = "";
+	getVariables = new Object();
+	serverType = "";
+	dataManagerURL = "";
+	workSpaces = new Array();
+	mainWorkSpace = null;
+	plugins = new Object();
+	pluginFrames = new Array();
+	uploads = new Array();
+	currentUser;
+	users = new Array();
+	browser;
+	browserVersion = "0";
+	ESVersion;
+	appList = new Array();
+    clipboard;
+	desk: Desk;
+	fileManager = new FileManager();
+
+	secretaryInstance: Secretary;
+
+	/**
+     * The static method that controls the access to the singleton instance.
+     *
+     * This implementation let you subclass the Singleton class while keeping
+     * just one instance of each subclass around.
+     */
+	 public static getInstance(): Secretary {
+        if (!Secretary.instance) {
+            Secretary.instance = new Secretary();
+        }
+
+        return Secretary.instance;
+    }
+
+    private constructor() {
+		this.desk = Desk.getInstance();
+		this.secretaryInstance = Secretary.getInstance();
+
 		// Init based on the server
 		if(this.serverType == "php") {
 			this.dataManagerURL = "/System/DataManager/DataManager.php";
@@ -43,23 +73,24 @@ var Secretary = new function () {
 		this.loadUserInfo();
 
 		// Load WorkSpaces
-		req = new RequestServer('WorkSpaces');
-		req.addEventListener('load', function(response, err) {
+		let req = new RequestServer('WorkSpaces');
+		req.addEventListener('load', (response, err) => {
 			if(err) {
 				// the system errors should be handled with a new way
-				Secretary.alertError("Failed to load WorkSpaces with following error from server:", evt.detail);
+				// @ts-ignore: TODO: bug - maybe get the error from err not evt?s
+				this.secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", evt.detail);
 				return -1;
 			}
 			if(response.DataBlockStatus == 0) {
 				var i = 0;
 				for(;i<response.WorkSpaces.length;i++) {
 					var tmpWS = new WorkSpace(response.WorkSpaces[i].name, "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon,".png"), response.WorkSpaces[i].apps, response.WorkSpaces[i].settings);
-					Secretary.workSpaces.push(tmpWS);
+					this.workSpaces.push(tmpWS);
 				}
 			}
 			
 			// Set first work space as main space
-			Secretary.setMainWorkSpace(Secretary.workSpaces[0]);
+			this.setMainWorkSpace(this.workSpaces[0]);
 		});
 		req.send();
 		
@@ -72,46 +103,48 @@ var Secretary = new function () {
 		req.addEventListener('load', function(response, err) {
 			if(err) {
 				// the system errors should be handled with a new way
-				Secretary.alertError("Failed to load ProgramList with following error from server:", evt.detail);
+				// @ts-ignore: TODO: bug - maybe get the error from err not evt?
+				this.secretaryInstance.alertError("Failed to load ProgramList with following error from server:", evt.detail);
 				return -1;
 			}
 			if(response.DataBlockStatus == 0) {
-				Secretary.appList = response.ProgramList;
+				this.appList = response.ProgramList;
 			}
 			
 			// reload desk menu
-			Desk.deskMenu.reloadData();
+			this.desk.deskMenu.reloadData();
 		});
 		req.send();
 	}
 
-	this.loadUserInfo = function() {
+	loadUserInfo() {
 		let req = new RequestServer('UserInfo');
 		req.addEventListener('load', function(response, err) {
 			if(err) {
+				// @ts-ignore: TODO: bug - maybe get the error from err not evt?
 				Secretary.alertError("Failed to load UserInfo with following error from server:", evt.detail);
 				return -1;
 			}
 			if(response.DataBlockStatus == 0) {
-				Secretary.user = response.UserInfo;
+				this.user = response.UserInfo;
 			}
 		});
 		req.send();
 	}
 	
-	this.setMainWorkSpace = function(workSpace) {
-		if(Secretary.mainWorkSpace) {
-			Secretary.mainWorkSpace.putInSleep();
+	setMainWorkSpace(workSpace) {
+		if(this.secretaryInstance.mainWorkSpace) {
+			this.secretaryInstance.mainWorkSpace.putInSleep();
 		}
 		workSpace.wakeUp();
-		Secretary.mainWorkSpace = workSpace;
-		Desk.body.unplugChildViews();
-		Desk.body.addChildView(Secretary.mainWorkSpace.body);
+		this.secretaryInstance.mainWorkSpace = workSpace;
+		this.desk.body.unplugChildViews();
+		this.desk.body.addChildView(this.secretaryInstance.mainWorkSpace.body);
 		// Update dock
-		Desk.workSpaceDock.update();
+		this.desk.workSpaceDock.update();
 	}
 	
-	this.quitWorkSpace = function(index) {
+	quitWorkSpace(index) {
 		var name = this.workSpaces[index].name;
 		var icon = this.workSpaces[index].icon.imageSource;
 		var appList = this.workSpaces[index].appList;
@@ -119,47 +152,22 @@ var Secretary = new function () {
 		this.workSpaces[index] = new WorkSpace(name, icon, appList);
 	}
 	
-	this.loadApp = function(appName, appSetting, workSpace) {
-		if(appName == 'StudentList') {
-			return new StudentList(workSpace, appName, appSetting);
-		} else if(appName == 'Students') {
-			return new Students(workSpace, appName, appSetting);
-		} else if(appName == 'StudentInfo') {
-			return new StudentInfo(workSpace, appName, appSetting);
-		} else if(appName == 'Classes') {
-			return new Classes(workSpace, appName, appSetting);
-		} else if(appName == 'LectureList') {
-			return new LectureList(workSpace, appName, appSetting);
-		} else if(appName == 'LectureResList') {
-			return new LectureResList(workSpace, appName, appSetting);
-		} else if(appName == 'StudentInbox') {
-			return new StudentInbox(workSpace, appName, appSetting);
-		} else if(appName == 'StudentTicket') {
-			return new StudentTicket(workSpace, appName, appSetting);
-		} else if(appName == 'Drawer') {
-			return new Drawer(workSpace, appName, appSetting);
-		} else if(appName == 'Preview') {
-			return new Preview(workSpace, appName, appSetting);
-		} else if(appName == 'Problems') {
-			return new Problems(workSpace, appName, appSetting);
-		} else if(appName == 'WorkSheets') {
-			return new WorkSheets(workSpace, appName, appSetting);
-		} else if(appName == 'Terminal') {
+	static loadApp(appName, appSetting, workSpace) {
+		if (appName == 'Terminal') {
 			return new Terminal(workSpace, appName, appSetting);
-		} else if(appName == 'TextEditor') {
+		} else if (appName == 'TextEditor') {
 			return new TextEditor(workSpace, appName, appSetting);
-		} else if(appName == 'DocReader') {
+		} else if (appName == 'DocReader') {
 			return new DocReader(workSpace, appName, appSetting);
-		} else if(appName == 'Debugger') {
+		} else if (appName == 'Debugger') {
 			return new Debugger(workSpace, appName, appSetting);
 		}
 	}
 	
-	this.loadScripts = function(appName) {
-		
+	loadScripts(appName) {
 	}
 	
-	this.setClipboard = function(clipboard) {
+	setClipboard(clipboard) {
 		if(this.clipboard) {
 			this.clipboard.delete();
 			this.clipboard = null;
@@ -167,14 +175,14 @@ var Secretary = new function () {
 		this.clipboard = clipboard;
 	}
 	
-	this.getClipboard = function(dataType) {
+	getClipboard(dataType) {
 		if(this.clipboard) {
 			return this.clipboard.getData(dataType);
 		} else
 			return false;
 	}
 	
-	this.loadPlugins = function() {
+	loadPlugins() {
 		// MathJax
 		var idx = this.pluginFrames.push(document.createElement("IFRAME")) - 1;
 		var mathJaxFrame = this.pluginFrames[idx];
@@ -183,7 +191,7 @@ var Secretary = new function () {
 			this.plugins.MathJax = mathJaxFrame.contentWindow.MathJax;
 			this.plugins.MathJax.buffer = mathJaxFrame.contentWindow.document.getElementById("buffer");
 		}.bind(this);
-		Desk.addPluginFrame(mathJaxFrame);
+		this.desk.addPluginFrame(mathJaxFrame);
 		mathJaxFrame.style.display = ""; // MathJax does not work with 'display: none'
 		mathJaxFrame.style.position = "absolute";
 		mathJaxFrame.style.left = "100%";
@@ -195,7 +203,7 @@ var Secretary = new function () {
 		tesseractFrame.onload = function() {
 			this.plugins.Tesseract = tesseractFrame.contentWindow.Tesseract;
 		}.bind(this);
-		Desk.addPluginFrame(tesseractFrame);
+		this.desk.addPluginFrame(tesseractFrame);
 		// pdf.js
 		idx = this.pluginFrames.push(document.createElement("IFRAME")) - 1;
 		var pdfFrame = this.pluginFrames[idx];
@@ -203,10 +211,10 @@ var Secretary = new function () {
 		pdfFrame.onload = function() {
 			this.plugins.PDFJS = pdfFrame.contentWindow.pdfjsLib;
 		}.bind(this);
-		Desk.addPluginFrame(pdfFrame);
+		this.desk.addPluginFrame(pdfFrame);
 	}
 
-	this.checkESVersion = function() {
+	checkESVersion() {
 		try {
 			const objects = { Gibson: "Les Paul", Fender: "Stratocaster"}
 			if(Object.values(objects)[0] == "Les Paul")
@@ -227,8 +235,12 @@ var Secretary = new function () {
 		return 6;
 	}
 	
-	this.checkBrowser = function () {
-		let browser = {};
+	checkBrowser() {
+        type Browser = {
+            name: string
+            version: string;
+        }
+		let browser = <Browser>{};
 		if(navigator.userAgent.indexOf("Chrome") != -1) {
 			browser.name = "Chrome";
 		} else if(navigator.userAgent.indexOf("Safari") != -1) {
@@ -241,7 +253,7 @@ var Secretary = new function () {
 		}
 		
 		if(!browser.name) {
-			browser.name = "unknown borwser";
+			browser.name = "unknown browser";
 			return browser;
 		}
 		
@@ -256,11 +268,11 @@ var Secretary = new function () {
 		return browser;
 	}
 
-	this.alertError = function(titleText, errorMsg, func) {
-		Desk.alertError(titleText, errorMsg, func)
+	alertError(titleText, errorMsg, func?) {
+		this.desk.alertError(titleText, errorMsg, func)
 	}
 
-	this.urlForFile = function(file) {
+	urlForFile(file: File | number) {
 		if(typeof file == "number") {
 			return this.urlForFileId(file);
 		}
@@ -280,35 +292,41 @@ var Secretary = new function () {
 		}
 	}
 
-	this.urlForFileId = function(fileId) {
-		if(Secretary.serverType == "php") {
+	urlForFileId(fileId) {
+		if(this.serverType == "php") {
 			return "/system/DataManager/DownloadBIN.php?file=".concat(fileId)
 		} else {
 			return "/System/DownloadBIN?file=".concat(fileId)
 		}
 	}
 
-	this.urlForStream = function(fileId) {
-		if(Secretary.serverType == "php") {
+	urlForStream(fileId) {
+		if(this.serverType == "php") {
 			return "/system/DataManager/Stream.php?file=".concat(fileId)
 		} else {
 			return "/System/Stream?file=".concat(fileId)
 		}
 	}
 
-	this.loadFileWithId = function(fileId, onCompletion, sync) {
+	loadFileWithId(fileId, onCompletion, sync?: boolean) {
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', Secretary.urlForFile(fileId), !sync);
+		xhr.open('GET', this.urlForFile(fileId), !sync);
 		xhr.addEventListener('load', function(evt) {
+			// @ts-ignore
 			if(evt.target.status == 200) {
 				// .OK
+				// @ts-ignore
 				onCompletion(evt.target.response);
+				// @ts-ignore
 			} else if(evt.target.status == 404) {
 				// .notFound
+				// @ts-ignore
 			} else if(evt.target.status == 400) {
 				// .badRequest
+				// @ts-ignore
 			} else if(evt.traget.status == 500) {
 				// .internalServerError
+				// @ts-ignore
 			} else if(evt.target.status == 401) {
 				// .unauthorized
 			} else {
@@ -318,7 +336,7 @@ var Secretary = new function () {
 		xhr.send();
 	}
 
-	this.loadFileInFolder = function(folderId, fileName, onCompletion) {
+	loadFileInFolder(folderId, fileName, onCompletion) {
 		if(!onCompletion)
 			return;
 		var req = new RequestServer('FileInFolder');
@@ -334,7 +352,7 @@ var Secretary = new function () {
 			if(response.DataBlockStatus == 0) {
 				if(response.FileInFolder.status == 0) {
 					// file found
-					Secretary.loadFileWithId(response.FileInFolder.file.id, onCompletion);
+					this.loadFileWithId(response.FileInFolder.file.id, onCompletion);
 				} else if(response.FileInFolder.status == 1) {
 					// 404 not found!
 					let err = Object.freeze({"titleText" : "File does not exist"});
@@ -344,33 +362,31 @@ var Secretary = new function () {
 		req.send();
 	}
 
-	this.loadFileWithPath = function(path, onCompletion) {
+	loadFileWithPath(path, onCompletion) {
 	}
 
-	this.openDrawer = function(option) {
+	openDrawer(option) {
 		option.drawerType = "openPanel"
 		var drawer = Secretary.loadApp('Drawer', option, null)
 	}
 
-	this.receivedMessageFromServer = function(message) {
+	receivedMessageFromServer(message) {
 	}
 
-	this.fileManager = new FileManager();
 
-	/*
-	** Upload file to the server
-	** 
-	** parameters
-	** 	-htmlFileObject	: HTML file object
-	** 	-file			: DeskFileUpload object
-	**	-onCompletion	: callback function (file, error)
-	**	-onProgress		: callback function (file, loaded, total)
-	** 
-	** errorType
-	** 	1 : server error
-	**
-	*/
-	this.uploadFile = function(htmlFileObject, file, onCompletion, onProgress) {
+    /**
+     * Upload file to the server
+     * 
+     * @param htmlFileObject HTML file object
+     * @param file DeskFileUpload object
+     * @param onCompletion callback function
+     * @param onProgress callback function
+     * 
+     * errorType
+     *  	1 : server error
+     */
+	uploadFile(htmlFileObject: any, file: File, onCompletion: (file: any, error: any) => void, 
+        onProgress: (file, loaded, total?) => void) {
 		var req = new RequestServer('FileUpload', true);
 		req.addData('File', htmlFileObject);
 		req.addData('FileId', file.id);
@@ -388,7 +404,7 @@ var Secretary = new function () {
 				return;
 			}
 			if(response.DataBlockStatus != 0) {
-				var err = Object.freeze({ type : 1,
+				const err = Object.freeze({ type : 1,
 									   message : "Failed to add new folder with following error from server",
 										detail : "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'FileUpload'" });
 				onCompletion(file, err);
@@ -396,7 +412,8 @@ var Secretary = new function () {
 			}
 			response = response.FileUpload;
 			if(response.UpdateResult != 0) { // file did not uploaded with an error
-				var err = Object.freeze({ type : response.UpdateResult + 2,
+				const err = Object.freeze({ type : response.UpdateResult + 2,
+                                       // @ts-ignore TODO: fix fileName
 									   message : "Failed to upload file '" + fileName + "' (Error Code: " + (response.UpdateResult + 2) + ")"});
 				onCompletion(file, err);
 				return;
@@ -410,7 +427,9 @@ var Secretary = new function () {
 			}
 			onCompletion(file, null);
 		}.bind(this));
-		req.ajax.upload.addEventListener('progress', function(evt) { // Progress handler
+
+        // Progress handler
+		req.ajax.upload.addEventListener('progress', function(evt) { 
 			console.log(`progress event called with ${evt.loaded} / ${evt.total}`);
 			file.progress = evt.loaded / evt.total;
 			if(onProgress) {
@@ -419,17 +438,24 @@ var Secretary = new function () {
 		});
 		req.send();
 	}
-	/*
-	** Get user info by user id
-	** 
-	** parameters
-	** 	-userId			: id of the user to get info
-	**	-onCompletion	: callback function (User, error)
-	** 
-	** errorType
-	** 	1 : server error
-	**
-	*/
-	this.getUserInfo = function(userId, onCompletion) {
+
+    /**
+     * Get user info by user id
+     *
+     * @param userId id of the user of which to get info
+     * @param onCompletion callback function (User, error)
+     * 
+     * errorType
+     *  1 : server error
+     */
+	getUserInfo = function(userId, onCompletion) {
 	}
 }
+
+type File = {
+    id: number;
+    path: string;
+    name: string;
+    progress: number;
+    ext: string;
+};
