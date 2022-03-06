@@ -1,18 +1,14 @@
-/*
-** Class	: DIButton
-** 
-** This is simple button for the system
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DeskEvent } from "../Secretary/DeskEvent";
+import { DIButton } from "./DIButton";
 
-class DIUploadButton extends DIButton {
-	constructor(text, className, idName) {
+/**
+ * This is simple button for the system
+ */
+export class DIUploadButton extends DIButton {
+	inputBody: HTMLInputElement;
+	buttonEvent: any;
+
+	constructor(text: string, className?: string, idName?: string) {
 		super(text, className, idName);
 		this.inputBody = document.createElement('input');
 		this.inputBody.setAttribute('type','file');

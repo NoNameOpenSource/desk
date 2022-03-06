@@ -1,16 +1,27 @@
-/*
-** Class	: DIListView
-** 
-** This is a view that displays lists
-** 
-** properties
-**	-cell			: Array of the cells
-**	-dataSource		: Object that will provide data to make list
-**
-*/
+import { DeskEvent } from "../Secretary/DeskEvent";
+import { DIView } from "./DIView";
 
-class DIListView extends DIView {
-	constructor(dataSource, delegate, cellClickType, className, idName) {
+/**
+ * A view that displays lists
+ * 
+ * @property cell			: Array of the cells
+ * @property dataSource		: Object that will provide data to make list
+ */
+export class DIListView extends DIView {
+    dataSource;
+    delegate;
+    cellClickType: number;
+    event: DeskEvent;
+    cellHeight: number;
+    selectedIndex: number;
+    reloadTicket: number;
+    moveEvent: number;
+    selected;
+
+
+    // TODO: create an enum for cellClickType
+	// TODO: type dataSource and delegate
+	constructor(dataSource: any, delegate: any, cellClickType: number, className: string, idName?: string) {
 		if(!className)
 			className='DIListView';
 		super(className, idName);
@@ -113,25 +124,17 @@ class DIListView extends DIView {
 		if(this.body.scrollTop+this.height<this.selected.body.offsetTop+this.selected.body.offsetHeight)
 			this.body.scrollTop=this.selected.body.offsetTop+this.selected.body.offsetHeight-this.height;
 	}
-	
-	/*
-	** selectCustomCellById
-	** 
-	** return	: New custom cell object
-	** 
-	** properties
-	** 	-name		: id of the custom cell to call
-	**
-	*/
-	getCustomCellById(name) {
+
+    /**
+     * @param name id of the custom cell to call
+     * @returns New custom cell object
+     */
+	getCustomCellById(name: string) {
 	}
-	
-	/*
-	** reloadData
-	** 
-	** This clears existing cells, and update it
-	** 
-	*/
+
+    /**
+     * Clear existing cells, and update it
+     */
 	reloadData(){
 		this.reloadTicket += 1;
 		var ticket = this.reloadTicket;

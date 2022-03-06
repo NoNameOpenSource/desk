@@ -1,6 +1,23 @@
-class DeskMenu extends DIView {
+import { DIView } from "./DIView";
+import {Secretary} from "../Secretary/Secretary";
+import {DIDragListView} from "./DIDragListView";
+import { DeskMenuListViewCell } from "./DeskMenuListViewCell";
+
+export class DeskMenu extends DIView {
+    _active: boolean;
+    listViewContainer: DIView;
+    listView: DIDragListView;
+    cellHeight: number;
+    secretary: Secretary;
+    // TODO: type
+    contextMenu: any;
+    // TODO: type
+    contextList: any;
+
 	constructor() {
 		super(null, "DeskMenu");
+
+        this.secretary = Secretary.getInstance();
 
 		// this is not active for default
 		this._active = false;
@@ -8,7 +25,9 @@ class DeskMenu extends DIView {
 		// Init list view
 		this.listViewContainer = new DIView("DeskMenuViewContainer");
 		this.listView;
-		this.listView = new DIDragListView(this, this, 2, "ListView", false);
+        // @ts-ignore TODO: bug - className should be a string, but it's 2
+		this.listView = new DIDragListView(this, this, 2, "ListView");
+		// @ts-ignore TODO: bug
 		this.listView.cellHeight = 40;
 		this.listViewContainer.addChildView(this.listView);
 		this.listView.body.style.width = "100%";
@@ -23,28 +42,28 @@ class DeskMenu extends DIView {
 	}
 
 	// ListView Delegate Section
-	numberOfRows(listView) {
+	numberOfRows(listView: DIDragListView) {
 		if(listView==this.listView)
-			return Secretary.appList.length;
+			return this.secretary.appList.length;
 		if(listView==this.contextMenu)
 			return this.contextList.length;
 	}
 
-	cellAtRow(listView, row) {
+	cellAtRow(listView: DIDragListView, row: number) {
 		if(listView == this.listView) {
 			var cell = new DeskMenuListViewCell();
 			cell.width = this.width - 32;
-			cell.name.stringValue = Secretary.appList[row];
-			cell.icon.imageSource = "/System/Secretary/AppIcon/" + Secretary.appList[row] + ".png";
+			cell.name.stringValue = this.secretary.appList[row];
+			cell.icon.imageSource = "/System/Secretary/AppIcon/" + this.secretary.appList[row] + ".png";
 			return cell;
 		}
 	}
 
-	listDidSelectRowAtIndex(listView, index) {
+	listDidSelectRowAtIndex(listView: DIDragListView, index: number) {
 		if(listView==this.listView) {
 			if(index>=0) {
 				listView.deselectAll()
-				Secretary.mainWorkSpace.loadApp(Secretary.appList[index], []);
+				this.secretary.mainWorkSpace.loadApp(this.secretary.appList[index], []);
 			}
 		}
 	}

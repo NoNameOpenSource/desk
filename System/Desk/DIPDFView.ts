@@ -1,18 +1,10 @@
-/*
-** Class	: DIImageView
-** 
-** This is a simple way to display an image
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DIView } from "./DIView";
 
-class DIPDFView extends DIView {
-	constructor(url, className, idName) {
+export class DIPDFView extends DIView {
+	pdfBody: HTMLElement;
+	private _src: any;
+	
+	constructor(url: string, className?: string, idName?: string) {
 		if(!className)
 			className='DIImageView';
 		super(className, idName);

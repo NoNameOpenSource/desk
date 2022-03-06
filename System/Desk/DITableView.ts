@@ -1,5 +1,15 @@
-class DITableView extends DIView {
-	constructor(dataSource, delegate, className, idName) {
+import { DIView } from "./DIView";
+
+export class DITableView extends DIView {
+	dataSource: any;
+	delegate: any;
+	columns: any[];
+	rows: any[];
+	tableBody: HTMLTableElement;
+	headerBody: HTMLTableRowElement;
+	numberOfRows: number;
+
+	constructor(dataSource: any, delegate: any, className?: string, idName?: string) {
 		if(!className)
 			className='DITableView';
 		super(className, idName);
@@ -35,7 +45,7 @@ class DITableView extends DIView {
 		}
 	}
 
-	addColumn(tableColumn) {
+	addColumn(tableColumn: any) {
 		this.columns.push(tableColumn);
 		let th = document.createElement("th");
 		th.innerText = tableColumn.name;
@@ -47,16 +57,19 @@ class DITableView extends DIView {
 		this.tableBody.appendChild(tr);
 	}
 
-	cellClicked(cell) {
+	cellClicked(cell: any) {
 		if(!this.delegate || !this.delegate.tableCellClicked) { return true; }
 		return this.delegate.tableViewCellClicked(cell);
 	}
 
-	cellUpdated(cell) {
+	cellUpdated(cell: any) {
 		if(!this.delegate || !this.delegate.tableCellUpdated) { return true; }
 		return this.delegate.tableCellUpdated(cell);
 	}
 
+	/**
+	 * @todo finish function or remove
+	 */
 	mouseDown(evt) {
 	}
 }

@@ -1,18 +1,36 @@
-/*
-** Class	: DIUniComboBox
-** 
-** This is better version of DIComboBox to support international languages that uses combinations of characters to type
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DeskEvent } from "../Secretary/DeskEvent";
+import { Desk } from "./Desk";
+import { DIListView } from "./DIListView";
+import { DIView } from "./DIView";
+import { DIPopUpCell } from "./DIPopUpCell";
 
-class DIUniComboBox extends DIView {
-	constructor(className, idName, inputClass, selectClass, inputId, selectId) {
+/**
+ * This is better version of DIComboBox to support international languages that uses combinations of characters to type
+ */
+export class DIUniComboBox extends DIView {
+	items: any[];
+	filtered: any[];
+	searchedItems: any[];
+	escapeKey: boolean;
+	oldString: string;
+	_usingHint: boolean;
+	color: string;
+	dropDownView: any;
+	searching: boolean;
+	listRequested: boolean;
+	dropDownViewTriggered: boolean;
+	arrowBody: HTMLImageElement;
+	cellHeight: number;
+	selectedBody: any;
+	english: boolean;
+	useDataSource: any;
+	keyEvent: any;
+	event: any;
+	_window: any;
+	_editable: any;
+	desk: Desk;
+
+	constructor(className?: string, idName?: string, inputClass?: string, selectClass?: string, inputId?: string, selectId?: string) {	
 		if(!className)
 			className='DIUniComboBox';
 		if(!inputClass)
@@ -20,18 +38,25 @@ class DIUniComboBox extends DIView {
 		if(!selectClass)
 			selectClass='DIUniComboBoxSelect';
 		super(className, idName);
+
+		this.desk = Desk.getInstance();
 		
+		// @ts-ignore TODO: bug
 		this.textBody = document.createElement('p');
 		if(inputClass)
 			this.textBody.className = inputClass;
 		if(inputId)
 			this.textBody.id = inputId;
+		// @ts-ignore TODO: bug
 		this.selectedBody = document.createElement('p');
 		if(selectClass)
+			// @ts-ignore TODO: bug
 			this.selectedBody.className = selectClass;
 		if(selectId)
+			// @ts-ignore TODO: bug
 			this.selectedBody.id = selectId;
 		this.body.appendChild(this.textBody);
+		// @ts-ignore TODO: bug
 		this.body.appendChild(this.selectedBody);
 		
 		this.drawArrow();
@@ -90,13 +115,13 @@ class DIUniComboBox extends DIView {
 				this.dropDownViewTriggered=true;
 				this.dropDownView.hidden=false;
 				this.dropDownView.reloadData();
-				if(this.body.getBoundingClientRect().bottom+this.cellHeight*5>Desk.screenHeight) {
+				if(this.body.getBoundingClientRect().bottom+this.cellHeight*5>this.desk.screenHeight) {
 					this.dropDownView.body.style.top="";
-					this.dropDownView.body.style.bottom="".concat(this.height,"px");
+					this.dropDownView.body.style.bottom = `${this.height}px`;
 					this.dropDownView.body.style.boxShadow="0px -6px 10px 0px rgba(0,0,0,0.3)";
 				} else {
 					this.dropDownView.body.style.bottom="";
-					this.dropDownView.body.style.top="".concat(this.height,"px");
+					this.dropDownView.body.style.top = `${this.height}px`;
 					this.dropDownView.body.style.boxShadow="0px 9px 10px 2px rgba(0,0,0,0.3)";
 				}
 			}
@@ -247,6 +272,7 @@ class DIUniComboBox extends DIView {
 			evt.preventDefault();
 		} else if(evt.keyCode==9) { // Tab key
 			this.putInSleep();
+		// @ts-ignore TODO: bug
 		} else if(event.keyCode==91 || event.keyCode==93) { // CMD key
 			if(this.usingHint) {
 				var start = this.stringValue.length;
@@ -317,6 +343,9 @@ class DIUniComboBox extends DIView {
 		if(this.dropDownViewTriggered)
 			this.dropDownView.reloadData();
 	}
+	searchingDone() {
+		throw new Error("Method not implemented.");
+	}
 	
 	addItem(item) {
 		if(this.useDataSource) {
@@ -360,7 +389,7 @@ class DIUniComboBox extends DIView {
 	}
 	
 	didMoveToDesk() {
-		this.dropDownView.body.style.maxHeight="".concat(this.cellHeight*5,"px");
+		this.dropDownView.body.style.maxHeight= `${this.cellHeight*5}px`;
 		this.dropDownView.cellHeight=this.cellHeight;
 		
 		this.event = new DeskEvent(this._window.body, "mousedown", this.mouseDown.bind(this));
@@ -376,7 +405,7 @@ class DIUniComboBox extends DIView {
 	
 	set usingHint(value) {
 		if(this._usingHint==value)
-			return false;
+			return;
 		this._usingHint=value;
 		if(this._usingHint) {
 			this.textBody.style.color="transparent";

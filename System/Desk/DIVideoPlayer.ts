@@ -1,23 +1,19 @@
-/*
-** Class	: DIImageView
-** 
-** This is a simple way to display an image
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DIView } from "./DIView";
 
-class DIVideoPlayer extends DIView {
-	constructor(video, autoplay, className, idName) {
+export class DIVideoPlayer extends DIView {
+	videoBody: HTMLVideoElement;
+	autoplay: boolean;
+	_src: any;
+	sourceBody: any;
+	_ratio: any;
+	_opRatio: any;
+
+	constructor(video: any, autoplay: any, className?: string, idName?: string) {
 		if(!className)
 			className='DIVideoPlayer';
 		super(className, idName);
 		this.canHaveChild = false;
-		this.videoBody = document.createElement('VIDEO');
+		this.videoBody = <HTMLVideoElement>document.createElement('VIDEO');
 		if(video)
 			this.videoSource = video;
 		if(autoplay) {

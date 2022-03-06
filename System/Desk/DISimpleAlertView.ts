@@ -1,17 +1,19 @@
-/*
-** Class	: DIAlertView
-** 
-** Sample alert for the system
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DIButton } from "./DIButton";
+import { DIImageView } from "./DIImageView";
+import { DILabel } from "./DILabel";
+import { DIView } from "./DIView";
 
-class DISimpleAlertView extends DIView {
+/**
+ * Sample alert for the system
+ */
+export class DISimpleAlertView extends DIView {
+	autoHeight: boolean;
+	buttons: any[];
+	alertContent: any;
+	icon: any;
+	_useTextArea: boolean;
+	textArea: DIView;
+
 	constructor(text, icon, className, idName) {
 		if(!className)
 			className='DISmallAlertView';
@@ -41,6 +43,7 @@ class DISimpleAlertView extends DIView {
 	useTextArea(text) {
 		if(!this._useTextArea) {
 			this.textArea = new DIView('DIAlertViewTextArea');
+			// @ts-ignore TODO: bug
 			this.textArea.textBody = document.createElement('DIV');
 			this.textArea.textBody.innerHTML = text;
 			this.textArea.body.appendChild(this.textArea.textBody);

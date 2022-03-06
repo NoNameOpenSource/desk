@@ -1,23 +1,18 @@
-/*
-** Class	: DIImageView
-** 
-** This is a simple way to display an image
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DIView } from "./DIView";
 
-class DITextArea extends DIView {
-	constructor(placeHolder, editable, className, idName) {
+/**
+ * This is a simple way to display an image
+ */
+export class DITextArea extends DIView {
+	private _editable: boolean;
+
+	constructor(placeHolder: any, editable: boolean, className?: string, idName?: string) {
 		if(!className)
 			className='DITextField';
 		super(className, idName);
 		this.canHaveChild = false;
-		this.textBody = document.createElement('textarea');
+		// @ts-ignore TODO: bug
+		this.textBody = <HTMLTextAreaElement>document.createElement('textarea');
 		if(placeHolder)
 			this.textBody.setAttribute("placeholder", placeHolder);
 		this._editable=true;
@@ -36,7 +31,7 @@ class DITextArea extends DIView {
 	*/
 	selectedLocation() {
 		if(this._editable) {
-			return this.textBody.selelctionStart;
+			return this.textBody.selectionStart;
 		}
 		return false;
 	}
@@ -72,7 +67,7 @@ class DITextArea extends DIView {
 	
 	set width(value) {
 		this._width = value;
-		this.body.style.width = "".concat(value, "px");
+		this.body.style.width = `${value}px`;
 		this.textBody.style.width = this.body.style.width;
 	}
 	
@@ -90,7 +85,7 @@ class DITextArea extends DIView {
 	
 	set height(value) {
 		this._height = value;
-		this.body.style.height = "".concat(value, "px");
+		this.body.style.height = `${value}px`;
 		this.textBody.style.height = this.body.style.height;
 	}
 	

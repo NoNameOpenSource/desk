@@ -1,16 +1,20 @@
-/*
-** Class	: DIListView
-** 
-** This is a view that displays lists
-** 
-** properties
-**	-cell			: Array of the cells
-**	-dataSource		: Object that will provide data to make list
-**
-*/
+import { DeskEvent } from "../Secretary/DeskEvent";
+import { DIListView } from "./DIListView";
 
-class DIDragListView extends DIListView {
-	constructor(dataSource, delegate, className, idName) {
+/**
+ * Displays a draggable list
+ * 
+ * -cell			: Array of the cells
+ * -dataSource		: Object that will provide data to make list
+ */
+export class DIDragListView extends DIListView {
+    events: DeskEvent[];
+    body: HTMLElement;
+    lastHighlightedCell: number;
+    multipleSelection: boolean;
+    children: any[]
+
+	constructor(dataSource: any, delegate: any, className: string, idName: string) {
 		super(dataSource, delegate, -1, className, idName);
 		
 		this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));

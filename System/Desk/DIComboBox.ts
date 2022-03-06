@@ -1,18 +1,17 @@
-/*
-** Class	: DIComboBox
-** 
-** This is a simple way to display an image
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DITextField } from "./DITextField";
+import { DeskEvent } from "../Secretary/DeskEvent";
 
-class DIComboBox extends DITextField {
-	constructor(className, idName) {
+/**
+ * This is a simple way to display an image
+ */
+export class DIComboBox extends DITextField {
+	items: any[];
+	searchedItems: any[];
+	deleteKey: boolean;
+	oldString: string;
+	useDataSource: any;
+
+	constructor(className?: string, idName?: string) {
 		if(!className)
 			className='DITextField';
 		super(false,true,className, idName);
@@ -53,7 +52,7 @@ class DIComboBox extends DITextField {
 		}
 	}
 	
-	addItem(item) {
+	addItem(item: any) {
 		if(this.useDataSource) {
 		}
 		else {

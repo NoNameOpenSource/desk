@@ -1,27 +1,19 @@
-/*
-** Class	: DIImageView
-** 
-** This is a simple way to display an image
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DIView } from "./DIView";
 
-class DIClassicDropDownView extends DIView {
-	constructor(className, idName) {
+export class DIClassicDropDownView extends DIView {
+	selectBody: HTMLSelectElement;
+
+	constructor(className?: string, idName?: string) {
 		if(!className)
 			className='DIClassicDropDownView';
 		super(className, idName);
 		this.canHaveChild = false;
+		// @ts-ignore TODO: bug
 		this.selectBody = document.createElement('SELECT');
 		this.body.appendChild(this.selectBody);
 	}
 	
-	addItem(item) {
+	addItem(item: any) {
 		var z = document.createElement("option");
 		z.setAttribute("value", item );
 		var t = document.createTextNode(item);

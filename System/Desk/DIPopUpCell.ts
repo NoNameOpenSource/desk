@@ -1,16 +1,14 @@
-/*
-** Class	: DIListViewCell
-** 
-** Cell for the view
-** 
-** properties
-**	-listCell		: Class that will be used for make cells
-**	-cell			: Array of the cells
-**
-*/
+import { DILabel } from "./DILabel";
+import { DIView } from "./DIView";
 
-class DIPopUpCell extends DIView {
-	constructor(name, className, idName) {
+/**
+ * Cell for the view
+ */
+export class DIPopUpCell extends DIView {
+	className: any;
+	name: any;
+
+	constructor(name: string, className?: string, idName?: string) {
 		if(!className)
 			className='DIPopUpCell';
 		super(className, idName);

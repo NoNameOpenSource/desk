@@ -1,18 +1,21 @@
-/*
-** Class	: DINavigationViewController
-** 
-** This is a simple way to display an image
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DeskEvent } from "../Secretary/DeskEvent";
+import { DILabel } from "./DILabel";
+import { DIView } from "./DIView";
+import { DIViewController } from "./DIViewController";
 
-class DINavigationViewController extends DIViewController {
-	constructor(className, idName, delegate) {
+export class DINavigationViewController extends DIViewController {
+	navigationView: DIView;
+	_currentView: any;
+	backwardButton: DIView;
+	titleField: any;
+	delegate: any;
+	oldView: any;
+
+
+	/**
+	 * @todo remove idName
+	 */
+	constructor(className?: string, idName?: string, delegate?: any) {
 		if(!className)
 			className='DINavigationViewController';
 		super(new DIView());
@@ -21,7 +24,7 @@ class DINavigationViewController extends DIViewController {
 		this.view.addChildView(this.navigationView);
 		this._currentView;
 		this.backwardButton = new DIView();
-		this.titleField = new DITextLabel();
+		this.titleField = new DILabel();
 		this.navigationView.addChildView(this.backwardButton);
 		this.backwardButton.events.push(new DeskEvent(this.backwardButton.body, "onclick", this.backButtonTriggered.bind(this)));
 		this.navigationView.addChildView(this.titleField);
@@ -31,7 +34,7 @@ class DINavigationViewController extends DIViewController {
 	
 	backButtonTriggered() {
 		if(this.delegate)
-			this.delgate.backButtonTriggered();
+			this.delegate.backButtonTriggered();
 	}
 	
 	setCurrentView(view, titleString, saveOld) {
@@ -43,7 +46,7 @@ class DINavigationViewController extends DIViewController {
 	
 	removeCurrentView() {
 		// Remove the current view from children list of navigation view
-		this.navigationView.removeChild(this._currentView);
+		this.navigationView.removeChildView(this._currentView);
 	};
 	
 	setTitle(stringValue) {
@@ -55,9 +58,9 @@ class DINavigationViewController extends DIViewController {
 			return false;
 		if(!backwardString)
 			backwardString = "Back";
-		var newTitleField = new DITextLabel();
+		var newTitleField = new DILabel();
 		this.navigationView.addChildView(view);
-		this.animatePushIn(this._currentView, view, this.titleField, newTitleField function() {
+		this.animatePushIn(this._currentView, view, this.titleField, newTitleField, function() {
 			this.setCurrentView(view, titleString);
 		}.bind(this));
 	}

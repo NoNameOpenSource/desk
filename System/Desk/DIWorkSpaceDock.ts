@@ -1,19 +1,29 @@
-/*
-** Class	: DIImageView
-** 
-** This is a simple way to display an image
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DIView } from "./DIView";
+import { DeskEvent } from "../Secretary/DeskEvent";
+import { DILabel } from "./DILabel";
+import { Secretary } from "../Secretary/Secretary";
+import { DIListView } from "./DIListView";
+import {DIListViewCell} from './DIListViewCell'
+import { Desk } from "./desk";
 
-class DIWorkSpaceDock extends DIView {
-	constructor(idName) {
+/**
+ * This is a simple way to display an image
+ */
+export class DIWorkSpaceDock extends DIView {
+	secretary: Secretary;
+	desk: Desk;
+
+	// TODO: should we initialize this in the constructor? It's used in listDidSelectRowAtIndex();
+	// Or maybe it should exist in DIView?
+	workSpaceIndex: number;
+	contextMenu: DIListView;
+	contextList: any[];
+	contextEvent: any;
+
+	constructor(idName: string) {
 		super(null, idName);
+		this.secretary = Secretary.getInstance();
+		this.desk = Desk.getInstance();
 		
 		// Init for context menu
 		this.contextMenu = new DIListView(this, this, 1, "DIContextMenu");
@@ -24,9 +34,9 @@ class DIWorkSpaceDock extends DIView {
 			evt.preventDefault();
 			var index = Math.floor((evt.clientY - 28)/64); // 28 for y of this view
 			this.workSpaceIndex = index;
-			if(index >= 0 && index < Secretary.workSpaces.length) {
-				if(Secretary.workSpaces[index].loaded) {
-					if(Secretary.workSpaces[index] == Secretary.mainWorkSpace)
+			if(index >= 0 && index < this.secretary.workSpaces.length) {
+				if(this.secretary.workSpaces[index].loaded) {
+					if(this.secretary.workSpaces[index] == this.secretary.mainWorkSpace)
 						this.contextList = ["Restart"];
 					else
 						this.contextList = ["Quit"];
@@ -92,9 +102,9 @@ class DIWorkSpaceDock extends DIView {
 				}
 				this.clearContextMenu();
 				if(this.contextList[index] == "Open") {
-					Secretary.setMainWorkSpace(Secretary.workSpaces[this.workSpaceIndex]);
+					this.secretary.setMainWorkSpace(this.secretary.workSpaces[this.workSpaceIndex]);
 				} else if(this.contextList[index] == "Quit") {
-					Secretary.quitWorkSpace(this.workSpaceIndex);
+					this.secretary.quitWorkSpace(this.workSpaceIndex);
 					this.update();
 				} else if(this.contextList[index] == "Restart") {
 				}
@@ -105,24 +115,25 @@ class DIWorkSpaceDock extends DIView {
 	update() {
 		this.unplugChildViews();
 		var i = 0;
-		for(;i<Secretary.workSpaces.length;i++) {
-			this.addChildView(Secretary.workSpaces[i].icon);
-			Secretary.workSpaces[i].icon.y = i*64;
-			if(Secretary.workSpaces[i].icon.events.length < 1) {
-				Secretary.workSpaces[i].icon.events.push(new DeskEvent(Secretary.workSpaces[i].icon.body, "click", function() {
-					Desk.workSpaceDock.clicked(this);
-				}.bind(Secretary.workSpaces[i])));
+		for(;i<this.secretary.workSpaces.length;i++) {
+			this.addChildView(this.secretary.workSpaces[i].icon);
+			this.secretary.workSpaces[i].icon.y = i*64;
+			if(this.secretary.workSpaces[i].icon.events.length < 1) {
+				// TODO: use fat arrow function instead of .bind
+				this.secretary.workSpaces[i].icon.events.push(new DeskEvent(this.secretary.workSpaces[i].icon.body, "click", function() {
+					this.desk.workSpaceDock.clicked(this);
+				}.bind(this.secretary.workSpaces[i])));
 			}
-			Secretary.workSpaces[i].icon.body.style.background = "";
-			if(Secretary.mainWorkSpace == Secretary.workSpaces[i]) {
-				Secretary.workSpaces[i].icon.body.style.background = "rgba(52,152,219, 0.4)";
+			this.secretary.workSpaces[i].icon.body.style.background = "";
+			if(this.secretary.mainWorkSpace == this.secretary.workSpaces[i]) {
+				this.secretary.workSpaces[i].icon.body.style.background = "rgba(52,152,219, 0.4)";
 			}
 		}
 	}
 	
 	clicked(workSpace) {
-		if(!(Secretary.mainWorkSpace == workSpace)) {
-			Secretary.setMainWorkSpace(workSpace);
+		if(!(this.secretary.mainWorkSpace == workSpace)) {
+			this.secretary.setMainWorkSpace(workSpace);
 		}
 	}
 	

@@ -1,17 +1,12 @@
-/*
-** Class	: DIViewController
-** 
-** This class is controller for the 'View' class
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+/**
+ * This class is controller for the 'View' class
+ */
+export class DIViewController {
+	app: any;
+	private _view: any;
+	/** Array of child views of this view */
+	private _child: any;
 
-class DIViewController {
 	constructor(view) {
 		this.app;
 		this._view;

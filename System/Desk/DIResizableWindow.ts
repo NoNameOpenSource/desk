@@ -1,18 +1,38 @@
-/*
-** Class	: DIWindow
-** 
-** Window class for the system
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DeskEvent } from "../Secretary/DeskEvent";
+import { DIView } from "./DIView";
+import { Desk } from './Desk'
+import { DILabel } from "./DILabel";
 
-class DIResizableWindow {
+/**
+ * Window class for the system
+ */
+export class DIResizableWindow {
+	child: any;
+	parent: any;
+	events: any[];
+	_x: number;
+	_y: number;
+	_z: number;
+	_width: number;
+	_height: number;
+	deleted: boolean;
+	resize: boolean;
+	cursor: number;
+	tmp: any;
+	body: HTMLElement;
+	titleBar: any;
+	titleField: any;
+	titleBarOptions: number;
+	border: any[];
+	_title: any;
+	closeButton: any;
+	minButton: any;
+	maxButton: any;
+	app: any;
+	desk: Desk;
+	
 	constructor(className, idName, title, x, y, width, height, titleBarOptions=1) {
+		this.desk = Desk.getInstance();
 		this.child;
 		this.parent;
 		this.events=new Array();
@@ -29,7 +49,9 @@ class DIResizableWindow {
 		
 		this.body = document.createElement('DIWindowBorder');
 		this.body.appendChild(document.createElement('DIWindow'));
+		// @ts-ignore TODO: type body differently?
 		this.body.childNodes[0].style.bottom="5px";
+		// @ts-ignore TODO: type body differently?
 		this.body.childNodes[0].style.left="5px";
 		if(className)
 			this.body.className = className;
@@ -44,7 +66,7 @@ class DIResizableWindow {
 			this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
 			// Add title to titleBar
 			if(titleBarOptions<3) {
-				this.titleField = new DILabel(false, 'DIWindowTitle');
+				this.titleField = new DILabel(undefined, 'DIWindowTitle');
 				this.titleBar.addChildView(this.titleField);
 			}
 		}
@@ -66,12 +88,13 @@ class DIResizableWindow {
 		if(evt.button == 0) { // If primary button
 			// Convert coord.
 			var x=evt.clientX-this.x;
-			var y=Desk.screenHeight-evt.clientY-this.y;
-			Desk.bringWindowFront(this);
+			var y=this.desk.screenHeight-evt.clientY-this.y;
+			this.desk.bringWindowFront(this);
 			if(this.resize&&(x<5||x>this.width-5)) { // Resizing window in X
 			} else if(this.height-y<0) { // TitleBar got clicked
 				evt.preventDefault(); // Disable text selection
-				Desk.beginWindowDrag(this, evt.clientX, evt.clientY);
+				// @ts-ignore TODO: bug
+				this.desk.beginWindowDrag(this, evt.clientX, evt.clientY);
         		return false; // Disable text selection
 			}
 		}
@@ -80,7 +103,7 @@ class DIResizableWindow {
 	changeCursor(cursor) {
 		if(cursor==this.cursor)
 			return false;
-		this.body.style.setProperty("cursor",Desk.cursor[cursor],"important");
+		this.body.style.setProperty("cursor", this.desk.cursor[cursor], "important");
 		this.cursor=cursor;
 	}
 	
@@ -121,7 +144,7 @@ class DIResizableWindow {
 		this.border=new Array();
 		for(var i=0;i<4;i++) {
 			this.border.push(document.createElement('DIWindowBorder'));
-			this.border[i].className="DIWindowBorder".concat(i);
+			this.border[i].className="DIWindowBorder".concat(`${i}`);
 			this.body.childNodes[0].appendChild(this.border[i]);
 		}
 	}
@@ -141,10 +164,12 @@ class DIResizableWindow {
 	}
 	
 	get background() {
+		// @ts-ignore TODO: type body differently?
 		return this.body.childNodes[0].style.background;
 	}
 	
 	set background(value) {
+		// @ts-ignore TODO: type body differently?
 		this.body.childNodes[0].style.background=value;
 	}
 	
@@ -155,10 +180,10 @@ class DIResizableWindow {
 	set x(value) {
 		if(value<20-this.width)
 			value=20-this.width;
-		if(value>Desk.screenWidth-20)
-			value=Desk.screenWidth-20;
+		if(value>this.desk.screenWidth-20)
+			value=this.desk.screenWidth-20;
 		this._x = value;
-		this.body.style.left = "".concat(value, "px");
+		this.body.style.left = `${value}px`;
 	}
 	
 	get y() {
@@ -169,7 +194,7 @@ class DIResizableWindow {
 		if(value<-this.height)
 			value = -this.height;
 		this._y = value;
-		this.body.style.bottom = "".concat(value, "px");
+		this.body.style.bottom = `${value}px`;
 	}
 	
 	get z() {
@@ -179,7 +204,7 @@ class DIResizableWindow {
 	set z(value) {
 		this._z = value;
 		if(this.body)
-			this.body.style.zIndex = value;
+			this.body.style.zIndex = `${value}px`;
 	}
 	
 	get width() {
@@ -191,9 +216,10 @@ class DIResizableWindow {
 		this.titleBar.width = value;
 		if(this.child)
 			this.child.width = value;
-		this.body.childNodes[0].style.width = "".concat(value, "px");
+		// @ts-ignore TODO: type body differently?
+		this.body.childNodes[0].style.width = `${value}px`
 		value+=10;
-		this.body.style.width = "".concat(value, "px");
+		this.body.style.width = `${value}px`
 	}
 	
 	get height() {
@@ -204,6 +230,7 @@ class DIResizableWindow {
 		this._height = value;
 		if(this.child)
 			this.child.height = value;
+		// @ts-ignore TODO: type body differently?
 		this.body.childNodes[0].style.height = "".concat((value+this.titleBar.height), "px");
 		value+=10;
 		this.body.style.height = "".concat((value+this.titleBar.height), "px");

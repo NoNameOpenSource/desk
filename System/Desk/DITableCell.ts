@@ -1,5 +1,14 @@
-class DITableCell {
-	constructor(className, idName) {
+import { DeskEvent } from "../Secretary/DeskEvent";
+
+export class DITableCell {
+	body: HTMLTableCellElement;
+	table: any;
+	editable: boolean;
+	event: any;
+	blurEvent: any;
+	oldValue: any;
+	
+	constructor(className?: string, idName?: string) {
 		if(!className)
 			className='DITableView';
 		this.body = document.createElement("td");
@@ -21,7 +30,7 @@ class DITableCell {
 	beginEdit() {
 		this.blurEvent = new DeskEvent(this.body, "blur", this.endEdit.bind(this));
 		this.oldValue = this.text;
-		this.body.setAttribute("contentEditable", true);
+		this.body.setAttribute("contentEditable", undefined);
 		this.body.focus();
 	}
 

@@ -1,18 +1,12 @@
-/*
-** Class	: DIImageView
-** 
-** This is a simple way to display an image
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DIView } from "./DIView";
 
-class DIProgressView extends DIView {
-	constructor(className, idName) {
+export class DIProgressView extends DIView {
+	progressBody: HTMLElement;
+	_total: any;
+	_completed: any;
+	_progress: number;
+
+	constructor(className?: string, idName?: string) {
 		if(!className)
 			className='DIProgressView';
 		super(className, idName);
@@ -32,7 +26,7 @@ class DIProgressView extends DIView {
 	}
 	
 	get progress() {
-		return this._progress();
+		return this._progress;
 	}
 	
 	set progress(value) {
@@ -40,7 +34,7 @@ class DIProgressView extends DIView {
 			value=0;
 		if(value>100)
 			value=100;
-		this.progressBody.style.width = "".concat(value,"%");
+		this.progressBody.style.width = "".concat(`${value}`, "%");
 		this._progress=value;
 	}
 	

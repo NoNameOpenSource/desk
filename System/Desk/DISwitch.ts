@@ -1,18 +1,15 @@
-/*
-** Class	: DIButton
-** 
-** This is simple button for the system
-** 
-** properties
-** 	-x				: x coordinate
-**	-y				: y coordinate
-**	-body			: Body of the view as HTML element
-**	-child			: Array of child views of this view
-**
-*/
+import { DeskEvent } from "../Secretary/DeskEvent";
+import { DIView } from "./DIView";
 
-class DISwitch extends DIView {
-	constructor(small, className, idName) {
+/**
+ * This is simple button for the system
+ */
+export class DISwitch extends DIView {
+	event: any;
+	switchBody: HTMLLabelElement;
+	buttonBody: any;
+
+	constructor(small: any, className?: string, idName?: string) {
 		if(!className) {
 			if(small)
 				className='DISmallSwitch';
@@ -24,6 +21,7 @@ class DISwitch extends DIView {
 		this.event;
 		this.switchBody = document.createElement('label');
 		this.switchBody.appendChild(document.createElement('input'));
+		// @ts-ignore TODO: bug
 		this.switchBody.firstChild.setAttribute('type','checkbox');
 		this.switchBody.appendChild(document.createElement('div'));
 		if(small)
@@ -53,14 +51,17 @@ class DISwitch extends DIView {
 	}
 	
 	get value() {
+		// @ts-ignore TODO: bug
 		return this.switchBody.firstChild.checked;
 	}
 	
 	set value(value) {
+		// @ts-ignore TODO: bug
 		this.switchBody.firstChild.checked = value;
 	}
 	
 	get width() {
+		// @ts-ignore TODO: this?
 		return _width;
 	}
 	
