@@ -3,12 +3,13 @@
     "version": "0.0.5",
     "description": "Desk User Interface",
     "main": "dist/index.js",
+    "types": "types/index.d.ts",
     "scripts": {
-        "compile": "rm -rf dist && tsc",
-        "watch": "rm -rf dist && tsc -w true",
+        "compile": "rm -rf dist && rm -rf types && tsc",
+        "watch": "tsc -w true",
+        "prepack": "npm run lint && npm run compile",
         "lint": "eslint --ext ts src/*",
-        "fix": "prettier --config .prettierrc.yml 'src/**/*.ts' --write",
-        "publish-package": "npm run compile && npm publish"
+        "fix": "eslint --ext ts src/* --fix"
     },
     "config": {
         "fund": false

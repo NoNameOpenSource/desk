@@ -11,7 +11,9 @@
         "noImplicitAny": true,
         "useUnknownInCatchVariables": false,
         "outDir": "dist",
-        "removeComments": true
+        "declaration": true,
+        "declarationDir": "types",
+        "removeComments": false
     },
     "include": ["System"],
     "ts-node": {

@@ -35,6 +35,8 @@
         ".serverless": true,
         ".webpack": true,
         "webpack.config.js": true,
-        "layers": true
+        "layers": true,
+        "types": true,
+        ".npmrc": true
     }
 }
