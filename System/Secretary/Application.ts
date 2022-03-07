@@ -5,23 +5,10 @@ import { DISmallAlertView } from "../Desk/DISmallAlertView";
 import { DIView } from "../Desk/DIView";
 import { DIWindow } from "../Desk/DIWindow";
 
-/*
- ** Class	: Application
- **
- ** This class is for the Applications that will run on 'Desk System'
- **
- ** Application gets loaded from Secretary Class
- **
- ** properties
- ** 	-appId			: Similar to Widnows` PID, it determinates which app this is from other apps, running.
- **	-appName		: Name of the Application
- **	-appType		: Type of the Application
- **		-null	: -1
- **		-GUIapp	: 1
- **		-Widget	: 2
- **		-noGUI	: 3
- **	-appBody		:Body of the Application. This is Highest HTML Elements of GUI of this app.
- **
+/**
+ * This class is for the Applications that will run on 'Desk System'
+ *
+ * Application gets loaded from Secretary Class
  */
 export class Application {
     workSpace: WorkSpace;
@@ -40,6 +27,12 @@ export class Application {
     ainmations: any;
     deleted: boolean;
 
+    /**
+     *
+     * @param appName Name of the Application
+     *
+     * @todo should resizable be a boolean?
+     */
     constructor(workSpace: WorkSpace, appName: string, windowClass?: string, resizable?: number) {
         this.workSpace = workSpace;
         this.data = workSpace.data;
