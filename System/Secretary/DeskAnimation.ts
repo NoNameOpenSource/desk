@@ -1,9 +1,7 @@
 /**
  * Object that handles css animations
- *
- *
  */
-class DeskAnimation {
+export class DeskAnimation {
     /** target element */
     target: any;
     animation: any;
