@@ -55,6 +55,7 @@ var Secretary = new function () {
 			Desk.hideTopMenuBar();
 			Desk.hideWorkSpaceDock();
 			Desk.hideWallpaper();
+			Desk.body.body.style.transition = "none";
 			this.workSpaces[0].fullScreen(this.workSpaces[0].apps[0].window);
 		}
 	}
@@ -102,6 +103,15 @@ var Secretary = new function () {
 			let workSpace = new WorkSpace("main", null, [Secretary.application], []);
 			Secretary.workSpaces.push(workSpace);
 			Secretary.setMainWorkSpace(Secretary.workSpaces[0]);
+			let app = Secretary.workSpaces[0].apps[0];
+			let resize = function() {
+				let width = window.innerWidth;
+				let height = window.innerHeight;
+
+				Secretary.workSpaces[0].apps[0].resize(width, height);
+			};
+			window.addEventListener('resize', resize);
+			resize();
 			return;
 		}
 
