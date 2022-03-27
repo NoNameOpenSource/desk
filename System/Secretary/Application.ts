@@ -192,7 +192,7 @@ export class Application {
 
     resizeWidth(width: number) {
         if (width < this.minWidth) width = this.minWidth;
-        if (width == this.window.width) return false;
+        if (width == this.window.width) return <boolean>false;
         this.window.width = width;
         return width;
     }
