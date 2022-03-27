@@ -1,6 +1,6 @@
 {
     "name": "@nonameopensource/desk",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "Desk User Interface",
     "main": "dist/index.js",
     "types": "types/index.d.ts",
