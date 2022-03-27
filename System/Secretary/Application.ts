@@ -12,7 +12,7 @@ import { DIWindow } from "../Desk/DIWindow";
  */
 export class Application {
     workSpace: WorkSpace;
-    data: Object;
+    data: any;
     window: any;
     alerts: any[];
     alertScreen: any;
