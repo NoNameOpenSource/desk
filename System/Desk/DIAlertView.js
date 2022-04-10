@@ -1,25 +1,18 @@
-import { DIButton } from "./DIButton";
-import { DIImageView } from "./DIImageView";
-import { DILabel } from "./DILabel";
-import { DIView } from "./DIView";
-
-/**
- * Sample alert for the system
- *
- * -x				: x coordinate
- * -y				: y coordinate
- * -body			: Body of the view as HTML element
- * -child			: Array of child views of this view
+/*
+ ** Class	: DIAlertView
+ **
+ ** Sample alert for the system
+ **
+ ** properties
+ ** 	-x				: x coordinate
+ **	-y				: y coordinate
+ **	-body			: Body of the view as HTML element
+ **	-child			: Array of child views of this view
+ **
  */
-export class DIAlertView extends DIView {
-    buttons: any[];
-    alertContent: any;
-    private _useTextArea: boolean;
-    autoHeight: boolean;
-    icon: any;
-    textArea: DIView;
 
-    constructor(text?: string, icon?: any, className?: string, idName?: string) {
+class DIAlertView extends DIView {
+    constructor(text, icon, className, idName) {
         if (!className) className = "DIAlertView";
         super(className, idName);
         this.buttons = new Array();
@@ -43,10 +36,9 @@ export class DIAlertView extends DIView {
         this.alertContent.stringValue = value;
     }
 
-    useTextArea(text: string) {
+    useTextArea(text) {
         if (!this._useTextArea) {
             this.textArea = new DIView("DIAlertViewTextArea");
-            // @ts-ignore TODO: bug
             this.textArea.textBody = document.createElement("DIV");
             this.textArea.textBody.innerHTML = text;
             this.textArea.body.appendChild(this.textArea.textBody);
@@ -55,7 +47,7 @@ export class DIAlertView extends DIView {
         }
     }
 
-    addButton(text: string, evt: any) {
+    addButton(text, evt) {
         var id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DIAlertViewButton"));
         //this.buttons[id].y = 10;
