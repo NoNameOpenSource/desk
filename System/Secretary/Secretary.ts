@@ -78,65 +78,25 @@ export class Secretary {
         this.loadUserInfo();
 
         // Load WorkSpaces
-        let req = new RequestServer("WorkSpaces");
-        req.addEventListener("load", (response, err) => {
-            if (err) {
-                // the system errors should be handled with a new way
-                // @ts-ignore: TODO: bug - maybe get the error from err not evt?s
-                this.secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", evt.detail);
-                return -1;
-            }
-            if (response.DataBlockStatus == 0) {
-                var i = 0;
-                for (; i < response.WorkSpaces.length; i++) {
-                    var tmpWS = new WorkSpace(
-                        response.WorkSpaces[i].name,
-                        "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon, ".png"),
-                        response.WorkSpaces[i].apps,
-                        response.WorkSpaces[i].settings
-                    );
-                    this.workSpaces.push(tmpWS);
-                }
-            }
-
-            // Set first work space as main space
-            this.setMainWorkSpace(this.workSpaces[0]);
-        });
-        req.send();
+        this.loadWorkSpaces();
 
         // load plugins
         this.loadPlugins();
 
         // load side menu app list
-        this.appList;
-        req = new RequestServer("ProgramList");
-        req.addEventListener("load", (response, err) => {
-            if (err) {
-                // the system errors should be handled with a new way
-                // @ts-ignore: TODO: bug - maybe get the error from err not evt?
-                this.secretaryInstance.alertError("Failed to load ProgramList with following error from server:", evt.detail);
-                return -1;
-            }
-            if (response.DataBlockStatus == 0) {
-                this.appList = response.ProgramList;
-            }
-
-            // reload desk menu
-            this.desk.deskMenu.reloadData();
-        });
-        req.send();
+        this.loadAppList();
     }
 
     loadUserInfo() {
         let req = new RequestServer("UserInfo");
-        req.addEventListener("load", (response, err) => {
+        req.addEventListener("load", function (response, err) {
             if (err) {
-                // @ts-ignore: TODO: bug - maybe get the error from err not evt?
-                Secretary.alertError("Failed to load UserInfo with following error from server:", evt.detail);
+                // TODO: maybe just err instead of err.detail?
+                Secretary.getInstance().alertError("Failed to load UserInfo with following error from server:", err.detail);
                 return -1;
             }
             if (response.DataBlockStatus == 0) {
-                this.user = response.UserInfo;
+                Secretary.getInstance().user = response.UserInfo;
             }
         });
         req.send();
@@ -198,6 +158,54 @@ export class Secretary {
         if (this.clipboard) {
             return this.clipboard.getData(dataType);
         } else return false;
+    }
+
+    loadAppList() {
+        this.appList;
+        const req = new RequestServer("ProgramList");
+        req.addEventListener("load", function (response, err) {
+            if (err) {
+                // the system errors should be handled with a new way
+                // TODO: maybe just err instead of err.detail?
+                Secretary.getInstance().alertError("Failed to load ProgramList with following error from server:", err.detail);
+                return -1;
+            }
+            if (response.DataBlockStatus == 0) {
+                Secretary.getInstance().appList = response.ProgramList;
+            }
+
+            // reload desk menu
+            Desk.getInstance().deskMenu.reloadData();
+        });
+        req.send();
+    }
+
+    loadWorkSpaces() {
+        const req = new RequestServer("WorkSpaces");
+        req.addEventListener("load", function (response, err) {
+            if (err) {
+                // the system errors should be handled with a new way
+                // TODO: maybe just err instead of err.detail?
+                Secretary.getInstance().alertError("Failed to load WorkSpaces with following error from server:", err.detail);
+                return -1;
+            }
+            if (response.DataBlockStatus == 0) {
+                var i = 0;
+                for (; i < response.WorkSpaces.length; i++) {
+                    var tmpWS = new WorkSpace(
+                        response.WorkSpaces[i].name,
+                        "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon, ".png"),
+                        response.WorkSpaces[i].apps,
+                        response.WorkSpaces[i].settings
+                    );
+                    Secretary.getInstance().workSpaces.push(tmpWS);
+                }
+            }
+
+            // Set first work space as main space
+            Secretary.getInstance().setMainWorkSpace(Secretary.getInstance().workSpaces[0]);
+        });
+        req.send();
     }
 
     loadPlugins() {
