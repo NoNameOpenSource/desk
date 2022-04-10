@@ -93,6 +93,7 @@ export class Secretary {
             this.desk.hideTopMenuBar();
             this.desk.hideWorkSpaceDock();
             this.desk.hideWallpaper();
+            this.desk.body.body.style.transition = "none";
             this.workSpaces[0].fullScreen(this.workSpaces[0].apps[0].window);
         }
     }
@@ -204,6 +205,15 @@ export class Secretary {
             let workSpace = new WorkSpace("main", null, [this.secretaryInstance.application], []);
             this.secretaryInstance.workSpaces.push(workSpace);
             this.secretaryInstance.setMainWorkSpace(this.secretaryInstance.workSpaces[0]);
+            let app = this.secretaryInstance.workSpaces[0].apps[0];
+            let resize = () => {
+                let width = window.innerWidth;
+                let height = window.innerHeight;
+
+                this.secretaryInstance.workSpaces[0].apps[0].resize(width, height);
+            };
+            window.addEventListener("resize", resize);
+            resize();
             return;
         }
 
