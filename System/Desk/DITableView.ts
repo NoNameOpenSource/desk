@@ -1,62 +1,77 @@
-class DITableView extends DIView {
-	constructor(dataSource, delegate, className, idName) {
-		if(!className)
-			className='DITableView';
-		super(className, idName);
-		if(dataSource)
-			this.dataSource = dataSource;
-		if(delegate)
-			this.delegate = delegate;
+import { DIView } from "./DIView";
 
-		this.columns = new Array();
-		this.rows = new Array();
+export class DITableView extends DIView {
+    dataSource: any;
+    delegate: any;
+    columns: any[];
+    rows: any[];
+    tableBody: HTMLTableElement;
+    headerBody: HTMLTableRowElement;
+    numberOfRows: number;
 
-		this.tableBody = document.createElement("table");
-		this.headerBody = document.createElement("tr");
-		this.tableBody.appendChild(this.headerBody);
-		this.body.appendChild(this.tableBody);
+    constructor(dataSource: any, delegate: any, className?: string, idName?: string) {
+        if (!className) className = "DITableView";
+        super(className, idName);
+        if (dataSource) this.dataSource = dataSource;
+        if (delegate) this.delegate = delegate;
 
-		this.numberOfRows = 0;
-	}
+        this.columns = new Array();
+        this.rows = new Array();
 
-	clearTable() {
-	}
+        this.tableBody = document.createElement("table");
+        this.headerBody = document.createElement("tr");
+        this.tableBody.appendChild(this.headerBody);
+        this.body.appendChild(this.tableBody);
 
-	reloadData() {
-		if(!this.dataSource) { return; }
+        this.numberOfRows = 0;
+    }
 
-		this.numberOfRows = this.dataSource.numberOfRows(this);
-		for(let i = 0; i < this.numberOfRows; i++) {
-			this.addRow();
-			for(let j = 0; j < this.columns.length; j++) {
-				let cell = this.dataSource.cellAtColRow(this, this.columns[j], i);
-				this.tableBody.children[i + 1].appendChild(cell.body);
-			}
-		}
-	}
+    clearTable() {}
 
-	addColumn(tableColumn) {
-		this.columns.push(tableColumn);
-		let th = document.createElement("th");
-		th.innerText = tableColumn.name;
-		this.headerBody.appendChild(th);
-	}
+    reloadData() {
+        if (!this.dataSource) {
+            return;
+        }
 
-	addRow() {
-		let tr = document.createElement("tr");
-		this.tableBody.appendChild(tr);
-	}
+        this.numberOfRows = this.dataSource.numberOfRows(this);
+        for (let i = 0; i < this.numberOfRows; i++) {
+            this.addRow();
+            for (let j = 0; j < this.columns.length; j++) {
+                let cell = this.dataSource.cellAtColRow(this, this.columns[j], i);
+                this.tableBody.children[i + 1].appendChild(cell.body);
+            }
+        }
+    }
 
-	cellClicked(cell) {
-		if(!this.delegate || !this.delegate.tableCellClicked) { return true; }
-		return this.delegate.tableViewCellClicked(cell);
-	}
+    addColumn(tableColumn: any) {
+        this.columns.push(tableColumn);
+        let th = document.createElement("th");
+        th.innerText = tableColumn.name;
+        this.headerBody.appendChild(th);
+    }
 
-	cellUpdated(cell) {
-		if(!this.delegate || !this.delegate.tableCellUpdated) { return true; }
-		return this.delegate.tableCellUpdated(cell);
-	}
+    addRow() {
+        let tr = document.createElement("tr");
+        this.tableBody.appendChild(tr);
+    }
 
-	mouseDown(evt) {
-	}
+    cellClicked(cell: any) {
+        if (!this.delegate || !this.delegate.tableCellClicked) {
+            return true;
+        }
+        return this.delegate.tableViewCellClicked(cell);
+    }
+
+    cellUpdated(cell: any) {
+        if (!this.delegate || !this.delegate.tableCellUpdated) {
+            return true;
+        }
+        return this.delegate.tableCellUpdated(cell);
+    }
+
+    /**
+     * @todo finish function or remove
+     * @todo use or remove this function
+     */
+    mouseDown(evt: any) {}
 }

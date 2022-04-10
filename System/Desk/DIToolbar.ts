@@ -1,27 +1,32 @@
-class DIToolbar extends DIView {
-	constructor(delegate, className) {
-		super(className);
+import { DIView } from "./DIView";
 
-		this.delegate = delegate;
+export class DIToolbar extends DIView {
+    delegate: string;
+    items: any[];
 
-		this.items = [];
-		this.width = 0;
-	}
+    constructor(delegate?: any, className?: string) {
+        super(className);
 
-	addItem(item) {
-		item.x = this.width;
-		this.width += item.width;
-		let identifier = item.identifier;
-		item.setButtonEvent(evt => {
-			this.itemSelected(identifier);
-		});
-		this.addChildView(item);
-		this.items.push(item);
-	}
+        this.delegate = delegate;
 
-	itemSelected() {
-		if(!this.delegate)
-			return;
-		this.delegate.toolBarSelected(item.identifier);
-	}
+        this.items = [];
+        this.width = 0;
+    }
+
+    addItem(item: any) {
+        item.x = this.width;
+        this.width += item.width;
+        let identifier = item.identifier;
+        item.setButtonEvent(() => {
+            this.itemSelected(identifier);
+        });
+        this.addChildView(item);
+        this.items.push(item);
+    }
+
+    itemSelected(identifier: any) {
+        if (!this.delegate) return;
+        // @ts-ignore
+        this.delegate.toolBarSelected(identifier);
+    }
 }
