@@ -8,7 +8,7 @@
         "compile": "rm -rf dist && rm -rf types && tsc",
         "watch": "tsc -w true",
         "prepack": "npm run compile",
-        "fix": "prettier --config .prettierrc.yml 'src/**/*.ts' --write"
+        "fix": "prettier --config .prettierrc.yml 'System/**/*.ts' --write"
     },
     "config": {
         "fund": false
