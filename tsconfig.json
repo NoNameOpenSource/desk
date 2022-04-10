@@ -1,0 +1,22 @@
+{
+    "extends": "@tsconfig/node16/tsconfig.json",
+    "compileOnSave": true,
+    "compilerOptions": {
+        "lib": ["es2021", "dom"],
+        "esModuleInterop": true,
+        "checkJs": false,
+        "allowJs": false,
+        // TODO: turn this on eventually
+        "strictNullChecks": false,
+        "noImplicitAny": true,
+        "useUnknownInCatchVariables": false,
+        "outDir": "dist",
+        "declaration": true,
+        "declarationDir": "types",
+        "removeComments": false
+    },
+    "include": ["System"],
+    "ts-node": {
+        "files": true
+    }
+}
