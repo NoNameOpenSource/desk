@@ -39,6 +39,9 @@ export class Secretary {
     clipboard: any;
     desk: Desk;
     fileManager = new FileManager();
+    /** @todo use enum */
+    clientMode: string;
+    application: any;
 
     secretaryInstance: Secretary;
     user: any;
@@ -85,6 +88,13 @@ export class Secretary {
 
         // load side menu app list
         this.loadAppList();
+
+        if (this.secretaryInstance.clientMode == "SingleApplication") {
+            this.desk.hideTopMenuBar();
+            this.desk.hideWorkSpaceDock();
+            this.desk.hideWallpaper();
+            this.workSpaces[0].fullScreen(this.workSpaces[0].apps[0].window);
+        }
     }
 
     loadUserInfo() {
@@ -138,6 +148,9 @@ export class Secretary {
         } else if (appName == "Debugger") {
             // @ts-ignore
             return new Debugger(workSpace, appName, appSetting);
+        } else if (appName == "BeatApp") {
+            // @ts-ignore TODO: BeatApp does not exist
+            return new BeatApp(workSpace, appName, appSetting);
         }
     }
 
@@ -162,6 +175,12 @@ export class Secretary {
 
     loadAppList() {
         this.appList;
+
+        if (this.secretaryInstance.clientMode == "SingleApplication") {
+            this.secretaryInstance.appList = [this.secretaryInstance.application];
+            return;
+        }
+
         const req = new RequestServer("ProgramList");
         req.addEventListener("load", function (response, err) {
             if (err) {
@@ -181,12 +200,19 @@ export class Secretary {
     }
 
     loadWorkSpaces() {
-        const req = new RequestServer("WorkSpaces");
-        req.addEventListener("load", function (response, err) {
+        if (this.secretaryInstance.clientMode == "SingleApplication") {
+            let workSpace = new WorkSpace("main", null, [this.secretaryInstance.application], []);
+            this.secretaryInstance.workSpaces.push(workSpace);
+            this.secretaryInstance.setMainWorkSpace(this.secretaryInstance.workSpaces[0]);
+            return;
+        }
+
+        let req = new RequestServer("WorkSpaces");
+        req.addEventListener("load", (response, err) => {
             if (err) {
                 // the system errors should be handled with a new way
                 // TODO: maybe just err instead of err.detail?
-                Secretary.getInstance().alertError("Failed to load WorkSpaces with following error from server:", err.detail);
+                this.secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", err.detail);
                 return -1;
             }
             if (response.DataBlockStatus == 0) {
@@ -198,12 +224,12 @@ export class Secretary {
                         response.WorkSpaces[i].apps,
                         response.WorkSpaces[i].settings
                     );
-                    Secretary.getInstance().workSpaces.push(tmpWS);
+                    this.secretaryInstance.workSpaces.push(tmpWS);
                 }
             }
 
             // Set first work space as main space
-            Secretary.getInstance().setMainWorkSpace(Secretary.getInstance().workSpaces[0]);
+            this.secretaryInstance.setMainWorkSpace(this.secretaryInstance.workSpaces[0]);
         });
         req.send();
     }

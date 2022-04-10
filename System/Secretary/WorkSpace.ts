@@ -24,7 +24,7 @@ export class WorkSpace {
     resizeEnd: DeskEvent;
     desk: Desk;
 
-    constructor(spaceName: string, iconName: string, appList: string, appSettings?: any[]) {
+    constructor(spaceName: string, iconName: string, appList: any[], appSettings?: any[]) {
         this.desk = Desk.getInstance();
         this.name = spaceName;
         this.icon = new DIImageView(iconName, "WorkSpaceIcon");
@@ -112,6 +112,12 @@ export class WorkSpace {
     setContextMenu(dataSource: any, delegate: any) {
         if (this.contextMenu) {
         }
+    }
+
+    fullScreen(window: any) {
+        window.x = 0;
+        window.titleBar.hidden = true;
+        window.width = this.body.body.getBoundingClientRect().width;
     }
 
     addWindow(window: any) {
