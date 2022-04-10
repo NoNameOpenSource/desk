@@ -32,7 +32,7 @@ export class Desk {
     header;
     body;
     headerLogo;
-    topMenu;
+    topMenu: DIView;
 
     windows = new Array();
     windowsIndex = 11;
@@ -107,8 +107,7 @@ export class Desk {
         this.loadLogoAsInline();
 
         // Draw top menu
-        this.topMenu = new DIView(undefined, "topMenu");
-        this.header.addChildView(this.topMenu);
+        this.initTopMenu();
 
         this.screenHeight = document.documentElement.clientHeight;
         this.screenWidth = document.documentElement.clientWidth;
@@ -126,17 +125,41 @@ export class Desk {
         this.canvas.style.display = "none";
 
         // Init desk menu
+        this.initDeskMenu();
+
+        // Init alert screen
+        this.alertScreen = new DIView("DILoading");
+        document.body.appendChild(this.alertScreen.body);
+        this.alertScreen.hidden = true;
+    }
+
+    hideTopMenuBar() {
+        this.body.y = 0;
+        this.workSpaceDock.y = 0;
+        this.header.hidden = true;
+    }
+
+    hideWorkSpaceDock() {
+        this.body.x = 0;
+        this.workSpaceDock.hidden = true;
+    }
+
+    hideWallpaper() {
+        this.wallpaper.hidden = true;
+    }
+
+    initTopMenu() {
+        this.topMenu = new DIView(undefined, "topMenu");
+        this.header.addChildView(this.topMenu);
+    }
+
+    initDeskMenu() {
         this.deskMenu = new DeskMenu();
         this.deskMenu.width = 200;
         this.deskMenu.x = -1 * this.deskMenu.width;
         this.deskMenu.y = 28;
         this.headerLogo.events.push(new DeskEvent(this.headerLogo.body, "click", this.launchDeskMenu.bind(this)));
         document.body.appendChild(this.deskMenu.body);
-
-        // Init alert screen
-        this.alertScreen = new DIView("DILoading");
-        document.body.appendChild(this.alertScreen.body);
-        this.alertScreen.hidden = true;
     }
 
     //	Context Menu
