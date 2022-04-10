@@ -3,14 +3,7 @@
     "ignorePaths": [],
     "dictionaryDefinitions": [],
     "dictionaries": [],
-    "words": [
-        "prettierrc"
-    ],
-    "ignoreWords": [
-        "DIPDF",
-        "Tesseract",
-        "datablock",
-        "nonameopensource"
-    ],
+    "words": ["prettierrc"],
+    "ignoreWords": ["DIPDF", "Tesseract", "datablock", "nonameopensource"],
     "import": []
 }
