@@ -4,6 +4,6 @@
     "dictionaryDefinitions": [],
     "dictionaries": [],
     "words": ["prettierrc"],
-    "ignoreWords": ["DIPDF", "Tesseract", "datablock", "nonameopensource"],
+    "ignoreWords": ["dipdf", "seamonkey", "Stratocaster", "contenteditable", "datablock", "frst", "nonameopensource", "scnd"],
     "import": []
 }
