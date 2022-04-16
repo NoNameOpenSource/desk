@@ -1,5 +1,6 @@
 import { DeskEvent } from "../Secretary/DeskEvent";
 import { Secretary } from "../Secretary/Secretary";
+import { WorkSpace } from "../Secretary/WorkSpace";
 import { DeskMenu } from "./DeskMenu";
 import { DIAlertView } from "./DIAlertView";
 import { DIImageView } from "./DIImageView";
@@ -34,9 +35,9 @@ export class Desk {
     headerLogo;
     topMenu: DIView;
 
-    windows = new Array();
+    windows: any[];
     windowsIndex = 11;
-    currentWindow: any;
+    currentWindow: WorkSpace;
 
     cursor;
 
@@ -48,20 +49,20 @@ export class Desk {
     screenHeight;
     screenWidth;
 
-    alerts = new Array();
+    alerts: any[];
     alertScreen;
     wallpaper;
     workSpaceDock: DIWorkSpaceDock;
 
     contextMenu: DIListView;
 
-    contextList: any[];
+    contextList: string[];
 
     canvas: HTMLElement;
 
     deskMenu: DeskMenu;
 
-    contextEvent: any;
+    contextEvent: DeskEvent;
 
     dragEnded: boolean;
     lastDragApp: any;
@@ -117,7 +118,7 @@ export class Desk {
         // Init contextMenu
         this.contextMenu = new DIListView(this, this, 1, "DIContextMenu");
         this.contextMenu.cellHeight = 25;
-        this.contextList = new Array();
+        this.contextList = [];
 
         // Init canvas
         this.canvas = document.createElement("CANVAS");
@@ -197,12 +198,12 @@ export class Desk {
     }
 
     numberOfRows(listView: DIListView) {
-        if (listView == this.contextMenu) return this.contextList.length;
+        if (listView === this.contextMenu) return this.contextList.length;
     }
 
     cellAtRow(listView: DIListView, row: number) {
-        if (listView == this.contextMenu) {
-            var cell = new DIListViewCell("DIContextMenuCell");
+        if (listView === this.contextMenu) {
+            const cell = new DIListViewCell("DIContextMenuCell");
             // @ts-ignore TODO: bug
             cell.name = new DILabel(this.contextList[row]);
             // @ts-ignore TODO: bug
@@ -213,30 +214,35 @@ export class Desk {
     }
 
     setUpContextMenu(body: any, delegate: any) {
-        return new DeskEvent(body, "contextmenu", (evt: any) => {
+        return new DeskEvent(body, "contextmenu", (evt: Event) => {
             evt.preventDefault();
             // TODO: spelling
-            var list = delegate.prepareContexMenu(body, evt.clientX, evt.clientY);
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            const list = delegate.prepareContexMenu(body, evt.clientX, evt.clientY);
             if (list) {
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 this.showContextMenu(list, delegate, evt.clientX, evt.clientY);
             }
         });
     }
 
-    startDrag(clipboard: any, view: any, x: number, y: number, originalX: number, originalY: number) {
-        var i = 0;
+    startDrag(clipboard: any, view: DIView, x: number, y: number, originalX: number, originalY: number) {
+        let i = 0;
         for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
             if (this.secretary.mainWorkSpace.apps[i].allowDrag) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 this.secretary.mainWorkSpace.apps[i].dragStart(clipboard);
             }
         }
         this.dragEnded = false;
 
         document.body.appendChild(view.body);
-        view.body.style.zIndex = 100000;
+        view.body.style.zIndex = "100000";
 
-        var difX = originalX - x;
-        var difY = originalY - y;
+        const difX = originalX - x;
+        const difY = originalY - y;
         view.x = x + difX;
         view.y = y + difY;
 
@@ -255,12 +261,13 @@ export class Desk {
                     if (evt.clientX < this.body.x) {
                         // client on dock
                     } else {
-                        var i = 0;
-                        var app;
+                        let i = 0;
+                        let app;
                         for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
                             app = this.secretary.mainWorkSpace.apps[i];
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                     app.dragOn(evt.clientX, evt.clientY);
                                 }
                             }
@@ -269,7 +276,8 @@ export class Desk {
                 }
                 view.x = evt.clientX + difX;
                 view.y = evt.clientY + difY;
-                if (this.currentDragApp != this.lastDragApp) {
+                if (this.currentDragApp !== this.lastDragApp) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (this.lastDragApp) this.lastDragApp.dragLeft();
                 }
                 this.lastDragApp = this.currentDragApp;
@@ -293,14 +301,16 @@ export class Desk {
                     if (evt.clientX < this.body.x) {
                         // client on dock
                     } else {
-                        var i = 0;
-                        var app;
+                        let i = 0;
+                        let app;
                         for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
                             app = this.secretary.mainWorkSpace.apps[i];
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                     app.dragEnd(true, clipboard, evt.clientX, evt.clientY);
                                 } else {
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                     app.dragEnd(false);
                                 }
                             }
@@ -344,17 +354,20 @@ export class Desk {
         this.dropEvent.target.addEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
 
         this.dropEsc = new DeskEvent(window, "keydown", (evt: any) => {
-            if (evt.keyCode == 27) {
+            if (evt.keyCode === 27) {
                 // esc
-                if (this.currentDragApp != null) this.currentDragApp.dragLeft();
-                if (this.currentDragApp != this.lastDragApp) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                if (this.currentDragApp !== null) this.currentDragApp.dragLeft();
+                if (this.currentDragApp !== this.lastDragApp) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (this.lastDragApp) this.lastDragApp.dragLeft();
                 }
-                var i = 0;
-                var app;
+                let i = 0;
+                let app;
                 for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
                     app = this.secretary.mainWorkSpace.apps[i];
                     if (app.allowDrag) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         app.dragEnd(false);
                     }
                 }
@@ -383,8 +396,8 @@ export class Desk {
         });
     }
 
-    getIconOf(file: { type: string }) {
-        if (file.type == "mp4") return "/System/Secretary/Icon/video.png";
+    static getIconOf(file: { type: string }) {
+        if (file.type === "mp4") return "/System/Secretary/Icon/video.png";
         else return "/System/Secretary/Icon/file.png";
     }
 
@@ -450,15 +463,16 @@ export class Desk {
     }
     */
 
-    closeWindow(window: any) {
-        if (window == this.deskInstance.currentWindow) this.deskInstance.currentWindow = null;
+    closeWindow(window: WorkSpace) {
+        if (window === this.deskInstance.currentWindow) this.deskInstance.currentWindow = null;
         window.delete();
         window = null;
     }
 
     bringWindowFront(window: any) {
         if (window.deleted) return false;
-        if (window == this.deskInstance.currentWindow) return false;
+        if (window === this.deskInstance.currentWindow) return false;
+        // @ts-ignore TODO: do we mean "delete" instead of "deleted"?
         if (this.deskInstance.currentWindow && !this.deskInstance.currentWindow.deleted) this.deskInstance.currentWindow.putInSleep();
         window.z = this.deskInstance.windowsIndex;
         this.deskInstance.windowsIndex += 1;
@@ -467,25 +481,25 @@ export class Desk {
         //Desk.testWindow.child.stringValue="window title: ".concat(window.title);
     }
 
-    getFontHeight(font: string, size: number) {
-        var span = document.createElement("SPAN");
+    static getFontHeight(font: string, size: number) {
+        const span = document.createElement("SPAN");
         document.body.appendChild(span);
         span.textContent = "a";
         span.style.fontFamily = font;
         span.style.fontSize = `${size}px`;
-        var height = span.offsetHeight;
+        const height = span.offsetHeight;
         span.remove();
         return height;
     }
 
-    addPluginFrame(frame: HTMLElement) {
+    static addPluginFrame(frame: HTMLElement) {
         frame.style.display = "none";
         document.body.appendChild(frame);
     }
 
     loadLogoAsInline() {
         // load logo as inline svg file
-        var ajax = new XMLHttpRequest();
+        const ajax = new XMLHttpRequest();
         ajax.open("GET", this.headerLogo.imageSource);
         ajax.addEventListener("load", (evt) => {
             this.headerLogo.imageBody.remove();
@@ -503,7 +517,7 @@ export class Desk {
 
     alertError(titleText: string, errorMsg: string, func: () => void) {
         this.alertScreen.hidden = false;
-        var alert = new DIAlertView(titleText, false, "DIAlertView");
+        let alert = new DIAlertView(titleText, false, "DIAlertView");
         alert.useTextArea(errorMsg);
         this.alerts.push(alert);
         // @ts-ignore window.body does not exist
@@ -512,20 +526,26 @@ export class Desk {
                 // @ts-ignore window.body does not exist
                 window.body,
                 "keydown",
-                (evt: any) => {
-                    if (evt.keyCode == 13) {
+                (evt: KeyboardEvent) => {
+                    if (evt.keyCode === 13) {
                         // enter key
+                        // @ts-ignore
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                    } else if (evt.keyCode == 27) {
+                    } else if (evt.keyCode === 27) {
                         // esc
+                        // @ts-ignore
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         alert.buttons[0].buttonBody.click();
                     }
+                    // @ts-ignore TODO: do we want stopPropagation?
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     evt.stopPropagate();
                 }
             )
         );
         alert.addButton("Ok", () => {
-            var i = this.alerts.indexOf(alert);
+            const i = this.alerts.indexOf(alert);
             this.alerts[i] = null;
             this.alerts.splice(i, 1);
             alert.delete();
