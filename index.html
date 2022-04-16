@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>EDU Space WorkDesk</title>
+        <link rel="stylesheet" type="text/css" href="/System/Desk/Resources/DeskInterface.css" />
+        <script src="/System/Secretary/ErrorHandler.js"></script>
+        <script src="/System/Secretary/FSDrawer.js"></script>
+        <script src="/System/Secretary/FileManager.js"></script>
+        <script src="/System/Secretary/User.js"></script>
+        <script src="/System/Secretary/Secretary.js"></script>
+        <script src="/System/Secretary/DeskEvent.js"></script>
+        <script src="/System/Secretary/DeskFile.js"></script>
+        <script src="/System/Secretary/DeskFileUpload.js"></script>
+        <script src="/System/Secretary/DeskClipboard.js"></script>
+        <script src="/System/Secretary/WorkSpace.js"></script>
+        <script src="/System/Desk/Desk.js"></script>
+        <script src="/System/Desk/DIView.js"></script>
+        <script src="/System/Desk/DeskMenu.js"></script>
+        <script src="/System/Desk/DICanvas.js"></script>
+        <script src="/System/Desk/DIWorkSpaceDock.js"></script>
+        <script src="/System/Desk/DIScrollView.js"></script>
+        <script src="/System/Desk/DIViewController.js"></script>
+        <script src="/System/Desk/DIImageView.js"></script>
+        <script src="/System/Desk/DIPDFView.js"></script>
+        <script src="/System/Desk/DIVideoPlayer.js"></script>
+        <script src="/System/Desk/DIListView.js"></script>
+        <script src="/System/Desk/DIListViewCell.js"></script>
+        <script src="/System/Desk/DeskMenuListViewCell.js"></script>
+        <script src="/System/Desk/DIDragListView.js"></script>
+        <script src="/System/Desk/DITextField.js"></script>
+        <script src="/System/Desk/DITextArea.js"></script>
+        <script src="/System/Desk/DIComboBox.js"></script>
+        <script src="/System/Desk/DIPopUpCell.js"></script>
+        <script src="/System/Desk/DIUniComboBox.js"></script>
+        <script src="/System/Desk/DIClassicDropDownView.js"></script>
+        <script src="/System/Desk/DILabel.js"></script>
+        <script src="/System/Desk/DIButton.js"></script>
+        <script src="/System/Desk/DISwitch.js"></script>
+        <script src="/System/Desk/DIUploadButton.js"></script>
+        <script src="/System/Desk/DIProgressView.js"></script>
+        <script src="/System/Desk/DIAlertView.js"></script>
+        <script src="/System/Desk/DISmallAlertView.js"></script>
+        <script src="/System/Desk/DISimpleAlertView.js"></script>
+        <script src="/System/Desk/DIWindow.js"></script>
+        <script src="/System/Desk/DIResizableWindow.js"></script>
+        <script src="/System/Secretary/Application.js"></script>
+        <script src="/System/Desk/DIApplicationDelegate.js"></script>
+        <script src="/System/Secretary/RequestServer.js"></script>
+        <script src="/System/Desk/DIMiniWindowView.js"></script>
+        <script src="/System/Desk/DIToolbar.js"></script>
+        <script src="/System/Desk/DIToolbarItem.js"></script>
+        <script src="/System/Desk/DITableView.js"></script>
+        <script src="/System/Desk/DITableColumn.js"></script>
+        <script src="/System/Desk/DITableCell.js"></script>
+
+        <script src="/System/Applications/Students/Students.js"></script>
+        <script src="/System/Applications/Students/StudentList.js"></script>
+        <script src="/System/Applications/Students/StudentInfo.js"></script>
+        <script src="/System/Applications/LectureList/LectureList.js"></script>
+
+        <script src="/System/Applications/Classes/Classes.js"></script>
+        <link rel="stylesheet" type="text/css" href="/System/Applications/Classes/Classes.css" />
+        <script src="/System/Applications/Classes/ClassList.js"></script>
+        <script src="/System/Applications/Classes/ClassDetail.js"></script>
+        <script src="/System/Applications/Classes/ScoreView/ScoreViewController.js"></script>
+
+        <script src="/System/Applications/StudentTicket/StudentTicket.js"></script>
+
+        <script src="/System/Applications/LectureResList/LectureResList.js"></script>
+        <script src="/System/Applications/LectureResList/LectureResCell.js"></script>
+
+        <script src="/System/Applications/StudentInbox/StudentInbox.js"></script>
+        <script src="/System/Applications/StudentInbox/StudentInboxCell.js"></script>
+
+        <script src="/System/Applications/Drawer/Drawer.js"></script>
+        <script src="/System/Applications/Drawer/DrawerListViewCell.js"></script>
+        <script src="/System/Applications/Drawer/DrawerUploadViewCell.js"></script>
+        <script src="/System/Applications/Drawer/DrawerProgressPie.js"></script>
+        <script src="/System/Secretary/DrawerOpenPanel.js"></script>
+        <script src="/System/Secretary/DrawerSavePanel.js"></script>
+
+        <script src="/System/Applications/Debugger/Debugger.js"></script>
+
+        <script src="/System/Applications/Preview/Preview.js"></script>
+        <script src="/System/Applications/Preview/PreviewPlayer.js"></script>
+        <script src="/System/Applications/Preview/PreviewPDF.js"></script>
+        <script src="/System/Applications/Preview/PreviewText.js"></script>
+        <script src="/System/Applications/Preview/PreViewImage.js"></script>
+
+        <script src="/System/Applications/WorkSheets/WorkSheets.js"></script>
+        <script src="/System/Applications/WorkSheets/WSPage.js"></script>
+        <script src="/System/Applications/WorkSheets/WSFunctionEditor.js"></script>
+        <script src="/System/Applications/WorkSheets/WSElement.js"></script>
+        <script src="/System/Applications/WorkSheets/WSEParagraph.js"></script>
+        <script src="/System/Applications/WorkSheets/WSELine.js"></script>
+        <script src="/System/Applications/WorkSheets/WSESpan.js"></script>
+        <script src="/System/Applications/WorkSheets/WSEBox.js"></script>
+        <script src="/System/Applications/WorkSheets/WSEProblemBox.js"></script>
+        <script src="/System/Applications/WorkSheets/WSResizer.js"></script>
+        <script src="/System/Applications/WorkSheets/WSCaret.js"></script>
+        <script src="/System/Applications/WorkSheets/WSUnityper.js"></script>
+        <script src="/System/Applications/WorkSheets/WSSelection.js"></script>
+        <script src="/System/Applications/WorkSheets/WSEFunction.js"></script>
+        <script src="/System/Applications/WorkSheets/WSEImage.js"></script>
+        <script src="/System/Applications/WorkSheets/WSInspector.js"></script>
+        <script src="/System/Applications/WorkSheets/WSIView.js"></script>
+        <script src="/System/Applications/WorkSheets/WSIBlankView.js"></script>
+        <script src="/System/Applications/WorkSheets/WSEditor.js"></script>
+        <script src="/System/Applications/WorkSheets/WSEScreen.js"></script>
+        <script src="/System/Applications/WorkSheets/WSSPage.js"></script>
+        <script src="/System/Applications/WorkSheets/WSSTabView.js"></script>
+        <script src="/System/Applications/WorkSheets/WSEPaper.js"></script>
+        <script src="/System/Applications/WorkSheets/WSToolbar.js"></script>
+        <script src="/System/Applications/WorkSheets/WSTemplateView.js"></script>
+        <script src="/System/Applications/WorkSheets/WSTemplateItem.js"></script>
+        <script src="/System/Applications/WorkSheets/WSSElementContainer.js"></script>
+        <script src="/System/Applications/WorkSheets/WSSProblemBox.js"></script>
+        <script src="/System/Applications/WorkSheets/WSIScreenProblem.js"></script>
+        <script src="/System/Applications/WorkSheets/WSIText.js"></script>
+        <script src="/System/Applications/WorkSheets/WSResourceManager.js"></script>
+        <script src="/System/Applications/WorkSheets/Problems/Problems.js"></script>
+
+        <script src="/System/Applications/Terminal/Terminal.js"></script>
+        <script src="/System/Applications/Terminal/CMDLine.js"></script>
+        <script src="/System/Applications/Terminal/CMDTyper.js"></script>
+        <script src="/System/Applications/Terminal/DeskShell.js"></script>
+        <script src="/System/Applications/Terminal/InteractiveJS.js"></script>
+
+        <script src="/System/Applications/TextEditor/TextEditor.js"></script>
+
+        <script src="/System/Applications/DocReader/DocReader.js"></script>
+        <script src="/System/Applications/DocReader/DRToolbox.js"></script>
+        <script src="/System/Applications/DocReader/DRWordInfoView.js"></script>
+        <script src="/System/Applications/DocReader/DRLineInfoView.js"></script>
+        <script src="/System/Applications/DocReader/DRMatchDict.js"></script>
+        <script src="/System/Applications/DocReader/DRChoiceView.js"></script>
+        <script src="/System/Applications/DocReader/DRChoiceViewCell.js"></script>
+        <script src="/System/Applications/DocReader/DRToolbar.js"></script>
+        <script src="/System/Applications/DocReader/DRDocView.js"></script>
+        <script src="/System/Applications/DocReader/DRThumbnailCell.js"></script>
+        <script>
+            //Wait until whole page to load, than initialize
+            window.onload = function () {
+                Desk.init();
+                Secretary.currentUser = new User(4, "qlqhwb");
+                Secretary.serverType = "Kitura";
+                Secretary.init();
+
+                //Secretary.analysisURL();
+            };
+        </script>
+    </head>
+    <body></body>
+</html>

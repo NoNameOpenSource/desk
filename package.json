@@ -1,0 +1,34 @@
+{
+    "name": "@nonameopensource/desk",
+    "version": "0.0.8",
+    "description": "Desk User Interface",
+    "main": "dist/index.js",
+    "types": "types/index.d.ts",
+    "scripts": {
+        "compile": "rm -rf dist && rm -rf types && tsc",
+        "watch": "tsc -w true",
+        "prepack": "npm run compile",
+        "fix": "prettier --config .prettierrc.yml 'System/**/*.ts' --write"
+    },
+    "config": {
+        "fund": false
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/NoNameOpenSource/desk.git"
+    },
+    "author": "NoNameOpenSource Team",
+    "bugs": {
+        "url": "https://github.com/NoNameOpenSource/desk/issues"
+    },
+    "homepage": "https://github.com/NoNameOpenSource/desk#readme",
+    "devDependencies": {
+        "@tsconfig/node16": "^1.0.2",
+        "prettier": "^2.5.1",
+        "typescript": "^4.6.2"
+    },
+    "engines": {
+        "node": "16",
+        "npm": "8"
+    }
+}
