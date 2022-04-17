@@ -3,10 +3,10 @@ import { DIView } from "./DIView";
 export class DIVideoPlayer extends DIView {
     videoBody: HTMLVideoElement;
     autoplay: boolean;
-    _src: any;
-    sourceBody: any;
-    _ratio: any;
-    _opRatio: any;
+    _src: string;
+    sourceBody: HTMLElement;
+    _ratio: number;
+    _opRatio: number;
 
     constructor(video: any, autoplay: any, className?: string, idName?: string) {
         if (!className) className = "DIVideoPlayer";
@@ -21,8 +21,8 @@ export class DIVideoPlayer extends DIView {
         this.body.appendChild(this.videoBody);
     }
 
-    play() {
-        this.videoBody.play();
+    async play() {
+        await this.videoBody.play();
     }
 
     pause() {
@@ -58,7 +58,7 @@ export class DIVideoPlayer extends DIView {
     set videoSource(value) {
         this._src = value;
         if (!this.sourceBody) {
-            // this currently suporting mp4 only
+            // this currently supports mp4 only
             this.sourceBody = document.createElement("SOURCE");
             this.sourceBody.setAttribute("type", "video/mp4");
             this.videoBody.appendChild(this.sourceBody);

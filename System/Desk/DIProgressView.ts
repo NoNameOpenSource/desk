@@ -2,8 +2,8 @@ import { DIView } from "./DIView";
 
 export class DIProgressView extends DIView {
     progressBody: HTMLElement;
-    _total: any;
-    _completed: any;
+    _total: number;
+    _completed: number;
     _progress: number;
 
     constructor(className?: string, idName?: string) {
@@ -16,7 +16,7 @@ export class DIProgressView extends DIView {
 
     updateProgress() {
         if (this._total && this._completed) {
-            if (this._total == 0) {
+            if (this._total === 0) {
                 this.progress = 100;
                 return;
             }

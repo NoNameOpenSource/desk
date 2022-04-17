@@ -1,12 +1,12 @@
 import { DeskEvent } from "../Secretary/DeskEvent";
 import { Secretary } from "../Secretary/Secretary";
-import { WorkSpace } from "../Secretary/WorkSpace";
 import { DeskMenu } from "./DeskMenu";
 import { DIAlertView } from "./DIAlertView";
 import { DIImageView } from "./DIImageView";
 import { DILabel } from "./DILabel";
 import { DIListView } from "./DIListView";
 import { DIListViewCell } from "./DIListViewCell";
+import { DIResizableWindow } from "./DIResizableWindow";
 import { DIView } from "./DIView";
 import { DIWorkSpaceDock } from "./DIWorkSpaceDock";
 
@@ -37,7 +37,7 @@ export class Desk {
 
     windows: any[];
     windowsIndex = 11;
-    currentWindow: WorkSpace;
+    currentWindow: DIResizableWindow;
 
     cursor;
 
@@ -463,7 +463,7 @@ export class Desk {
     }
     */
 
-    closeWindow(window: WorkSpace) {
+    closeWindow(window: DIResizableWindow) {
         if (window === this.deskInstance.currentWindow) this.deskInstance.currentWindow = null;
         window.delete();
         window = null;
@@ -517,7 +517,7 @@ export class Desk {
 
     alertError(titleText: string, errorMsg: string, func: () => void) {
         this.alertScreen.hidden = false;
-        let alert = new DIAlertView(titleText, false, "DIAlertView");
+        let alert = new DIAlertView(titleText, undefined, "DIAlertView");
         alert.useTextArea(errorMsg);
         this.alerts.push(alert);
         // @ts-ignore window.body does not exist

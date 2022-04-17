@@ -5,8 +5,8 @@ import { DIView } from "./DIView";
  * Cell for the view
  */
 export class DIPopUpCell extends DIView {
-    className: any;
-    name: any;
+    className: string;
+    name: DILabel;
 
     constructor(name: string, className?: string, idName?: string) {
         if (!className) className = "DIPopUpCell";

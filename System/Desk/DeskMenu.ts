@@ -1,6 +1,7 @@
 import { Secretary } from "../Secretary/Secretary";
 import { DeskMenuListViewCell } from "./DeskMenuListViewCell";
 import { DIDragListView } from "./DIDragListView";
+import { DIListView } from "./DIListView";
 import { DIView } from "./DIView";
 
 export class DeskMenu extends DIView {
@@ -12,7 +13,7 @@ export class DeskMenu extends DIView {
     // TODO: type
     contextMenu: any;
     // TODO: type
-    contextList: any;
+    contextList: any[];
 
     constructor() {
         super(null, "DeskMenu");
@@ -43,13 +44,13 @@ export class DeskMenu extends DIView {
 
     // ListView Delegate Section
     numberOfRows(listView: DIDragListView) {
-        if (listView == this.listView) return this.secretary.appList.length;
-        if (listView == this.contextMenu) return this.contextList.length;
+        if (listView === this.listView) return this.secretary.appList.length;
+        if (listView === this.contextMenu) return this.contextList.length;
     }
 
     cellAtRow(listView: DIDragListView, row: number) {
-        if (listView == this.listView) {
-            var cell = new DeskMenuListViewCell();
+        if (listView === this.listView) {
+            const cell = new DeskMenuListViewCell();
             cell.width = this.width - 32;
             cell.name.stringValue = this.secretary.appList[row];
             cell.icon.imageSource = "/System/Secretary/AppIcon/" + this.secretary.appList[row] + ".png";
@@ -57,10 +58,13 @@ export class DeskMenu extends DIView {
         }
     }
 
-    listDidSelectRowAtIndex(listView: DIDragListView, index: number) {
-        if (listView == this.listView) {
+    listDidSelectRowAtIndex(listView: DIListView, index: number) {
+        if (listView === this.listView) {
             if (index >= 0) {
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 listView.deselectAll();
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 this.secretary.mainWorkSpace.loadApp(this.secretary.appList[index], []);
             }
         }
@@ -69,18 +73,19 @@ export class DeskMenu extends DIView {
     /**
      * @todo remove this function or finish it
      */
-    listDidHighlightedCells(listView: any, selecte: boolean) {}
+    // eslint-disable-next-line @typescript-eslint/naming-convention,class-methods-use-this
+    listDidHighlightedCells(_listView: any, _selecte: DIView) {}
 
     get width() {
         if (!this._width) this._width = this.body.offsetWidth;
         return this._width;
     }
 
-    set width(value) {
+    set width(value: number) {
         this._width = value;
-        this.body.style.width = "".concat(value, "px");
-        var i = 0;
-        var width = value - 32;
+        this.body.style.width = "".concat(`${value}`, "px");
+        let i = 0;
+        const width = value - 32;
         for (; i < this.listView.children.length; i++) {
             this.listView.children[i].width = width;
         }

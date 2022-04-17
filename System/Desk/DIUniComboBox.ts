@@ -8,14 +8,14 @@ import { DIView } from "./DIView";
  * This is better version of DIComboBox to support international languages that uses combinations of characters to type
  */
 export class DIUniComboBox extends DIView {
-    items: any[];
-    filtered: any[];
-    searchedItems: any[];
+    items: string[];
+    filtered: string[];
+    searchedItems: string[];
     escapeKey: boolean;
     oldString: string;
     _usingHint: boolean;
     color: string;
-    dropDownView: any;
+    dropDownView: DIListView;
     searching: boolean;
     listRequested: boolean;
     dropDownViewTriggered: boolean;
@@ -24,10 +24,11 @@ export class DIUniComboBox extends DIView {
     selectedBody: any;
     english: boolean;
     useDataSource: any;
-    keyEvent: any;
-    event: any;
+    /** @todo rename to keyEventCode or something that doesn't make this sound like an event itself */
+    keyEvent: number;
+    event: DeskEvent;
     _window: any;
-    _editable: any;
+    _editable: boolean;
     desk: Desk;
 
     constructor(className?: string, idName?: string, inputClass?: string, selectClass?: string, inputId?: string, selectId?: string) {
@@ -58,9 +59,9 @@ export class DIUniComboBox extends DIView {
 
         this.editable = true;
 
-        this.items = new Array();
-        this.filtered = new Array();
-        this.searchedItems = new Array();
+        this.items = [];
+        this.filtered = [];
+        this.searchedItems = [];
 
         this.escapeKey = true;
 
@@ -69,7 +70,9 @@ export class DIUniComboBox extends DIView {
         this.color = "#000";
 
         this.dropDownView = new DIListView(false, false, 2, "DIComboBoxDropDown");
+        // @ts-ignore
         this.dropDownView.dataSource = this;
+        // @ts-ignore
         this.dropDownView.delegate = this;
         this.dropDownView.hidden = true;
         this.addChildView(this.dropDownView);
@@ -104,7 +107,7 @@ export class DIUniComboBox extends DIView {
             this.dropDownViewTriggered = false;
         } else {
             if (this.editable) {
-                if (this.stringValue === "" && this.items.length != this.searchedItems.length) this.searchedItems = this.items.slice();
+                if (this.stringValue === "" && this.items.length !== this.searchedItems.length) this.searchedItems = this.items.slice();
                 this.dropDownViewTriggered = true;
                 this.dropDownView.hidden = false;
                 this.dropDownView.reloadData();
@@ -126,27 +129,27 @@ export class DIUniComboBox extends DIView {
     }
 
     cellAtRow(listView: any, row: any) {
-        var cell = new DIPopUpCell(this.searchedItems[row]);
+        const cell = new DIPopUpCell(this.searchedItems[row]);
         cell.height = this.cellHeight;
         return cell;
     }
 
     numberOfRows(listView: any) {
-        if (this.searchedItems.length == 0) listView.hidden = true;
+        if (this.searchedItems.length === 0) listView.hidden = true;
         else listView.hidden = false;
         return this.searchedItems.length;
     }
 
     listDidSelectRowAtIndex(listView: any, index: any) {
-        if (index == -1) this.triggerDropDownView();
+        if (index === -1) this.triggerDropDownView();
         else {
             this.stringValue = this.searchedItems[index];
             this.usingHint = false;
             this.textBody.focus();
-            var range = document.createRange();
+            const range = document.createRange();
             range.setStart(this.textBody.firstChild, 0);
             range.setEnd(this.textBody.firstChild, this.stringValue.length);
-            var sel = window.getSelection();
+            const sel = window.getSelection();
             sel.removeAllRanges();
             sel.addRange(range);
             this.triggerDropDownView();
@@ -158,7 +161,7 @@ export class DIUniComboBox extends DIView {
     // Input Handlers
 
     mouseDown(evt: any) {
-        var body = this.body.getBoundingClientRect();
+        const body = this.body.getBoundingClientRect();
         if (evt.clientX < body.left || evt.clientX > body.right) {
             this.putInSleep();
             return;
@@ -168,7 +171,7 @@ export class DIUniComboBox extends DIView {
             return;
         }
         if (this.dropDownViewTriggered) {
-            var height = this.searchedItems.length < 5 ? this.cellHeight * this.searchedItems.length : this.cellHeight * 5;
+            const height = this.searchedItems.length < 5 ? this.cellHeight * this.searchedItems.length : this.cellHeight * 5;
             if (this.dropDownView.body.style.bottom === "") {
                 if (evt.clientY > body.bottom + height || evt.clientY < body.top) {
                     this.putInSleep();
@@ -195,25 +198,25 @@ export class DIUniComboBox extends DIView {
         } else this.usingHint = false;
     }
 
-    keyDown(evt: any) {
-        if (evt.keyCode == 8 || evt.keyCode == 46) {
+    keyDown(evt: KeyboardEvent) {
+        if (evt.keyCode === 8 || evt.keyCode === 46) {
             // Backspace & Delete
             this.escapeKey = true;
             if (this.usingHint) {
                 evt.preventDefault();
                 this.usingHint = false;
             }
-        } else if (evt.keyCode == 39) {
+        } else if (evt.keyCode === 39) {
             // Right Arrow
             if (this.usingHint) {
                 this.stringValue = this.stringValue + this.selectedBody.textContent;
                 this.usingHint = false;
                 this.textBody.focus();
-                var sel = window.getSelection();
+                const sel = window.getSelection();
                 sel.collapse(this.textBody.firstChild, this.stringValue.length);
                 evt.preventDefault();
             }
-        } else if (evt.keyCode == 40) {
+        } else if (evt.keyCode === 40) {
             // Down Arrow
             if (this.dropDownViewTriggered) {
                 this.dropDownView.moveSelection(1);
@@ -223,19 +226,19 @@ export class DIUniComboBox extends DIView {
                 if (this.usingHint) this.dropDownView.highlightCellAtIndex(0);
             }
             if (this.usingHint) {
-                var start = this.stringValue.length;
+                const start = this.stringValue.length;
                 this.stringValue = this.stringValue + this.selectedBody.textContent;
                 this.usingHint = false;
                 this.textBody.focus();
-                var range = document.createRange();
+                const range = document.createRange();
                 range.setStart(this.textBody.firstChild, start);
                 range.setEnd(this.textBody.firstChild, this.stringValue.length);
-                var sel = window.getSelection();
+                const sel = window.getSelection();
                 sel.removeAllRanges();
                 sel.addRange(range);
                 evt.preventDefault();
             }
-        } else if (evt.keyCode == 38) {
+        } else if (evt.keyCode === 38) {
             // Up Arrow
             if (this.dropDownViewTriggered) {
                 this.dropDownView.moveSelection(-1);
@@ -245,11 +248,11 @@ export class DIUniComboBox extends DIView {
                 this.stringValue = this.stringValue + this.selectedBody.textContent;
                 this.usingHint = false;
                 this.textBody.focus();
-                var sel = window.getSelection();
+                const sel = window.getSelection();
                 sel.collapse(this.textBody.firstChild, 0);
                 evt.preventDefault();
             }
-        } else if (evt.keyCode == 13) {
+        } else if (evt.keyCode === 13) {
             // Enter Key
             if (this.dropDownViewTriggered) {
                 this.listDidSelectRowAtIndex(this.dropDownView, this.dropDownView.selectedIndex);
@@ -257,37 +260,37 @@ export class DIUniComboBox extends DIView {
                 this.stringValue = this.stringValue + this.selectedBody.textContent;
                 this.usingHint = false;
                 this.textBody.focus();
-                var sel = window.getSelection();
+                const sel = window.getSelection();
                 sel.collapse(this.textBody.firstChild, this.stringValue.length);
             }
             evt.preventDefault();
-        } else if (evt.keyCode == 9) {
+        } else if (evt.keyCode === 9) {
             // Tab key
             this.putInSleep();
             // @ts-ignore TODO: bug
-        } else if (event.keyCode == 91 || event.keyCode == 93) {
+        } else if (event.keyCode === 91 || event.keyCode === 93) {
             // CMD key
             if (this.usingHint) {
-                var start = this.stringValue.length;
+                const start = this.stringValue.length;
                 this.stringValue = this.stringValue + this.selectedBody.textContent;
                 this.usingHint = false;
                 this.textBody.focus();
-                var range = document.createRange();
+                const range = document.createRange();
                 range.setStart(this.textBody.firstChild, start);
                 range.setEnd(this.textBody.firstChild, this.stringValue.length);
-                var sel = window.getSelection();
+                const sel = window.getSelection();
                 sel.removeAllRanges();
                 sel.addRange(range);
                 evt.preventDefault();
             }
-        } else if (evt.keyCode == 37) {
+        } else if (evt.keyCode === 37) {
             // Left key
             if (this.usingHint) {
-                var start = this.stringValue.length;
+                const start = this.stringValue.length;
                 this.stringValue = this.stringValue + this.selectedBody.textContent;
                 this.usingHint = false;
                 this.textBody.focus();
-                var sel = window.getSelection();
+                const sel = window.getSelection();
                 sel.collapse(this.textBody.firstChild, start);
                 evt.preventDefault();
             }
@@ -301,18 +304,18 @@ export class DIUniComboBox extends DIView {
 
     searchHints() {
         this.searching = true;
-        var founded = false;
+        let founded = false;
         this.searchedItems.length = 0;
-        var i = 0;
-        var inpputed = this.english ? this.stringValue.toLowerCase() : this.stringValue;
+        let i = 0;
+        const inpputed = this.english ? this.stringValue.toLowerCase() : this.stringValue;
         if (!this.escapeKey) {
             for (; i < this.filtered.length; i++) {
                 if (this.filtered[i].indexOf(inpputed) === 0) {
-                    var start = this.stringValue.length;
+                    const start = this.stringValue.length;
                     this.selectedBody.textContent = this.items[i].substr(start);
                     if (this.english) {
                         this.stringValue = this.items[i].substr(0, start);
-                        var sel = window.getSelection();
+                        const sel = window.getSelection();
                         sel.collapse(this.textBody.firstChild, this.stringValue.length);
                     }
                     this.searchedItems.push(this.items[i]);
@@ -330,14 +333,15 @@ export class DIUniComboBox extends DIView {
             }
         }
         this.searching = false;
-        if (this.listRequested) this.searchingDone();
+        if (this.listRequested) DIUniComboBox.searchingDone();
         if (this.dropDownViewTriggered) this.dropDownView.reloadData();
     }
-    searchingDone() {
+
+    static searchingDone() {
         throw new Error("Method not implemented.");
     }
 
-    addItem(item: any) {
+    addItem(item: string) {
         if (this.useDataSource) {
         } else {
             this.items.push(item);
@@ -346,7 +350,10 @@ export class DIUniComboBox extends DIView {
     }
 
     addItems() {
-        for (var i = 0; i < arguments.length; i++) this.addItem(arguments[i]);
+        // eslint-disable-next-line prefer-rest-params
+        for (const argument of arguments) {
+            this.addItem(<string>argument);
+        }
     }
 
     putInSleep() {
@@ -391,7 +398,7 @@ export class DIUniComboBox extends DIView {
     }
 
     set usingHint(value) {
-        if (this._usingHint == value) return;
+        if (this._usingHint === value) return;
         this._usingHint = value;
         if (this._usingHint) {
             this.textBody.style.color = "transparent";

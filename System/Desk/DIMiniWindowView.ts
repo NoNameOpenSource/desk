@@ -1,3 +1,4 @@
+import { Application } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
 import { Desk } from "./Desk";
 import { DIImageView } from "./DIImageView";
@@ -7,12 +8,12 @@ import { DIView } from "./DIView";
 export class DIMiniWindowView extends DIView {
     titleBar: DIView;
     titleSize: any;
-    titleField: any;
-    closeButton: any;
+    titleField: DIView;
+    closeButton: DIImageView;
     title: string;
     titleBarOptions: number;
     resize: boolean;
-    delegate: any;
+    delegate: Application;
     desk: Desk;
 
     constructor(className: string, idName: string, title: string, x: number, y: number, width: number, height: number, titleBarOptions = 0) {
@@ -24,7 +25,8 @@ export class DIMiniWindowView extends DIView {
         if (titleBarOptions < 5) {
             this.titleBar = new DIView("DIWindowTitleBar");
             this.titleBar.height = this.titleSize;
-            // @ts-ignore TODO: type body better?
+            // @ts-ignore TODO: maybe appendChild?
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.body.addChildView(titleBar.titleBar);
             this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
             // Add title to titleBar
@@ -32,6 +34,7 @@ export class DIMiniWindowView extends DIView {
                 this.titleField = new DILabel(title, "DIWindowTitle");
                 this.titleBar.addChildView(this.titleField);
                 if (titleBarOptions < 2) {
+                    // TODO: why is something called "closeButton" a DIImageView?
                     this.closeButton = new DIImageView(this.desk.getDeskUI["CloseButton"], "DIWindowButton");
                     this.closeButton.events.push(new DeskEvent(this.closeButton.imageBody, "click", this.close.bind(this)));
                     this.titleBar.addChildView(this.closeButton);
@@ -50,16 +53,18 @@ export class DIMiniWindowView extends DIView {
         if (titleBarOptions) this.titleBarOptions = titleBarOptions;
     }
 
-    mouseDown(evt: any) {
+    mouseDown(evt: MouseEvent) {
         //if(evt.button == 0) { // If primary button
         // Convert coord.
-        var x = evt.clientX - this.x;
-        var y = evt.clientY - this.y - 28;
+        const x = evt.clientX - this.x;
+        const y = evt.clientY - this.y - 28;
         this.desk.bringWindowFront(this);
         if (this.resize && (x < 5 || x > this.width - 5)) {
             // Resizing window in X
         } else if (y < 20) {
             // TitleBar got clicked
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             evt.preventDefault(); // Disable text selection
             //!-----------
             //Desk.beginWindowDrag(this, evt.clientX, evt.clientY);

@@ -6,7 +6,7 @@ import { DIButton } from "./DIButton";
  */
 export class DIUploadButton extends DIButton {
     inputBody: HTMLInputElement;
-    buttonEvent: any;
+    buttonEvent: DeskEvent;
 
     constructor(text: string, className?: string, idName?: string) {
         super(text, className, idName);

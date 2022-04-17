@@ -1,4 +1,7 @@
 import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskMenu } from "./DeskMenu";
+import { DIListViewCell } from "./DIListViewCell";
+import { DIListViewDataSource } from "./DIListViewDataSource";
 import { DIView } from "./DIView";
 
 /**
@@ -8,15 +11,16 @@ import { DIView } from "./DIView";
  * @property dataSource		: Object that will provide data to make list
  */
 export class DIListView extends DIView {
-    dataSource;
-    delegate;
+    dataSource: DIListViewDataSource;
+    delegate: DeskMenu;
     cellClickType: number;
     event: DeskEvent;
     cellHeight: number;
     selectedIndex: number;
     reloadTicket: number;
     moveEvent: number;
-    selected: any;
+    selected: DIListViewCell;
+    children: DIListViewCell[];
 
     // TODO: create an enum for cellClickType
     // TODO: type dataSource and delegate
@@ -30,10 +34,10 @@ export class DIListView extends DIView {
         }
         if (delegate) this.delegate = delegate;
         this.cellClickType = cellClickType;
-        if (cellClickType == 0) {
-        } else if (cellClickType == 1) {
+        if (cellClickType === 0) {
+        } else if (cellClickType === 1) {
             this.event = new DeskEvent(this.body, "click", this.clicked.bind(this));
-        } else if (cellClickType == 2) {
+        } else if (cellClickType === 2) {
             this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
         }
         this.cellHeight = 0;
@@ -58,7 +62,7 @@ export class DIListView extends DIView {
 
     mouseDown(evt: any) {
         //evt.preventDefault();
-        if (evt.button == 0) {
+        if (evt.button === 0) {
             this.highlightCellAtIndex(Math.floor((this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight));
             this.moveEvent = this.events.length;
             // @ts-ignore TODO: not sure how to fix this
@@ -66,19 +70,20 @@ export class DIListView extends DIView {
             document.documentElement.style.cursor = "default";
             this.events.push(new DeskEvent(document, "mousemove", this.mouseMove.bind(this)));
             this.events.push(new DeskEvent(document, "mouseup", this.mouseUp.bind(this)));
-        } else if (evt.button == 2) {
+        } else if (evt.button === 2) {
         }
     }
 
     mouseMove(evt: any) {
-        var body = this.body.getBoundingClientRect();
+        const body = this.body.getBoundingClientRect();
         if (evt.clientX > body.left && evt.clientX < body.right) {
             // If y is higher than top, top becomes y. If y is lower than bottom, bottom becomes y.
-            var y = evt.clientY < body.bottom ? (evt.clientY > body.top ? evt.clientY : body.top) : body.bottom - 1;
+            const y = evt.clientY < body.bottom ? (evt.clientY > body.top ? evt.clientY : body.top) : body.bottom - 1;
             this.highlightCellAtIndex(Math.floor((this.body.scrollTop + y - body.top) / this.cellHeight));
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     mouseUp(evt: any) {
         this.events[this.moveEvent].delete();
         document.documentElement.style.cursor = "";
@@ -90,7 +95,7 @@ export class DIListView extends DIView {
     }
 
     highlightCellAtIndex(index: number) {
-        if (this.selected == this.children[index]) return false;
+        if (this.selected === this.children[index]) return false;
         if (index < 0 || index >= this.children.length) return false;
         if (this.selected) {
             this.selected.deselect();
@@ -105,7 +110,7 @@ export class DIListView extends DIView {
     }
 
     moveSelection(amount: number) {
-        var index = this.selected ? this.selectedIndex + amount : 0;
+        const index = this.selected ? this.selectedIndex + amount : 0;
         if (index < 0 || index >= this.children.length) return false;
         if (this.selected) {
             this.selected.deselect();
@@ -121,26 +126,31 @@ export class DIListView extends DIView {
     /**
      * @param name id of the custom cell to call
      * @returns New custom cell object
+     *
+     * @todo finish this method or remove it
      */
-    getCustomCellById(name: string) {}
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    static getCustomCellById(name: string) {}
 
     /**
      * Clear existing cells, and update it
      */
     reloadData() {
         this.reloadTicket += 1;
-        var ticket = this.reloadTicket;
+        const ticket = this.reloadTicket;
         this.clearChildViews();
         this.selected = null;
         this.selectedIndex = -1;
-        var length = this.dataSource.numberOfRows(this);
-        for (var i = 0; i < length; i++) {
-            if (this.reloadTicket == ticket) this.addChildView(this.dataSource.cellAtRow(this, i));
+        const length = this.dataSource.numberOfRows(this);
+        for (let i = 0; i < length; i++) {
+            if (this.reloadTicket === ticket) this.addChildView(this.dataSource.cellAtRow(this, i));
             else break;
         }
     }
 
-    clicked(evt: any) {
+    clicked(evt: MouseEvent) {
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         evt.preventDefault();
         this.didSelectRowAtIndex(Math.floor((this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight));
         return false;
@@ -163,7 +173,7 @@ export class DIListView extends DIView {
     }
 
     delete() {
-        if (this.cellClickType == 1) {
+        if (this.cellClickType === 1) {
             if (this.event) {
                 this.event.delete();
                 this.event = null;

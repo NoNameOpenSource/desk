@@ -6,12 +6,12 @@ import { DIView } from "./DIView";
 export class DITextArea extends DIView {
     private _editable: boolean;
 
-    constructor(placeHolder: any, editable: boolean, className?: string, idName?: string) {
+    constructor(placeHolder: string, editable: boolean, className?: string, idName?: string) {
         if (!className) className = "DITextField";
         super(className, idName);
         this.canHaveChild = false;
         // @ts-ignore TODO: bug
-        this.textBody = <HTMLTextAreaElement>document.createElement("textarea");
+        this.textBody = document.createElement("textarea");
         if (placeHolder) this.textBody.setAttribute("placeholder", placeHolder);
         this._editable = true;
         if (editable === false) {

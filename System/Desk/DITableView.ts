@@ -15,8 +15,8 @@ export class DITableView extends DIView {
         if (dataSource) this.dataSource = dataSource;
         if (delegate) this.delegate = delegate;
 
-        this.columns = new Array();
-        this.rows = new Array();
+        this.columns = [];
+        this.rows = [];
 
         this.tableBody = document.createElement("table");
         this.headerBody = document.createElement("tr");
@@ -26,6 +26,7 @@ export class DITableView extends DIView {
         this.numberOfRows = 0;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     clearTable() {}
 
     reloadData() {
@@ -33,11 +34,13 @@ export class DITableView extends DIView {
             return;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.numberOfRows = this.dataSource.numberOfRows(this);
         for (let i = 0; i < this.numberOfRows; i++) {
             this.addRow();
-            for (let j = 0; j < this.columns.length; j++) {
-                let cell = this.dataSource.cellAtColRow(this, this.columns[j], i);
+            for (const column of this.columns) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                const cell = this.dataSource.cellAtColRow(this, column, i);
                 this.tableBody.children[i + 1].appendChild(cell.body);
             }
         }
@@ -45,13 +48,13 @@ export class DITableView extends DIView {
 
     addColumn(tableColumn: any) {
         this.columns.push(tableColumn);
-        let th = document.createElement("th");
+        const th = document.createElement("th");
         th.innerText = tableColumn.name;
         this.headerBody.appendChild(th);
     }
 
     addRow() {
-        let tr = document.createElement("tr");
+        const tr = document.createElement("tr");
         this.tableBody.appendChild(tr);
     }
 
@@ -59,6 +62,7 @@ export class DITableView extends DIView {
         if (!this.delegate || !this.delegate.tableCellClicked) {
             return true;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-call
         return this.delegate.tableViewCellClicked(cell);
     }
 
@@ -66,6 +70,7 @@ export class DITableView extends DIView {
         if (!this.delegate || !this.delegate.tableCellUpdated) {
             return true;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return,@typescript-eslint/no-unsafe-call
         return this.delegate.tableCellUpdated(cell);
     }
 
@@ -73,5 +78,6 @@ export class DITableView extends DIView {
      * @todo finish function or remove
      * @todo use or remove this function
      */
+    // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
     mouseDown(evt: any) {}
 }

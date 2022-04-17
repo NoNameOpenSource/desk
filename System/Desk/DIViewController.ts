@@ -1,11 +1,13 @@
+import { DIView } from "./DIView";
+
 /**
  * This class is controller for the 'View' class
  */
 export class DIViewController {
     app: any;
-    private _view: any;
+    private _view: DIView;
     /** Array of child views of this view */
-    private _child: any;
+    private _child: DIViewController;
 
     constructor(view: any) {
         this.app;
@@ -29,7 +31,7 @@ export class DIViewController {
 
     set child(vc) {
         this._child = vc;
-        if (vc != null) {
+        if (vc !== null) {
             this._child.app = this.app;
             //this._child.parent = this;
         }
@@ -41,8 +43,9 @@ export class DIViewController {
 
     set view(view) {
         this._view = view;
-        if (view != null) {
+        if (view !== null) {
             this.view._controller = this;
+            // @ts-ignore
             view.parent = this;
         }
     }
