@@ -5,26 +5,25 @@ import { DeskAnimation, DeskEvent } from "../Secretary";
  */
 export class DIView {
     textBody: HTMLInputElement;
-
     canHaveChild = true;
     /** Array of child views of this view */
     children: DIView[];
     parent: DIView;
-    /** x coordinate */
-    _x = 0;
-    /** y coordinate */
-    _y = 0;
-    _width: number;
-    _height: number;
-    _inSleep;
-    _controller: any = null;
     onDesk = false;
     /** Body of the view as HTML element */
     body: HTMLElement;
     events: DeskEvent[];
     animations: DeskAnimation[];
-    _hidden: boolean;
     deleted: boolean;
+
+    /** x coordinate */
+    protected _x = 0;
+    /** y coordinate */
+    protected _y = 0;
+    protected _width: number;
+    protected _height: number;
+    private _hidden: boolean;
+    private _inSleep: boolean;
 
     /**
      * @todo accept only a string for className and idName params and pass undefined instead of false when necessary

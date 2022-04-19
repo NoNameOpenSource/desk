@@ -11,7 +11,7 @@ export class DISimpleAlertView extends DIView {
     autoHeight: boolean;
     buttons: DIButton[];
     alertContent: DILabel;
-    icon: any;
+    icon: DIView;
     _useTextArea: boolean;
     textArea: DIView;
 

@@ -10,9 +10,9 @@ import { DIView } from "./DIView";
 /**
  * Window class for the system
  */
-export class DIWindow {
+export class DIWindow extends DIView {
     /** This view's child view */
-    child: DIWindow;
+    child: DIView;
     parent: any;
     events: DeskEvent[];
     deleted: boolean;
@@ -35,16 +35,12 @@ export class DIWindow {
     inSleep: boolean;
     titleBar: DIView;
 
-    /** x coordinate */
-    private _x: number;
-    /** y coordinate */
-    private _y: number;
     private _z: number;
-    private _width: number;
-    private _height: number;
     private _title: string;
 
     constructor(className?: string, idName?: string, title?: string, x?: number, y?: number, width?: number, height?: number, titleBarOptions = 0) {
+        super(className, idName);
+
         this.secretary = Secretary.getInstance();
         this.desk = Desk.getInstance();
         this.child;
@@ -177,7 +173,7 @@ export class DIWindow {
         this.cursor = cursor;
     }
 
-    setChildView(child: DIWindow) {
+    setChildView(child: DIView) {
         this.child = child;
         this.body.appendChild(child.body);
         child.parent = this;
