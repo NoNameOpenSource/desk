@@ -83,7 +83,7 @@ export class DeskMenu extends DIView {
 
     set width(value: number) {
         this._width = value;
-        this.body.style.width = "".concat(`${value}`, "px");
+        this.body.style.width = `${value}px`;
         let i = 0;
         const width = value - 32;
         for (; i < this.listView.children.length; i++) {

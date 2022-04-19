@@ -66,7 +66,7 @@ export class DISwitch extends DIView {
 
     set width(value) {
         this._width = value;
-        this.buttonBody.style.width = "".concat(`${value}`, "px");
+        this.buttonBody.style.width = `${value}px`;
     }
 
     delete() {

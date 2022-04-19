@@ -31,7 +31,7 @@ export class DIProgressView extends DIView {
     set progress(value) {
         if (value < 0) value = 0;
         if (value > 100) value = 100;
-        this.progressBody.style.width = "".concat(`${value}`, "%");
+        this.progressBody.style.width = `${value}%`;
         this._progress = value;
     }
 

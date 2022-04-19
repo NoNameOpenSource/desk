@@ -237,7 +237,7 @@ export class DIWindow {
 			value=Desk.screenWidth-20;
 			*/
         this._x = value;
-        this.body.style.left = "".concat(`${value}`, "px");
+        this.body.style.left = `${value}px`;
     }
 
     get y() {
@@ -247,7 +247,7 @@ export class DIWindow {
     set y(value) {
         if (value < -this.height) value = -this.height;
         this._y = value;
-        this.body.style.bottom = "".concat(`${value}`, "px");
+        this.body.style.bottom = `${value}px`;
     }
 
     get z() {
@@ -267,7 +267,7 @@ export class DIWindow {
         this._width = value;
         this.titleBar.width = value;
         if (this.child) this.child.width = value;
-        this.body.style.width = "".concat(`${value}`, "px");
+        this.body.style.width = `${value}px`;
     }
 
     get height() {

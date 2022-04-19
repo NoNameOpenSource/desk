@@ -53,7 +53,7 @@ export class DIButton extends DIView {
 
     set width(value: number) {
         this._width = value;
-        this.buttonBody.style.width = "".concat(`${value}`, "px");
+        this.buttonBody.style.width = `${value}px`;
     }
 
     delete() {

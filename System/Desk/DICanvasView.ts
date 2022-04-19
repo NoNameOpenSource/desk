@@ -23,7 +23,7 @@ export class DICanvasView extends DIView {
 
     didMoveToDesk() {
         super.didMoveToDesk();
-        this.canvasBody.style.width = "".concat(`${this._width}`, "px");
-        this.canvasBody.style.height = "".concat(`${this._height}`, "px");
+        this.canvasBody.style.width = `${this._width}px`;
+        this.canvasBody.style.height = `${this._height}px`;
     }
 }

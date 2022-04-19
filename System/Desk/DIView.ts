@@ -133,7 +133,7 @@ export class DIView {
 
     set x(value) {
         this._x = value;
-        this.body.style.left = "".concat(`${value}`, "px");
+        this.body.style.left = `${value}px`;
     }
 
     get y() {
@@ -142,7 +142,7 @@ export class DIView {
 
     set y(value) {
         this._y = value;
-        this.body.style.top = "".concat(`${value}`, "px");
+        this.body.style.top = `${value}px`;
     }
 
     get width() {
@@ -152,7 +152,7 @@ export class DIView {
 
     set width(value) {
         this._width = value;
-        this.body.style.width = "".concat(`${value}`, "px");
+        this.body.style.width = `${value}px`;
     }
 
     get height() {
@@ -162,7 +162,7 @@ export class DIView {
 
     set height(value) {
         this._height = value;
-        this.body.style.height = "".concat(`${value}`, "px");
+        this.body.style.height = `${value}px`;
     }
 
     get hidden() {
