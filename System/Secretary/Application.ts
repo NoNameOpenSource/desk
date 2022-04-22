@@ -40,7 +40,7 @@ export class Application {
         this.window.app = this;
 
         // Init alert layer
-        this.alerts = new Array();
+        this.alerts = [];
         this.alertScreen = new DIView("DILoading");
         this.alertScreen.body.style.zIndex = 100;
         this.alertScreen.hidden = true;
@@ -54,7 +54,7 @@ export class Application {
         this.loadingAnimation.body.style.left = "calc(50% - 64px)";
         this.loadingAnimation.body.style.top = "calc(50% - 64px)";
 
-        this.animations = new Array();
+        this.animations = [];
 
         if (resizable) {
             this.resizable = true;
@@ -83,7 +83,7 @@ export class Application {
 
     alert(text: string, func: () => void, className: string) {
         this.alertScreen.hidden = false;
-        var alert: any;
+        let alert: any;
         if (this.window.width < 330) alert = new DISmallAlertView(text, undefined, className);
         else alert = new DIAlertView(text, false, className);
         this.alerts.push(alert);
@@ -102,7 +102,7 @@ export class Application {
             })
         );
         alert.addButton("Ok", () => {
-            var i = this.alerts.indexOf(alert);
+            const i = this.alerts.indexOf(alert);
             this.alerts[i] = null;
             this.alerts.splice(i, 1);
             alert.delete();
@@ -118,7 +118,7 @@ export class Application {
 
     alertSimple(text: string, frstTitle: string, scndTitle: string, frstFunc: () => void, scndFunc: () => void, className?: string) {
         this.alertScreen.hidden = false;
-        var alert: any;
+        let alert: any;
         if (this.window.width < 330) {
             alert = new DISimpleAlertView(text, undefined, className);
             this.alerts.push(alert);
@@ -134,7 +134,7 @@ export class Application {
                 })
             );
             alert.addButton(frstTitle, () => {
-                var i = this.alerts.indexOf(alert);
+                const i = this.alerts.indexOf(alert);
                 this.alerts[i] = null;
                 this.alerts.splice(i, 1);
                 alert.delete();
@@ -143,7 +143,7 @@ export class Application {
                 if (frstFunc) frstFunc();
             });
             alert.addButton(scndTitle, () => {
-                var i = this.alerts.indexOf(alert);
+                const i = this.alerts.indexOf(alert);
                 this.alerts[i] = null;
                 this.alerts.splice(i, 1);
                 alert.delete();
@@ -159,7 +159,7 @@ export class Application {
 
     alertError(titleText: string, errorMsg: string, func: () => void, className?: string) {
         this.alertScreen.hidden = false;
-        var alert = new DIAlertView(titleText, false, className);
+        let alert = new DIAlertView(titleText, false, className);
         if (errorMsg) alert.useTextArea(errorMsg);
         this.alerts.push(alert);
         alert.events.push(
@@ -174,7 +174,7 @@ export class Application {
             })
         );
         alert.addButton("Ok", () => {
-            var i = this.alerts.indexOf(alert);
+            const i = this.alerts.indexOf(alert);
             this.alerts[i] = null;
             this.alerts.splice(i, 1);
             alert.delete();
@@ -201,6 +201,12 @@ export class Application {
 
     deactivate() {}
 
+    windowMinimized() {}
+
+    windowMaximized() {}
+
+    backButtonTriggered() {}
+
     beginAnimation(animation: any) {
         this.ainmations.push(animation);
     }
@@ -208,7 +214,7 @@ export class Application {
     // stopping animations is possible through the DeskAnimation. Not needed here. ...probably
 
     endAnimation(animation: any) {
-        var i = this.animations.indexOf(animation);
+        const i = this.animations.indexOf(animation);
         animation.delete();
         this.animations[i] = null;
         this.animations.splice(i, 1);
@@ -248,7 +254,7 @@ export class Application {
         this.deleted = true;
         if (!this.window.deleted) this.window.delete();
         if (this.alerts.length > 0) {
-            var i = 0;
+            let i = 0;
             for (; i < this.alerts.length; i++) {
                 this.alerts[i].delete();
             }

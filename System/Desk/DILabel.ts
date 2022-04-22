@@ -33,7 +33,7 @@ export class DILabel extends DIView {
 
     set width(value) {
         this._width = value;
-        this.body.style.width = "".concat(value, "px");
+        this.body.style.width = `${value}px`;
         // this.textBody.style.width = "".concat(value, "px");
     }
 

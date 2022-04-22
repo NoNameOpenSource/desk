@@ -1,3 +1,4 @@
+import { WorkSpace } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
 import { Secretary } from "../Secretary/Secretary";
 import { Desk } from "./Desk";
@@ -17,8 +18,8 @@ export class DIWorkSpaceDock extends DIView {
     // Or maybe it should exist in DIView?
     workSpaceIndex: number;
     contextMenu: DIListView;
-    contextList: any[];
-    contextEvent: any;
+    contextList: string[];
+    contextEvent: DeskEvent;
 
     preventClick: DeskEvent;
 
@@ -30,16 +31,16 @@ export class DIWorkSpaceDock extends DIView {
         // Init for context menu
         this.contextMenu = new DIListView(this, this, 1, "DIContextMenu");
         this.contextMenu.cellHeight = 25;
-        this.contextList = new Array();
+        this.contextList = [];
         // Init context event
         this.events.push(
-            new DeskEvent(this.body, "contextmenu", (evt: any) => {
+            new DeskEvent(this.body, "contextmenu", (evt: MouseEvent) => {
                 evt.preventDefault();
-                var index = Math.floor((evt.clientY - 28) / 64); // 28 for y of this view
+                const index = Math.floor((evt.clientY - 28) / 64); // 28 for y of this view
                 this.workSpaceIndex = index;
                 if (index >= 0 && index < this.secretary.workSpaces.length) {
                     if (this.secretary.workSpaces[index].loaded) {
-                        if (this.secretary.workSpaces[index] == this.secretary.mainWorkSpace) this.contextList = ["Restart"];
+                        if (this.secretary.workSpaces[index] === this.secretary.mainWorkSpace) this.contextList = ["Restart"];
                         else this.contextList = ["Quit"];
                     } else {
                         this.contextList = ["Open"];
@@ -53,7 +54,7 @@ export class DIWorkSpaceDock extends DIView {
                     this.contextEvent.delete();
                     this.contextEvent = null;
                 }
-                this.contextEvent = new DeskEvent(document.body, "mousedown", (evt: any) => {
+                this.contextEvent = new DeskEvent(document.body, "mousedown", (evt: MouseEvent) => {
                     if (
                         !(
                             this.contextMenu.body.getBoundingClientRect().left <= evt.clientX &&
@@ -70,7 +71,7 @@ export class DIWorkSpaceDock extends DIView {
                             evt.preventDefault();
                             if (!this.preventClick) {
                                 // add the event only it is not there
-                                this.preventClick = new DeskEvent(this.body, "click", (evt: any) => {
+                                this.preventClick = new DeskEvent(this.body, "click", (evt: Event) => {
                                     if (this.preventClick) this.preventClick.delete();
                                     evt.stopPropagation();
                                     evt.preventDefault();
@@ -88,12 +89,12 @@ export class DIWorkSpaceDock extends DIView {
     }
 
     numberOfRows(listView: any) {
-        if (listView == this.contextMenu) return this.contextList.length;
+        if (listView === this.contextMenu) return this.contextList.length;
     }
 
     cellAtRow(listView: any, row: any) {
-        if (listView == this.contextMenu) {
-            var cell = new DIListViewCell("DIContextMenuCell");
+        if (listView === this.contextMenu) {
+            const cell = new DIListViewCell("DIContextMenuCell");
             cell.name = new DILabel(this.contextList[row]);
             cell.addChildView(cell.name);
             return cell;
@@ -102,19 +103,19 @@ export class DIWorkSpaceDock extends DIView {
     }
 
     listDidSelectRowAtIndex(listView: any, index: number) {
-        if (listView == this.contextMenu) {
+        if (listView === this.contextMenu) {
             if (index >= 0) {
                 if (this.contextEvent) {
                     this.contextEvent.delete();
                     this.contextEvent = null;
                 }
                 this.clearContextMenu();
-                if (this.contextList[index] == "Open") {
+                if (this.contextList[index] === "Open") {
                     this.secretary.setMainWorkSpace(this.secretary.workSpaces[this.workSpaceIndex]);
-                } else if (this.contextList[index] == "Quit") {
+                } else if (this.contextList[index] === "Quit") {
                     this.secretary.quitWorkSpace(this.workSpaceIndex);
                     this.update();
-                } else if (this.contextList[index] == "Restart") {
+                } else if (this.contextList[index] === "Restart") {
                 }
             }
         }
@@ -122,27 +123,29 @@ export class DIWorkSpaceDock extends DIView {
 
     update() {
         this.unplugChildViews();
-        var i = 0;
+        let i = 0;
         for (; i < this.secretary.workSpaces.length; i++) {
             this.addChildView(this.secretary.workSpaces[i].icon);
             this.secretary.workSpaces[i].icon.y = i * 64;
             if (this.secretary.workSpaces[i].icon.events.length < 1) {
                 // TODO: use fat arrow function instead of .bind
                 this.secretary.workSpaces[i].icon.events.push(
+                    // eslint-disable-next-line @typescript-eslint/no-loop-func
                     new DeskEvent(this.secretary.workSpaces[i].icon.body, "click", () => {
+                        // @ts-ignore
                         this.secretary.workSpaces[i].desk.workSpaceDock.clicked(this);
                     })
                 );
             }
             this.secretary.workSpaces[i].icon.body.style.background = "";
-            if (this.secretary.mainWorkSpace == this.secretary.workSpaces[i]) {
+            if (this.secretary.mainWorkSpace === this.secretary.workSpaces[i]) {
                 this.secretary.workSpaces[i].icon.body.style.background = "rgba(52,152,219, 0.4)";
             }
         }
     }
 
-    clicked(workSpace: any) {
-        if (!(this.secretary.mainWorkSpace == workSpace)) {
+    clicked(workSpace: WorkSpace) {
+        if (!(this.secretary.mainWorkSpace === workSpace)) {
             this.secretary.setMainWorkSpace(workSpace);
         }
     }
@@ -166,7 +169,7 @@ export class DIWorkSpaceDock extends DIView {
 
     set width(value) {
         this._width = value;
-        this.body.style.width = "".concat(value, "px");
+        this.body.style.width = `${value}px`;
         //this.textBody.style.width = "".concat(value, "px");
     }
 

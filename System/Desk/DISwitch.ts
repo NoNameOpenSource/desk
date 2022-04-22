@@ -5,8 +5,8 @@ import { DIView } from "./DIView";
  * This is simple button for the system
  */
 export class DISwitch extends DIView {
-    event: any;
-    switchBody: HTMLLabelElement;
+    event: DeskEvent;
+    switchBody: HTMLLabelElement & { firstChild: FirstChild };
     buttonBody: any;
 
     constructor(small: any, className?: string, idName?: string) {
@@ -17,10 +17,14 @@ export class DISwitch extends DIView {
         super(className, idName);
         this.canHaveChild = false;
         this.event;
-        this.switchBody = document.createElement("label");
-        this.switchBody.appendChild(document.createElement("input"));
+
+        const switchBody = document.createElement("label");
+        switchBody.appendChild(document.createElement("input"));
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        switchBody.firstChild.setAttribute("type", "checkbox");
+        this.switchBody = <HTMLLabelElement & { firstChild: FirstChild }>switchBody;
         // @ts-ignore TODO: bug
-        this.switchBody.firstChild.setAttribute("type", "checkbox");
         this.switchBody.appendChild(document.createElement("div"));
         if (small) this.switchBody.children[1].className = "DISmallSwitchSlider";
         else this.switchBody.children[1].className = "DISwitchSlider";
@@ -46,23 +50,23 @@ export class DISwitch extends DIView {
     }
 
     get value() {
-        // @ts-ignore TODO: bug
         return this.switchBody.firstChild.checked;
     }
 
     set value(value) {
-        // @ts-ignore TODO: bug
         this.switchBody.firstChild.checked = value;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     get width() {
         // @ts-ignore TODO: this?
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return _width;
     }
 
     set width(value) {
         this._width = value;
-        this.buttonBody.style.width = "".concat(value, "px");
+        this.buttonBody.style.width = `${value}px`;
     }
 
     delete() {
@@ -74,4 +78,8 @@ export class DISwitch extends DIView {
         this.switchBody.remove();
         super.delete();
     }
+}
+
+interface FirstChild extends ChildNode {
+    checked: boolean;
 }

@@ -13,7 +13,7 @@ export class DITextField extends DIView {
         this.textBody = document.createElement("input");
         if (placeHolder) this.textBody.value = placeHolder;
         this._editable = true;
-        if (editable == false) {
+        if (editable === false) {
             this._editable = false;
             this.textBody.disabled = true;
         }
@@ -64,7 +64,7 @@ export class DITextField extends DIView {
 
     set width(value) {
         this._width = value;
-        this.body.style.width = "".concat(value, "px");
+        this.body.style.width = `${value}px`;
         this.textBody.style.width = this.body.style.width;
     }
 
@@ -74,7 +74,7 @@ export class DITextField extends DIView {
 
     set height(value) {
         this._height = value;
-        this.body.style.height = "".concat(`${value}`, "px");
+        this.body.style.height = `${value}px`;
         this.textBody.style.height = this.body.style.height;
     }
 

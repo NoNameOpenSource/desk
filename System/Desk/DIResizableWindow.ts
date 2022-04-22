@@ -1,3 +1,4 @@
+import { Application } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
 import { Desk } from "./Desk";
 import { DILabel } from "./DILabel";
@@ -6,10 +7,10 @@ import { DIView } from "./DIView";
 /**
  * Window class for the system
  */
-export class DIResizableWindow {
-    child: any;
-    parent: any;
-    events: any[];
+export class DIResizableWindow extends DIView {
+    child: DIView;
+    parent: DIView;
+    events: DeskEvent[];
     _x: number;
     _y: number;
     _z: number;
@@ -20,22 +21,23 @@ export class DIResizableWindow {
     cursor: number;
     tmp: any;
     body: HTMLElement;
-    titleBar: any;
-    titleField: any;
+    titleBar: DIView;
+    titleField: DILabel;
     titleBarOptions: number;
     border: any[];
-    _title: any;
+    _title: string;
     closeButton: any;
     minButton: any;
     maxButton: any;
-    app: any;
+    app: Application;
     desk: Desk;
 
     constructor(className: string, idName: string, title: string, x: number, y: number, width: number, height: number, titleBarOptions = 1) {
+        super();
         this.desk = Desk.getInstance();
         this.child;
         this.parent;
-        this.events = new Array();
+        this.events = [];
         this._x = 0;
         this._y = 0;
         this._z = 0;
@@ -77,11 +79,11 @@ export class DIResizableWindow {
     }
 
     mouseDown(evt: MouseEvent) {
-        if (evt.button == 0) {
+        if (evt.button === 0) {
             // If primary button
             // Convert coord.
-            var x = evt.clientX - this.x;
-            var y = this.desk.screenHeight - evt.clientY - this.y;
+            const x = evt.clientX - this.x;
+            const y = this.desk.screenHeight - evt.clientY - this.y;
             this.desk.bringWindowFront(this);
             if (this.resize && (x < 5 || x > this.width - 5)) {
                 // Resizing window in X
@@ -89,6 +91,7 @@ export class DIResizableWindow {
                 // TitleBar got clicked
                 evt.preventDefault(); // Disable text selection
                 // @ts-ignore TODO: bug
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 this.desk.beginWindowDrag(this, evt.clientX, evt.clientY);
                 return false; // Disable text selection
             }
@@ -96,12 +99,12 @@ export class DIResizableWindow {
     }
 
     changeCursor(cursor: any) {
-        if (cursor == this.cursor) return false;
+        if (cursor === this.cursor) return false;
         this.body.style.setProperty("cursor", this.desk.cursor[cursor], "important");
         this.cursor = cursor;
     }
 
-    setChildView(child: any) {
+    setChildView(child: DIView) {
         this.child = child;
         this.body.childNodes[0].appendChild(child.body);
         child.parent = this;
@@ -112,24 +115,25 @@ export class DIResizableWindow {
     }
 
     removeChildView(child: any) {
-        if (this.child == child) this.child = null;
+        if (this.child === child) this.child = null;
         else return false;
         return true;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     didMoveToParent() {}
 
     didMoveToDesk() {
         if (this.child) {
             this.child.didMoveToDesk();
-            if (this.width == 0) this.width = this.child.width;
+            if (this.width === 0) this.width = this.child.width;
             else this.child.width = this.width;
-            if (this.height == 0) this.height = this.child.height;
+            if (this.height === 0) this.height = this.child.height;
             else this.child.height = this.height;
         }
         // Make window border
-        this.border = new Array();
-        for (var i = 0; i < 4; i++) {
+        this.border = [];
+        for (let i = 0; i < 4; i++) {
             this.border.push(document.createElement("DIWindowBorder"));
             this.border[i].className = "DIWindowBorder".concat(`${i}`);
             this.body.childNodes[0].appendChild(this.border[i]);
@@ -151,12 +155,12 @@ export class DIResizableWindow {
     }
 
     get background() {
-        // @ts-ignore TODO: type body differently?
-        return this.body.childNodes[0].style.background;
+        // @ts-ignore TODO: does a childNode have a style property?
+        return <string>this.body.childNodes[0].style.background;
     }
 
     set background(value) {
-        // @ts-ignore TODO: type body differently?
+        // @ts-ignore TODO: does a childNode have a style property?
         this.body.childNodes[0].style.background = value;
     }
 
@@ -214,7 +218,7 @@ export class DIResizableWindow {
         // @ts-ignore TODO: type body differently?
         this.body.childNodes[0].style.height = "".concat(value + this.titleBar.height, "px");
         value += 10;
-        this.body.style.height = "".concat(value + this.titleBar.height, "px");
+        this.body.style.height = "".concat(`${value}` + this.titleBar.height, "px");
     }
 
     get title() {
@@ -229,6 +233,8 @@ export class DIResizableWindow {
     }
 
     close() {
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.parent.closeWindow(this);
     }
 
@@ -242,7 +248,9 @@ export class DIResizableWindow {
             this.titleBar.delete();
             this.titleBar = null;
         }
-        for (var i = 0; i < this.events.length; i++) this.events[i].delete();
+        for (const event of this.events) {
+            event.delete();
+        }
         this.events.length = 0;
         this.child.delete();
         this.body.remove();

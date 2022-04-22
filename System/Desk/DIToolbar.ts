@@ -1,8 +1,9 @@
+import { DIButton } from "./DIButton";
 import { DIView } from "./DIView";
 
 export class DIToolbar extends DIView {
     delegate: string;
-    items: any[];
+    items: DIButton[];
 
     constructor(delegate?: any, className?: string) {
         super(className);
@@ -13,10 +14,11 @@ export class DIToolbar extends DIView {
         this.width = 0;
     }
 
-    addItem(item: any) {
+    addItem(item: DIButton) {
         item.x = this.width;
         this.width += item.width;
-        let identifier = item.identifier;
+        // @ts-ignore
+        const identifier = item.identifier;
         item.setButtonEvent(() => {
             this.itemSelected(identifier);
         });
@@ -27,6 +29,7 @@ export class DIToolbar extends DIView {
     itemSelected(identifier: any) {
         if (!this.delegate) return;
         // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.delegate.toolBarSelected(identifier);
     }
 }

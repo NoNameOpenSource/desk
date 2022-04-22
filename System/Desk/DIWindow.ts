@@ -1,3 +1,4 @@
+import { Application } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
 import { Secretary } from "../Secretary/Secretary";
 import { Desk } from "./Desk";
@@ -9,11 +10,11 @@ import { DIView } from "./DIView";
 /**
  * Window class for the system
  */
-export class DIWindow {
+export class DIWindow extends DIView {
     /** This view's child view */
-    child: any;
+    child: DIView;
     parent: any;
-    events: any[];
+    events: DeskEvent[];
     deleted: boolean;
     resize: boolean;
     cursor: number;
@@ -21,34 +22,30 @@ export class DIWindow {
     tmp: any;
     /** Body of the view as HTML element */
     body: HTMLElement;
-    titleField: any;
-    closeButton: any;
-    minButton: any;
-    maxButton: any;
+    titleField: DILabel;
+    closeButton: DIImageView;
+    minButton: DIImageView;
+    maxButton: DIImageView;
     titleBarOptions: number;
-    toolbar: any;
+    toolbar: DIToolbar;
     regWidth: number;
-    app: any;
+    app: Application;
     secretary: Secretary;
     desk: Desk;
     inSleep: boolean;
     titleBar: DIView;
 
-    /** x coordinate */
-    private _x: number;
-    /** y coordinate */
-    private _y: number;
     private _z: number;
-    private _width: number;
-    private _height: number;
-    private _title: any;
+    private _title: string;
 
     constructor(className?: string, idName?: string, title?: string, x?: number, y?: number, width?: number, height?: number, titleBarOptions = 0) {
+        super(className, idName);
+
         this.secretary = Secretary.getInstance();
         this.desk = Desk.getInstance();
         this.child;
         this.parent;
-        this.events = new Array();
+        this.events = [];
         this._x = 0;
         this._y = 0;
         this._z = 0;
@@ -113,11 +110,11 @@ export class DIWindow {
         this.body.appendChild(toolbar.body);
     }
 
-    mouseDown(evt: any) {
+    mouseDown(evt: MouseEvent) {
         //if(evt.button == 0) { // If primary button
         // Convert coord.
-        var x = evt.clientX - this.x;
-        var y = evt.clientY - this.y - 28;
+        const x = evt.clientX - this.x;
+        const y = evt.clientY - this.y - 28;
         this.desk.bringWindowFront(this);
         if (this.resize && (x < 5 || x > this.width - 5)) {
             // Resizing window in X
@@ -142,6 +139,7 @@ export class DIWindow {
         this.titleField.textBody.style.width = "".concat(`${this.body.clientHeight - 62}`, "px");
         this.titleField.textBody.style.textAlign = "left";
         this.titleField.textBody.style.transform = "rotate(90deg)";
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (this.app.windowMinimized) this.app.windowMinimized();
         if (this.child) {
             this.child.putInSleep();
@@ -160,6 +158,7 @@ export class DIWindow {
         this.titleField.textBody.style.width = "";
         this.titleField.textBody.style.textAlign = "";
         this.titleField.textBody.style.transform = "";
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (this.app && this.app.windowMaximized) this.app.windowMaximized();
         if (this.child) {
             this.body.appendChild(this.child.body);
@@ -169,12 +168,12 @@ export class DIWindow {
     }
 
     changeCursor(cursor: any) {
-        if (cursor == this.cursor) return false;
+        if (cursor === this.cursor) return false;
         this.body.style.setProperty("cursor", this.desk.cursor[cursor], "important");
         this.cursor = cursor;
     }
 
-    setChildView(child: any) {
+    setChildView(child: DIView) {
         this.child = child;
         this.body.appendChild(child.body);
         child.parent = this;
@@ -186,11 +185,15 @@ export class DIWindow {
     }
 
     removeChildView(child: any) {
-        if (this.child == child) this.child = null;
+        if (this.child === child) this.child = null;
         else return false;
         return true;
     }
 
+    /**
+     * @todo implement or remove
+     */
+    // eslint-disable-next-line class-methods-use-this
     didMoveToParent() {}
 
     didMoveToDesk() {
@@ -230,7 +233,7 @@ export class DIWindow {
 			value=Desk.screenWidth-20;
 			*/
         this._x = value;
-        this.body.style.left = "".concat(`${value}`, "px");
+        this.body.style.left = `${value}px`;
     }
 
     get y() {
@@ -240,7 +243,7 @@ export class DIWindow {
     set y(value) {
         if (value < -this.height) value = -this.height;
         this._y = value;
-        this.body.style.bottom = "".concat(`${value}`, "px");
+        this.body.style.bottom = `${value}px`;
     }
 
     get z() {
@@ -260,7 +263,7 @@ export class DIWindow {
         this._width = value;
         this.titleBar.width = value;
         if (this.child) this.child.width = value;
-        this.body.style.width = "".concat(`${value}`, "px");
+        this.body.style.width = `${value}px`;
     }
 
     get height() {
@@ -299,7 +302,9 @@ export class DIWindow {
             this.titleBar.delete();
             this.titleBar = null;
         }
-        for (var i = 0; i < this.events.length; i++) this.events[i].delete();
+        for (const event of this.events) {
+            event.delete();
+        }
         this.events.length = 0;
         this.child.delete();
         this.child = null;

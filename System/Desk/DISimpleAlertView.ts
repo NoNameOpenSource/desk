@@ -1,3 +1,4 @@
+import { DeskEvent } from "../Secretary";
 import { DIButton } from "./DIButton";
 import { DIImageView } from "./DIImageView";
 import { DILabel } from "./DILabel";
@@ -8,16 +9,16 @@ import { DIView } from "./DIView";
  */
 export class DISimpleAlertView extends DIView {
     autoHeight: boolean;
-    buttons: any[];
-    alertContent: any;
-    icon: any;
+    buttons: DIButton[];
+    alertContent: DILabel;
+    icon: DIView;
     _useTextArea: boolean;
     textArea: DIView;
 
     constructor(text: string, icon: string, className?: string, idName?: string) {
         if (!className) className = "DISmallAlertView";
         super(className, idName);
-        this.buttons = new Array();
+        this.buttons = [];
         // Add alert content
         this.alertContent = new DILabel("", "DIAlertViewContent");
         if (text) this.alertContent.stringValue = text;
@@ -50,11 +51,12 @@ export class DISimpleAlertView extends DIView {
         }
     }
 
-    addButton(text: string, evt: any) {
-        var id = this.buttons.length;
+    addButton(text: string, evt: DeskEvent) {
+        const id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DISmallAlertViewButton"));
         this.buttons[id].body.style.width = "50%";
         //this.buttons[id].y = 10;
+        // @ts-ignore
         this.buttons[id].setButtonEvent(evt);
         this.addChildView(this.buttons[id]);
         return id;
@@ -62,7 +64,6 @@ export class DISimpleAlertView extends DIView {
 
     didMoveToDesk() {
         if (this.autoHeight) {
-            var height;
             if (this._useTextArea) this.height = this.alertContent.body.offsetHeight + 239;
             else this.height = this.alertContent.body.offsetHeight + 39;
         }

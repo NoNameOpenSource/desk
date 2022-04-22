@@ -10,6 +10,7 @@ export class DICanvas extends DIView {
         //this.canHaveChild = false;
         this.canvas = <HTMLCanvasElement>document.createElement("CANVAS");
         this.body.appendChild(this.canvas);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         if (context) this.ctx = this.canvas.getContext(context);
         else this.ctx = this.canvas.getContext("2d");
     }

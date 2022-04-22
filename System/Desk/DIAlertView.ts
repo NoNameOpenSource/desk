@@ -12,17 +12,17 @@ import { DIView } from "./DIView";
  * -child			: Array of child views of this view
  */
 export class DIAlertView extends DIView {
-    buttons: any[];
-    alertContent: any;
+    buttons: DIButton[];
+    alertContent: DILabel;
     private _useTextArea: boolean;
     autoHeight: boolean;
-    icon: any;
+    icon: DIView;
     textArea: DIView;
 
-    constructor(text?: string, icon?: any, className?: string, idName?: string) {
+    constructor(text?: string, icon?: string, className?: string, idName?: string) {
         if (!className) className = "DIAlertView";
         super(className, idName);
-        this.buttons = new Array();
+        this.buttons = [];
         // Add alert content
         this.alertContent = new DILabel("", "DIAlertViewContent");
         if (text) this.alertContent.stringValue = text;
@@ -55,8 +55,8 @@ export class DIAlertView extends DIView {
         }
     }
 
-    addButton(text: string, evt: any) {
-        var id = this.buttons.length;
+    addButton(text: string, evt: (this: HTMLElement, ev: any) => any) {
+        const id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DIAlertViewButton"));
         //this.buttons[id].y = 10;
         this.buttons[id].setButtonEvent(evt);
@@ -69,7 +69,7 @@ export class DIAlertView extends DIView {
             if (this._useTextArea) this.height = this.alertContent.body.offsetHeight + 251;
             else this.height = this.alertContent.body.offsetHeight + 51;
         }
-        for (var i = 0; i < this.buttons.length; i++) {
+        for (let i = 0; i < this.buttons.length; i++) {
             this.buttons[i].x = this.width + 5 - 140 * (i + 1);
         }
     }

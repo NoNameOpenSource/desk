@@ -12,16 +12,19 @@ export class DIClassicDropDownView extends DIView {
         this.body.appendChild(this.selectBody);
     }
 
-    addItem(item: any) {
-        var z = document.createElement("option");
+    addItem(item: string) {
+        const z = document.createElement("option");
         z.setAttribute("value", item);
-        var t = document.createTextNode(item);
+        const t = document.createTextNode(item);
         z.appendChild(t);
         this.selectBody.appendChild(z);
     }
 
     addItems() {
-        for (var i = 0; i < arguments.length; i++) this.addItem(arguments[i]);
+        // eslint-disable-next-line prefer-rest-params
+        for (const argument of arguments) {
+            this.addItem(<string>argument);
+        }
     }
 
     get selectedIndex() {

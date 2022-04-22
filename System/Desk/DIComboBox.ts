@@ -5,7 +5,7 @@ import { DITextField } from "./DITextField";
  * This is a simple way to display an image
  */
 export class DIComboBox extends DITextField {
-    items: any[];
+    items: string[];
     searchedItems: any[];
     deleteKey: boolean;
     oldString: string;
@@ -14,8 +14,8 @@ export class DIComboBox extends DITextField {
     constructor(className?: string, idName?: string) {
         if (!className) className = "DITextField";
         super(false, true, className, idName);
-        this.items = new Array();
-        this.searchedItems = new Array();
+        this.items = [];
+        this.searchedItems = [];
 
         this.deleteKey = true;
 
@@ -24,18 +24,18 @@ export class DIComboBox extends DITextField {
 
     keyDown(evt: Event) {
         // @ts-ignore TODO: type evt better?
-        if (evt.keyCode == 8 || evt.keyCode == 42) this.deleteKey = true;
+        if (evt.keyCode === 8 || evt.keyCode === 42) this.deleteKey = true;
         else this.deleteKey = false;
     }
 
     searchHints() {
-        if (this.oldString == this.stringValue || this.deleteKey) return;
+        if (this.oldString === this.stringValue || this.deleteKey) return;
         else this.oldString = this.stringValue;
         this.searchedItems.length = 0;
-        var i;
+        let i;
         for (i = 0; i < this.items.length; i++) {
             if (this.items[i].indexOf(this.stringValue) === 0) {
-                var start = this.stringValue.length;
+                const start = this.stringValue.length;
                 this.stringValue = this.items[i];
                 this.textBody.setSelectionRange(start, this.items[i].length);
                 this.searchedItems.push(this.items[i]);
@@ -48,7 +48,7 @@ export class DIComboBox extends DITextField {
         }
     }
 
-    addItem(item: any) {
+    addItem(item: string) {
         if (this.useDataSource) {
         } else {
             this.items.push(item);
@@ -56,7 +56,10 @@ export class DIComboBox extends DITextField {
     }
 
     addItems() {
-        for (var i = 0; i < arguments.length; i++) this.addItem(arguments[i]);
+        // eslint-disable-next-line prefer-rest-params
+        for (const argument of arguments) {
+            this.addItem(<string>argument);
+        }
     }
 
     didMoveToDesk() {

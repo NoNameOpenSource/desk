@@ -26,7 +26,7 @@ export class Secretary {
     serverType = "";
     dataManagerURL = "";
     workSpaces = new Array();
-    mainWorkSpace: any = null;
+    mainWorkSpace: WorkSpace = null;
     plugins = new Object();
     pluginFrames = new Array();
     uploads = new Array();

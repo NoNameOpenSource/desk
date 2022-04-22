@@ -1,3 +1,4 @@
+import { Application } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
 import { DILabel } from "./DILabel";
 import { DIView } from "./DIView";
@@ -5,11 +6,11 @@ import { DIViewController } from "./DIViewController";
 
 export class DINavigationViewController extends DIViewController {
     navigationView: DIView;
-    _currentView: any;
+    _currentView: DIView;
     backwardButton: DIView;
-    titleField: any;
-    delegate: any;
-    oldView: any;
+    titleField: DILabel;
+    delegate: Application;
+    oldView: DIView;
 
     /**
      * @todo remove idName
@@ -30,12 +31,14 @@ export class DINavigationViewController extends DIViewController {
     }
 
     backButtonTriggered() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (this.delegate) this.delegate.backButtonTriggered();
     }
 
     /**
      * @todo remove parameters or use them
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setCurrentView(view: any, titleString: string, saveOld?: boolean) {
         if (this._currentView) {
             this.removeCurrentView();
@@ -52,22 +55,23 @@ export class DINavigationViewController extends DIViewController {
         this.titleField.stringValue = stringValue;
     }
 
-    pushToView(view: any, titleString: string, backwardString: string) {
+    pushToView(view: DIView, titleString: string, backwardString: string) {
         if (!this._currentView) return false;
         if (!backwardString) backwardString = "Back";
-        var newTitleField = new DILabel();
+        const newTitleField = new DILabel();
         this.navigationView.addChildView(view);
         this.animatePushIn(this._currentView, view, this.titleField, newTitleField, () => {
             this.setCurrentView(view, titleString);
         });
     }
 
-    animatePushIn(oldView: any, newView: any, oldTitle: any, newTitle: any, func: () => void) {
+    animatePushIn(oldView: DIView, newView: DIView, oldTitle: DILabel, newTitle: DILabel, func: () => void) {
         this.oldView.putInSleep();
-        var originalName = newView.body.className;
+        const originalName = newView.body.className;
         newView.body.className = originalName.concat("PushIn");
         newTitle.body.className = "NavTitlePushIn";
         if (this.backwardButton.hidden) {
+            // @ts-ignore
             this.backwardButton.children[1].stringValue = oldTitle.stringValue;
             oldTitle.delete();
             this.backwardButton.children[1].body.className = "NavBackPushIn";
@@ -75,7 +79,7 @@ export class DINavigationViewController extends DIViewController {
         }
         oldTitle.body.className = "NavBackPushIn";
         // this.newView.putInSleep();
-        var tmp = new DeskEvent(
+        const tmp = new DeskEvent(
             newView.body,
             "animationend",
             function () {

@@ -5,7 +5,7 @@ import { DIView } from "./DIView";
  * This is simple button for the system
  */
 export class DIButton extends DIView {
-    event: any;
+    event: DeskEvent;
     buttonBody: HTMLButtonElement;
 
     constructor(text: string, className?: string, idName?: string) {
@@ -31,7 +31,7 @@ export class DIButton extends DIView {
         super.wakeUp();
     }
 
-    setButtonEvent(evt: DeskEvent) {
+    setButtonEvent(evt: (this: HTMLElement, ev: any) => any) {
         if (this.event) this.event.delete();
         this.event = new DeskEvent(this.buttonBody, "click", evt);
     }
@@ -44,14 +44,16 @@ export class DIButton extends DIView {
         this.buttonBody.textContent = value;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     get width() {
         // @ts-ignore TODO: bug - maybe use this._width?
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return _width;
     }
 
-    set width(value) {
+    set width(value: number) {
         this._width = value;
-        this.buttonBody.style.width = "".concat(value, "px");
+        this.buttonBody.style.width = `${value}px`;
     }
 
     delete() {

@@ -1,13 +1,15 @@
 import { DeskEvent } from "../Secretary/DeskEvent";
+import { DITableView } from "./DITableView";
 
 export class DITableCell {
     body: HTMLTableCellElement;
-    table: any;
+    table: DITableView;
     editable: boolean;
     event: any;
-    blurEvent: any;
+    blurEvent: DeskEvent;
     oldValue: any;
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(className?: string, idName?: string) {
         if (!className) className = "DITableView";
         this.body = document.createElement("td");
@@ -19,6 +21,7 @@ export class DITableCell {
     /**
      * @todo remove or use evt
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     dblclick(evt: any) {
         let result = true;
         if (this.table) {
@@ -41,7 +44,7 @@ export class DITableCell {
         this.blurEvent = null;
         this.body.removeAttribute("contentEditable");
 
-        if (!this.table && this.oldValue == this.text) {
+        if (!this.table && this.oldValue === this.text) {
             return;
         }
         this.table.cellUpdated(this);

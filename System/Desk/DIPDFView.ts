@@ -2,7 +2,7 @@ import { DIView } from "./DIView";
 
 export class DIPDFView extends DIView {
     pdfBody: HTMLElement;
-    private _src: any;
+    private _src: string;
 
     constructor(url: string, className?: string, idName?: string) {
         if (!className) className = "DIImageView";
