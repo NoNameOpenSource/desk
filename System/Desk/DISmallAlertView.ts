@@ -55,7 +55,6 @@ export class DISmallAlertView extends DIView {
     addButton(text: string, evt: DeskEvent) {
         const id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DISmallAlertViewButton"));
-        //this.buttons[id].y = 10;
         // @ts-ignore
         this.buttons[id].setButtonEvent(evt);
         this.addChildView(this.buttons[id]);
@@ -77,14 +76,10 @@ export class DISmallAlertView extends DIView {
     }
 
     delete() {
-        //for(var i = 0; i < this.buttons.length; i++) {
-        //	this.buttons[i].delete();
-        //}
         this.alertContent = null;
         this.icon = null;
         this.buttons.length = 0;
         this.buttons = null;
-        //this.alertContent.delete();
         super.delete();
     }
 }

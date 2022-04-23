@@ -57,7 +57,6 @@ export class DIResizableWindow extends DIView {
         this.body.childNodes[0].style.left = "5px";
         if (className) this.body.className = className;
         if (idName) this.body.id = idName;
-        //this.events.push(new DeskEvent(this.body, "mousemove", this.mouseMove.bind(this), false));
         // TitleBar Initialization
         if (titleBarOptions < 5) {
             this.titleBar = new DIView("DIWindowTitleBar");
@@ -141,15 +140,11 @@ export class DIResizableWindow extends DIView {
     }
 
     putInSleep() {
-        //if(this.events[0])
-        //	this.events[0].stop();
         this.body.style.cursor = "default";
         this.child.putInSleep();
     }
 
     wakeUp() {
-        //if(this.events[0])
-        //	this.events[0].resume();
         this.body.style.cursor = "";
         this.child.wakeUp();
     }

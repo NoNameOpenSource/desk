@@ -62,7 +62,6 @@ export class DIDragListView extends DIListView {
             const body = this.body.getBoundingClientRect();
             if (evt.clientX > body.left && evt.clientX < body.right) {
                 // If y is higher than top, top becomes y. If y is lower than bottom, bottom becomes y.
-                //var y = (evt.clientY<body.bottom)? ((evt.clientY>body.top)? evt.clientY : body.top) : (body.bottom - 1);
                 const index = Math.floor((this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight);
                 this.dragToIndex(index);
             }

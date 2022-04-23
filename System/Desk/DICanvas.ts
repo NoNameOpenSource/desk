@@ -7,7 +7,6 @@ export class DICanvas extends DIView {
     constructor(className?: string, idName?: string, context?: any) {
         if (!className) className = "DICanvas";
         super(className, idName);
-        //this.canHaveChild = false;
         this.canvas = <HTMLCanvasElement>document.createElement("CANVAS");
         this.body.appendChild(this.canvas);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

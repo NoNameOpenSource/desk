@@ -82,9 +82,6 @@ export class DIUniComboBox extends DIView {
         this.listRequested = false;
 
         this.dropDownViewTriggered = false;
-
-        //this.cell = DIPopUpCell;
-        //this.english=false;
     }
 
     drawArrow() {

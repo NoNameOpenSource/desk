@@ -20,14 +20,10 @@ export class DIButton extends DIView {
     }
 
     putInSleep() {
-        //if(this.event)
-        //	this.event.stop();
         super.putInSleep();
     }
 
     wakeUp() {
-        //if(this.event)
-        //	this.event.resume();
         super.wakeUp();
     }
 

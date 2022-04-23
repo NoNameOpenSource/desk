@@ -1,4 +1,5 @@
 import { DeskAnimation, DeskEvent } from "../Secretary";
+import { DIViewController } from "./DIViewController";
 
 /**
  * View class for the items that will be displayed on the screen
@@ -15,6 +16,7 @@ export class DIView {
     events: DeskEvent[];
     animations: DeskAnimation[];
     deleted: boolean;
+    _controller: DIViewController;
 
     /** x coordinate */
     protected _x = 0;
@@ -22,8 +24,9 @@ export class DIView {
     protected _y = 0;
     protected _width: number;
     protected _height: number;
+    protected _inSleep: boolean;
+
     private _hidden: boolean;
-    private _inSleep: boolean;
 
     /**
      * @todo accept only a string for className and idName params and pass undefined instead of false when necessary

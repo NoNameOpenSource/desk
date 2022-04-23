@@ -61,7 +61,6 @@ export class DIWindow extends DIView {
         this.body = document.createElement("DIWindow");
         if (className) this.body.className = className;
         if (idName) this.body.id = idName;
-        //this.events.push(new DeskEvent(this.body, "mousemove", this.mouseMove.bind(this), false));
         // TitleBar Initialization
         if (titleBarOptions < 5) {
             this.titleBar = new DIView("DIWindowTitleBar");
@@ -111,7 +110,6 @@ export class DIWindow extends DIView {
     }
 
     mouseDown(evt: MouseEvent) {
-        //if(evt.button == 0) { // If primary button
         // Convert coord.
         const x = evt.clientX - this.x;
         const y = evt.clientY - this.y - 28;
@@ -120,12 +118,11 @@ export class DIWindow extends DIView {
             // Resizing window in X
         } else if (y < 20) {
             // TitleBar got clicked
-            evt.preventDefault(); // Disable text selection
-            //!-----------
-            //Desk.beginWindowDrag(this, evt.clientX, evt.clientY);
-            return false; // Disable text selection
+            // Disable text selection
+            evt.preventDefault();
+            // Disable text selection
+            return false;
         }
-        //}
     }
 
     minimize() {
@@ -226,12 +223,6 @@ export class DIWindow extends DIView {
     }
 
     set x(value) {
-        /*
-		if(value<20-this.width)
-			value=20-this.width;
-		if(value>Desk.screenWidth-20)
-			value=Desk.screenWidth-20;
-			*/
         this._x = value;
         this.body.style.left = `${value}px`;
     }

@@ -29,8 +29,6 @@ export class DIListView extends DIView {
         super(className, idName);
         if (dataSource) {
             this.dataSource = dataSource;
-            //initialize Data
-            //this.reloadData();
         }
         if (delegate) this.delegate = delegate;
         this.cellClickType = cellClickType;
@@ -43,10 +41,8 @@ export class DIListView extends DIView {
         this.cellHeight = 0;
         this.selectedIndex = -1;
 
-        /*
-         ** reloadTicket is being used to prevent updating the table when the view received a new request to update the table.
-         ** If there is two different thread that are trying to update the table asynchronously, this can prevent updating the view with two different requests.
-         */
+        // reloadTicket is being used to prevent updating the table when the view received a new request to update the table.
+        // If there is two different thread that are trying to update the table asynchronously, this can prevent updating the view with two different requests.
         this.reloadTicket = 0;
     }
 
@@ -61,7 +57,6 @@ export class DIListView extends DIView {
     }
 
     mouseDown(evt: any) {
-        //evt.preventDefault();
         if (evt.button === 0) {
             this.highlightCellAtIndex(Math.floor((this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight));
             this.moveEvent = this.events.length;
@@ -158,7 +153,6 @@ export class DIListView extends DIView {
 
     didSelectRowAtIndex(index: number) {
         if (this.selected) {
-            //if(this.selected == this.children[index]) return false;
             this.selected.deselect();
         }
         if (index < this.children.length && index >= 0) {

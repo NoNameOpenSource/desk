@@ -170,7 +170,6 @@ export class DIWorkSpaceDock extends DIView {
     set width(value) {
         this._width = value;
         this.body.style.width = `${value}px`;
-        //this.textBody.style.width = "".concat(value, "px");
     }
 
     delete() {

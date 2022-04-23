@@ -58,7 +58,6 @@ export class DIAlertView extends DIView {
     addButton(text: string, evt: (this: HTMLElement, ev: any) => any) {
         const id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DIAlertViewButton"));
-        //this.buttons[id].y = 10;
         this.buttons[id].setButtonEvent(evt);
         this.addChildView(this.buttons[id]);
         return id;
@@ -75,14 +74,10 @@ export class DIAlertView extends DIView {
     }
 
     delete() {
-        //for(var i = 0; i < this.buttons.length; i++) {
-        //	this.buttons[i].delete();
-        //}
         this.alertContent = null;
         this.icon = null;
         this.buttons.length = 0;
         this.buttons = null;
-        //this.alertContent.delete();
         super.delete();
     }
 }

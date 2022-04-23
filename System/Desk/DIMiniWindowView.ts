@@ -54,7 +54,6 @@ export class DIMiniWindowView extends DIView {
     }
 
     mouseDown(evt: MouseEvent) {
-        //if(evt.button == 0) { // If primary button
         // Convert coord.
         const x = evt.clientX - this.x;
         const y = evt.clientY - this.y - 28;
@@ -63,14 +62,11 @@ export class DIMiniWindowView extends DIView {
             // Resizing window in X
         } else if (y < 20) {
             // TitleBar got clicked
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            evt.preventDefault(); // Disable text selection
-            //!-----------
-            //Desk.beginWindowDrag(this, evt.clientX, evt.clientY);
-            return false; // Disable text selection
+            // Disable text selection
+            evt.preventDefault();
+            // Disable text selection
+            return false;
         }
-        //}
     }
 
     close() {

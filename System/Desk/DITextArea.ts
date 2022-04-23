@@ -21,11 +21,8 @@ export class DITextArea extends DIView {
         this.body.appendChild(this.textBody);
     }
 
-    /*
-     ** selectedLocation
-     **
-     ** return	: The index of the beginning of selected text. If no text is selected, contains the index of the character that follows the input cursor.
-     **
+    /**
+     * @returns The index of the beginning of selected text. If no text is selected, contains the index of the character that follows the input cursor.
      */
     selectedLocation() {
         if (this._editable) {

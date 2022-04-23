@@ -401,68 +401,6 @@ export class Desk {
         else return "/System/Secretary/Icon/file.png";
     }
 
-    //This belongs to old UI
-    /*
-
-    this.addWindow = function(window, x=0, y=0) {
-        window.x = x;
-        window.y = y;
-        this.body.body.appendChild(window.body);
-        window.didMoveToDesk();
-        this.bringWindowFront(window);
-    }
-
-    this.addWindowAtTheEnd = function() {
-    }
-
-    this.addWindowAtCenter = function(window) {
-        var x = this.body.body.offsetWidth/2;
-        var y = this.body.body.offsetHeight/2;
-        this.body.body.appendChild(window.body);
-        window.didMoveToDesk();
-        this.bringWindowFront(window);
-        window.x= x - window.width/2;
-        window.y= y - window.height/2;
-    }
-    */
-
-    // This belongs to old UI
-    /*
-    this.beginWindowDrag = function(window, initX, initY) {
-        this.dragPointX = initX - window.x;
-        this.dragPointY = initY + window.y;
-        this.dragPointA = initY - this.screenHeight + window.y + window.height + window.titleBar.height;
-        this.dragWindow = window;
-        document.addEventListener("mousemove",Desk.doWindowDrag, true);
-        document.addEventListener("mouseup",Desk.endWindowDrag, true);
-        document.documentElement.style.cursor="default";
-    }
-    */
-
-    // This belongs to old UI
-    /*
-    this.doWindowDrag = function(evt) {
-        var newY = evt.clientY;
-        if(evt.clientY - Desk.dragPointA < Desk.headerHeight)
-            newY = Desk.headerHeight + Desk.dragPointA;
-        // Move the window
-        Desk.dragWindow.x = evt.clientX - Desk.dragPointX;
-        Desk.dragWindow.y = Desk.dragPointY - newY;
-        // For debug purpose
-        //Desk.testWindow.child.stringValue="  X : ".concat(evt.clientX,", Y : ",evt.clientY);
-    }
-    */
-
-    // This belongs to old UI
-    /*
-    this.endWindowDrag = function(evt) {
-        document.removeEventListener("mousemove",Desk.doWindowDrag, true);
-        document.documentElement.style.cursor="";
-        Desk.dragWindow = null;
-        document.removeEventListener("mouseup",Desk.endWindowDrag, true);
-    }
-    */
-
     closeWindow(window: DIResizableWindow) {
         if (window === this.deskInstance.currentWindow) this.deskInstance.currentWindow = null;
         window.delete();
@@ -478,7 +416,6 @@ export class Desk {
         this.deskInstance.windowsIndex += 1;
         this.deskInstance.currentWindow = window;
         this.deskInstance.currentWindow.wakeUp();
-        //Desk.testWindow.child.stringValue="window title: ".concat(window.title);
     }
 
     static getFontHeight(font: string, size: number) {
@@ -505,8 +442,6 @@ export class Desk {
             this.headerLogo.imageBody.remove();
             this.headerLogo.imageBody = document.createElement("SVG");
             this.headerLogo.body.appendChild(this.headerLogo.imageBody);
-            //var str = evt.target.responseText.substr(evt.target.responseText.indexOf('<svg'));
-            //this.headerLogo.imageBody.outerHTML = str;
             // @ts-ignore TODO
             this.headerLogo.imageBody.outerHTML = evt.target.responseText;
             // @ts-ignore TODO
