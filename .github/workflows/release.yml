@@ -9,14 +9,14 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
 
-            - uses: actions/setup-node@v2
+            - uses: actions/setup-node@v3
               with:
-                  node-version: 14.x
+                  node-version: "14"
+                  cache: npm
 
-            # TODO: consider npm ci instead
-            - run: npm install
+            - run: npm ci
 
             - name: Semantic release
               run: npx semantic-release -b main -p @semantic-release/commit-analyzer -p @semantic-release/github -p @semantic-release/release-notes-generator -p @semantic-release/npm
