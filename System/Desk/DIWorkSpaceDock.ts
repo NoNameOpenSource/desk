@@ -66,7 +66,7 @@ export class DIWorkSpaceDock extends DIView {
                         this.clearContextMenu();
                         this.contextEvent.delete();
                         this.contextEvent = null;
-                        if (evt.clientY > Desk.headerHeight && evt.clientX < 64) {
+                        if (evt.clientY > Desk.getInstance().headerHeight && evt.clientX < 64) {
                             evt.stopPropagation();
                             evt.preventDefault();
                             if (!this.preventClick) {

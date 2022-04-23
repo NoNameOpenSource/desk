@@ -68,7 +68,6 @@ export class Desk {
     lastDragApp: any;
     currentDragApp: any;
     dragEvent: DeskEvent;
-    static headerHeight: any;
     dropEvent: DeskEvent;
     deskInstance: Desk;
     dropEsc: DeskEvent;
@@ -255,7 +254,7 @@ export class Desk {
             "mousemove",
             (evt: any) => {
                 // find where the cursor is on
-                if (evt.clientY < Desk.headerHeight) {
+                if (evt.clientY < this.deskInstance.headerHeight) {
                     // client on header
                 } else {
                     if (evt.clientX < this.body.x) {
