@@ -16,6 +16,10 @@ jobs:
           node-version: "14"
           cache: npm
 
+      - run: echo "//npm.pkg.github.com/:_authToken=$CUSTOM_TOKEN" > ~/.npmrc
+        env:
+          CUSTOM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - run: npm ci
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
