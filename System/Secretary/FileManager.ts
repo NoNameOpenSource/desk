@@ -11,47 +11,50 @@ export class FileManager {
     }
 
     get homeFolder() {
-        var homeFolder = new DeskFile(0, "My Cloud", "DIR", this.secretary.currentUser.id);
+        const homeFolder = new DeskFile(0, "My Cloud", "DIR", this.secretary.currentUser.id);
         homeFolder.path = "~";
         return homeFolder;
     }
 
     get trashcan() {
-        var trash = new DeskFile(1, "휴지통", "RCB", this.secretary.currentUser.id);
+        const trash = new DeskFile(1, "휴지통", "RCB", this.secretary.currentUser.id);
         trash.path = "~/.Trash";
         return trash;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     get networkFolder() {
-        var network = new DeskFile(2, "네트워크", "NWK");
+        const network = new DeskFile(2, "네트워크", "NWK");
         network.path = "/Networks";
         return network;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     isHomeFolder(folder: DeskFile) {
-        if (folder.id != null) {
-            if (folder.id == 0) return true;
+        if (folder.id !== null) {
+            if (folder.id === 0) return true;
             else return false;
         }
-        var components = folder.path.split("/");
-        if (components.length == 3) {
-            if (components[1] == "Users") {
+        const components = folder.path.split("/");
+        if (components.length === 3) {
+            if (components[1] === "Users") {
                 return true;
             }
         }
-        if (components.length == 4) {
-            if (components[1] == "Users" && components[3] == "") {
+        if (components.length === 4) {
+            if (components[1] === "Users" && components[3] === "") {
                 return true;
             }
         }
         return false;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     isSameFile(a: any, b: any) {
-        if (a.id != null) {
-            return a.id == b.id;
+        if (a.id !== null) {
+            return a.id === b.id;
         } else {
-            return a.path == b.path;
+            return a.path === b.path;
         }
     }
 
@@ -63,32 +66,32 @@ export class FileManager {
      * @param fileId id of the file
      */
     loadFileDataWithId(fileId: string, onCompletion: (data: Blob, error: any) => void) {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.open("GET", this.secretary.urlForFileId(fileId));
         xhr.responseType = "blob";
         xhr.addEventListener("load", function (evt) {
             // @ts-ignore
-            if (evt.target.status == 200) {
+            if (evt.target.status === 200) {
                 // .OK
                 // @ts-ignore
                 onCompletion(evt.target.response, null);
                 // @ts-ignore
-            } else if (evt.target.status == 404) {
+            } else if (evt.target.status === 404) {
                 // .notFound
                 var err = Object.freeze({ message: "Failed to find file" });
                 onCompletion(null, err);
                 // @ts-ignore
-            } else if (evt.target.status == 400) {
+            } else if (evt.target.status === 400) {
                 // .badRequest
                 var err = Object.freeze({ message: "Server responded with bad request" });
                 onCompletion(null, err);
                 // @ts-ignore
-            } else if (evt.traget.status == 500) {
+            } else if (evt.traget.status === 500) {
                 // .internalServerError
                 var err = Object.freeze({ message: "Server responded with internal server error" });
                 onCompletion(null, err);
                 // @ts-ignore
-            } else if (evt.target.status == 401) {
+            } else if (evt.target.status === 401) {
                 // .unauthorized
                 var err = Object.freeze({ message: "Server responded with unauthorized request" });
                 onCompletion(null, err);
@@ -109,32 +112,32 @@ export class FileManager {
      * @param fileId id of the file
      */
     loadFileTextWithId(fileId: string, onCompletion: (data: Blob, error: any) => void) {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         xhr.open("GET", this.secretary.urlForFileId(fileId));
         xhr.responseType = "text";
         xhr.addEventListener("load", function (evt) {
             // @ts-ignore
-            if (evt.target.status == 200) {
+            if (evt.target.status === 200) {
                 // .OK
                 // @ts-ignore
                 onCompletion(evt.target.response, null);
                 // @ts-ignore
-            } else if (evt.target.status == 404) {
+            } else if (evt.target.status === 404) {
                 // .notFound
                 var err = Object.freeze({ message: "Failed to find file" });
                 onCompletion(null, err);
                 // @ts-ignore
-            } else if (evt.target.status == 400) {
+            } else if (evt.target.status === 400) {
                 // .badRequest
                 var err = Object.freeze({ message: "Server responded with bad request" });
                 onCompletion(null, err);
                 // @ts-ignore
-            } else if (evt.traget.status == 500) {
+            } else if (evt.traget.status === 500) {
                 // .internalServerError
                 var err = Object.freeze({ message: "Server responded with internal server error" });
                 onCompletion(null, err);
                 // @ts-ignore
-            } else if (evt.target.status == 401) {
+            } else if (evt.target.status === 401) {
                 // .unauthorized
                 var err = Object.freeze({ message: "Server responded with unauthorized request" });
                 onCompletion(null, err);
@@ -155,22 +158,22 @@ export class FileManager {
      */
     loadFileInFolder(folderId: string, fileName: string, onCompletion: (file: Blob, error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("FileInFolder");
+        const req = new RequestServer("FileInFolder");
         req.addData("Folder", folderId);
         req.addData("File", fileName);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                var err = Object.freeze({ type: 1, message: "Failed to load file with following error from server", detail: responseErr.detail });
+                const err = Object.freeze({ type: 1, message: "Failed to load file with following error from server", detail: responseErr.detail });
                 onCompletion(null, err);
                 return;
             }
-            if (response.DataBlockStatus == 0) {
-                if (response.FileInFolder.status == 0) {
+            if (response.DataBlockStatus === 0) {
+                if (response.FileInFolder.status === 0) {
                     // file found
                     this.secretary.loadFileWithId(response.FileInFolder.file.id, onCompletion);
                 } else if (response.FileInFolder.status == 1) {
                     // 404 not found!
-                    let err = Object.freeze({ type: 2, message: "File does not exist" });
+                    const err = Object.freeze({ type: 2, message: "File does not exist" });
                 }
             }
         });
@@ -185,18 +188,18 @@ export class FileManager {
      */
     listInFolder(folder: any, onCompletion: (fileList: any, locationData: any, error: any) => void) {
         if (!onCompletion) return;
-        if (folder.owner != this.secretary.currentUser.id && this.isHomeFolder(folder)) {
+        if (folder.owner !== this.secretary.currentUser.id && this.isHomeFolder(folder)) {
             this.requestRemoteDrive(folder.owner, onCompletion);
             return;
         }
-        var req = new RequestServer("FileList");
+        const req = new RequestServer("FileList");
         req.addData("Path", folder.path);
-        if (folder.id != null && folder.id != -1) {
+        if (folder.id !== null && folder.id !== -1) {
             req.addData("Location", folder.id);
         }
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to load list data with following error from server",
                     detail: responseErr.detail,
@@ -204,8 +207,8 @@ export class FileManager {
                 onCompletion(null, null, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to load list data with data with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'FileList'",
@@ -214,7 +217,7 @@ export class FileManager {
                 return;
             }
             if (!response.FileList.Location) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to load list data with following error from server",
                     detail: responseErr.detail,
@@ -223,24 +226,24 @@ export class FileManager {
                 return;
             }
             response = response.FileList;
-            var files = new Array();
-            if (folder.id == 0) {
+            const files = [];
+            if (folder.id === 0) {
                 // home folder
                 // add networks and trash
                 files.push(this.trashcan);
                 files.push(this.networkFolder);
             }
-            var location = DeskFile.initWithFile(response.Location);
-            if (location.path == null) location.path = folder.path;
+            const location = DeskFile.initWithFile(response.Location);
+            if (location.path === null) location.path = folder.path;
 
-            var path = folder.path ? folder.path : location.path;
+            let path = folder.path ? folder.path : location.path;
             if (path) {
-                if (path[path.length - 1] == "/") {
+                if (path[path.length - 1] === "/") {
                     path = path.slice(0, path.length - 1);
                 }
             }
-            for (var i = 0; i < response.FileList.length; i++) {
-                var file = DeskFile.initWithFile(response.FileList[i]);
+            for (let i = 0; i < response.FileList.length; i++) {
+                const file = DeskFile.initWithFile(response.FileList[i]);
                 if (path) file.path = path + "/" + file.name;
                 files.push(file);
             }
@@ -257,16 +260,16 @@ export class FileManager {
      */
     getFileByPath(path: string, onCompletion: (file: DeskFile, error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("FileByPath");
+        const req = new RequestServer("FileByPath");
         req.addData("Path", path);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({ type: 1, message: "Failed to get file with following error from server", detail: responseErr.detail });
+                const err = Object.freeze({ type: 1, message: "Failed to get file with following error from server", detail: responseErr.detail });
                 onCompletion(null, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to get file with data with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'FileByPath'",
@@ -276,27 +279,27 @@ export class FileManager {
             }
             response = response.FileByPath;
             if (response.Error) {
-                var errorCode = response.Error;
-                if (errorCode == 1) {
+                const errorCode = response.Error;
+                if (errorCode === 1) {
                     // file does not exist
-                    let err = Object.freeze({ type: 3, message: "File does not exist" });
+                    const err = Object.freeze({ type: 3, message: "File does not exist" });
                     onCompletion(null, err);
                     return;
                 }
-                if (errorCode == 2) {
+                if (errorCode === 2) {
                     // database error
-                    let err = Object.freeze({ type: 1, message: "Failed to add new folder with database error from server" });
+                    const err = Object.freeze({ type: 1, message: "Failed to add new folder with database error from server" });
                     onCompletion(null, err);
                     return;
                 }
-                if (errorCode == 3) {
+                if (errorCode === 3) {
                     // permission is not given to view list
-                    let err = Object.freeze({ type: 2, message: "Unauthorized request" });
+                    const err = Object.freeze({ type: 2, message: "Unauthorized request" });
                     onCompletion(null, err);
                     return;
                 }
             }
-            var file = DeskFile.initWithFile(response.File);
+            const file = DeskFile.initWithFile(response.File);
             file.path = path;
             onCompletion(file, null);
         });
@@ -312,9 +315,9 @@ export class FileManager {
      */
     addFolder(folder: any, folderName: string, onCompletion: (addedFolderId: string, error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("AddDirectory");
-        if (folder.id == 2) {
-            var err = Object.freeze({ type: 3, message: "Can not create folder in this location" });
+        const req = new RequestServer("AddDirectory");
+        if (folder.id === 2) {
+            const err = Object.freeze({ type: 3, message: "Can not create folder in this location" });
             onCompletion(null, err);
             return;
         }
@@ -322,7 +325,7 @@ export class FileManager {
         req.addData("Location", folder.id);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: responseErr.detail,
@@ -330,8 +333,8 @@ export class FileManager {
                 onCompletion(null, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'AddDirectory'",
@@ -340,15 +343,15 @@ export class FileManager {
                 return;
             }
             response = response.AddDirectory;
-            if (response.UpdateResult == 1) {
+            if (response.UpdateResult === 1) {
                 // already same name exist
-                let err = Object.freeze({ type: 2, message: "'" + folderName + "'이름이 이미 사용중 입니다." });
+                const err = Object.freeze({ type: 2, message: "'" + folderName + "'이름이 이미 사용중 입니다." });
                 onCompletion(null, err);
                 return;
             }
-            if (response.UpdateResult == 2) {
+            if (response.UpdateResult === 2) {
                 // database error
-                let err = Object.freeze({ type: 1, message: "Failed to add new folder with database error from server" });
+                const err = Object.freeze({ type: 1, message: "Failed to add new folder with database error from server" });
                 onCompletion(null, err);
                 return;
             }
@@ -365,11 +368,11 @@ export class FileManager {
      */
     requestRemoteDrive(userId: any, onCompletion: (fileList: any[], locationData: any, error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("RemoteDrive");
+        const req = new RequestServer("RemoteDrive");
         req.addData("UserId", userId);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to load list data with following error from server",
                     detail: responseErr.detail,
@@ -377,8 +380,8 @@ export class FileManager {
                 onCompletion(null, null, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to load list data with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'RemoteDrive'",
@@ -387,29 +390,29 @@ export class FileManager {
                 return;
             }
             response = response.RemoteDrive;
-            if (response.UpdateResult == 1) {
+            if (response.UpdateResult === 1) {
                 // remote location does not exist
-                let err = Object.freeze({ type: 2, message: "Unauthorized request" });
+                const err = Object.freeze({ type: 2, message: "Unauthorized request" });
                 onCompletion(null, null, err);
                 return;
             }
-            if (response.UpdateResult == 2) {
+            if (response.UpdateResult === 2) {
                 // database error
-                let err = Object.freeze({ type: 1, message: "Failed to load list data with database error from server" });
+                const err = Object.freeze({ type: 1, message: "Failed to load list data with database error from server" });
                 onCompletion(null, null, err);
                 return;
             }
-            if (response.UpdateResult == 3) {
+            if (response.UpdateResult === 3) {
                 // permission is not given to view list
-                let err = Object.freeze({ type: 2, message: "Unauthorized request" });
+                const err = Object.freeze({ type: 2, message: "Unauthorized request" });
                 onCompletion(null, null, err);
                 return;
             }
-            var location = DeskFile.initWithFile(response.Location);
+            const location = DeskFile.initWithFile(response.Location);
             location.path = this.networkFolder.path + "/" + location.name;
-            var files = new Array();
-            for (var i = 0; i < response.FileList.length; i++) {
-                var file = DeskFile.initWithFile(response.FileList[i]);
+            const files = [];
+            for (let i = 0; i < response.FileList.length; i++) {
+                const file = DeskFile.initWithFile(response.FileList[i]);
                 file.path = location.path + "/" + file.name;
                 files.push(file);
             }
@@ -433,8 +436,8 @@ export class FileManager {
         altNames: string[]
     ) {
         if (!onCompletion) return;
-        var names = new Array();
-        for (var i = 0; i < htmlFileObjects.length; i++) {
+        const names = [];
+        for (let i = 0; i < htmlFileObjects.length; i++) {
             if (htmlFileObjects[i].size >= 4294967296) {
                 // 4GB files
                 // can't upload file bigger than 4GB
@@ -447,14 +450,14 @@ export class FileManager {
             }
         }
         // request server to get place to upload the files
-        var req = new RequestServer("FileUploadRequest");
+        const req = new RequestServer("FileUploadRequest");
         req.addData("Location", location);
         req.addData("Names[]", names);
 
         // TODO: use fat arrow function instead of .bind(this)
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: responseErr.detail,
@@ -463,7 +466,7 @@ export class FileManager {
                 return;
             }
             if (response.DataBlockStatus != 0) {
-                var err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'FileUploadRequest'",
@@ -472,14 +475,14 @@ export class FileManager {
                 return;
             }
             response = response.FileUploadRequest;
-            var errors = new Array();
-            for (var i = 0; i < response.fileIds.length; i++) {
+            const errors = [];
+            for (let i = 0; i < response.fileIds.length; i++) {
                 if (response.fileIds[i] < 0) {
                     // name already exist
-                    let err = Object.freeze({ type: 2, message: "'" + names[i] + "'이름이 이미 사용중 입니다. 업로드에 실패하였습니다." });
+                    const err = Object.freeze({ type: 2, message: "'" + names[i] + "'이름이 이미 사용중 입니다. 업로드에 실패하였습니다." });
                     onCompletion(null, err);
                 } else {
-                    var file = new DeskFileUpload(response.fileIds[i], names[i]);
+                    const file = new DeskFileUpload(response.fileIds[i], names[i]);
                     file.location = location;
                     file.size = htmlFileObjects[i].size;
                     if (file.size < 1000000000)
@@ -503,13 +506,13 @@ export class FileManager {
      */
     renameFile(file: DeskFile, name: string, onCompletion: (error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("RenameFile");
+        const req = new RequestServer("RenameFile");
         req.addData("Name", name);
         req.addData("File", file.id);
         req.addData("Type", file.type);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: responseErr.detail,
@@ -517,8 +520,8 @@ export class FileManager {
                 onCompletion(err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'RenameFile'",
@@ -527,9 +530,9 @@ export class FileManager {
                 return;
             }
             response = response.RenameFile;
-            if (response.UpdateResult == 1) {
+            if (response.UpdateResult === 1) {
                 // already same name exist
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 2,
                     // @ts-ignore
                     message: "'" + folderName + "'이름이 이미 사용중 입니다.",
@@ -551,12 +554,12 @@ export class FileManager {
      */
     touch(name: string, folder: any, onCompletion: (addedDeskFile: DeskFile, errorType: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("AddBlankFile");
+        const req = new RequestServer("AddBlankFile");
         req.addData("Name", name);
         req.addData("Location", folder.id);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                var err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: responseErr.detail,
@@ -564,8 +567,8 @@ export class FileManager {
                 onCompletion(null, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'AddBlankFile'",
@@ -574,13 +577,13 @@ export class FileManager {
                 return;
             }
             response = response.AddBlankFile;
-            if (response.UpdateResult == 1) {
+            if (response.UpdateResult === 1) {
                 // already same name exist
-                let err = Object.freeze({ type: 2, message: "'" + name + "'이름이 이미 사용중 입니다." });
+                const err = Object.freeze({ type: 2, message: "'" + name + "'이름이 이미 사용중 입니다." });
                 onCompletion(null, err);
                 return;
             }
-            var file = new DeskFile(response.FileId, name, "BIN");
+            const file = new DeskFile(response.FileId, name, "BIN");
             onCompletion(file, null);
         });
         req.send();
@@ -595,16 +598,16 @@ export class FileManager {
      */
     copyFiles(files: any[], folder: any, onCompletion: (conflictedFiles: any[], error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("CopyFiles");
-        var fileIds = new Array();
-        for (var i = 0; i < files.length; i++) {
+        const req = new RequestServer("CopyFiles");
+        const fileIds = [];
+        for (let i = 0; i < files.length; i++) {
             fileIds.push(files[i].id);
         }
         req.addData("FileList[]", fileIds);
         req.addData("Location", folder.id);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to copy files with following error from server",
                     detail: responseErr.detail,
@@ -612,8 +615,8 @@ export class FileManager {
                 onCompletion(null, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to copy files with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'CopyFiles'",
@@ -622,22 +625,22 @@ export class FileManager {
                 return;
             }
             response = response.CopyFiles;
-            if (response.UpdateResult == 1) {
+            if (response.UpdateResult === 1) {
                 // already same name exist
-                let err = Object.freeze({ type: 2, message: "Can not copy files into this location" });
+                const err = Object.freeze({ type: 2, message: "Can not copy files into this location" });
                 onCompletion(null, err);
                 return;
             }
-            if (response.UpdateResult == 2) {
+            if (response.UpdateResult === 2) {
                 // database error
-                var err = Object.freeze({ type: 1, message: "Failed to copy files with database error from server" });
+                const err = Object.freeze({ type: 1, message: "Failed to copy files with database error from server" });
                 onCompletion(null, err);
                 return;
             }
             // check conflicted files
-            var conflictedFiles = new Array();
-            for (var i = 0; i < response.ConflictFiles.length; i++) {
-                for (var j = 0; j < files.length; j++) {
+            const conflictedFiles = [];
+            for (let i = 0; i < response.ConflictFiles.length; i++) {
+                for (let j = 0; j < files.length; j++) {
                     if (files[j].name == response.ConflictFiles[i].name) {
                         conflictedFiles.push(files[j]);
                         break;
@@ -658,16 +661,16 @@ export class FileManager {
      */
     moveFiles(files: any[], folder: any, onCompletion: (conflictedFiles: any[], error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("MoveFiles");
-        var fileIds = new Array();
-        for (var i = 0; i < files.length; i++) {
+        const req = new RequestServer("MoveFiles");
+        const fileIds = [];
+        for (let i = 0; i < files.length; i++) {
             fileIds.push(files[i].id);
         }
         req.addData("FileList[]", fileIds);
         req.addData("Location", folder.id);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to move files with following error from server",
                     detail: responseErr.detail,
@@ -675,8 +678,8 @@ export class FileManager {
                 onCompletion(null, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to move files with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'MoveFiles'",
@@ -685,22 +688,22 @@ export class FileManager {
                 return;
             }
             response = response.MoveFiles;
-            if (response.UpdateResult == 1) {
+            if (response.UpdateResult === 1) {
                 // already same name exist
-                let err = Object.freeze({ type: 2, message: "Can not move the files into this location" });
+                const err = Object.freeze({ type: 2, message: "Can not move the files into this location" });
                 onCompletion(null, err);
                 return;
             }
-            if (response.UpdateResult == 2) {
+            if (response.UpdateResult === 2) {
                 // database error
-                let err = Object.freeze({ type: 1, message: "Failed to move files with database error from server" });
+                const err = Object.freeze({ type: 1, message: "Failed to move files with database error from server" });
                 onCompletion(null, err);
                 return;
             }
             // check conflicted files
-            var conflictedFiles = new Array();
-            for (var i = 0; i < response.ConflictFiles.length; i++) {
-                for (var j = 0; j < files.length; j++) {
+            const conflictedFiles = [];
+            for (let i = 0; i < response.ConflictFiles.length; i++) {
+                for (let j = 0; j < files.length; j++) {
                     if (files[j].name == response.ConflictFiles[i].name) {
                         conflictedFiles.push(files[j]);
                         break;
@@ -720,15 +723,15 @@ export class FileManager {
      */
     trashFiles(files: any[], onCompletion: (error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("TrashFiles");
-        var fileIds = new Array();
-        for (var i = 0; i < files.length; i++) {
+        const req = new RequestServer("TrashFiles");
+        const fileIds = [];
+        for (let i = 0; i < files.length; i++) {
             fileIds.push(files[i].id);
         }
         req.addData("FileList[]", fileIds);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to trash files with following error from server",
                     detail: responseErr.detail,
@@ -736,8 +739,8 @@ export class FileManager {
                 onCompletion(err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to trash files with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'TrashFiles'",
@@ -759,15 +762,15 @@ export class FileManager {
      */
     deleteFiles(files: any[], onCompletion: (error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("DeleteFiles");
-        var fileIds = new Array();
-        for (var i = 0; i < files.length; i++) {
+        const req = new RequestServer("DeleteFiles");
+        const fileIds = [];
+        for (let i = 0; i < files.length; i++) {
             fileIds.push(files[i].id);
         }
         req.addData("FileList[]", fileIds);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to delete files with following error from server",
                     detail: responseErr.detail,
@@ -775,8 +778,8 @@ export class FileManager {
                 onCompletion(err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
-                let err = Object.freeze({
+            if (response.DataBlockStatus !== 0) {
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to delete files with following error from server",
                     detail: "Server returned DataBlockStatus = " + response.DataBlockStatus + " with datablock 'DeleteFiles'",
@@ -785,9 +788,9 @@ export class FileManager {
                 return;
             }
             response = response.DeleteFiles;
-            if (response.UpdateResult == 2) {
+            if (response.UpdateResult === 2) {
                 // database error
-                let err = Object.freeze({ type: 1, message: "Failed to delete files with database error from server" });
+                const err = Object.freeze({ type: 1, message: "Failed to delete files with database error from server" });
                 onCompletion(err);
                 return;
             }

@@ -1,7 +1,7 @@
 import { Secretary } from "./Secretary";
 
 export class DeskFile {
-    id: any;
+    id: string;
     name: any;
     type: any;
     data: any;
@@ -18,9 +18,9 @@ export class DeskFile {
         this.owner = owner;
         this.path;
 
-        if (this.type == "BIN" || this.type == "PKG") {
+        if (this.type === "BIN" || this.type === "PKG") {
             // getting extension if file
-            var index = ((name.lastIndexOf(".") - 1) >>> 0) + 2;
+            const index = ((name.lastIndexOf(".") - 1) >>> 0) + 2;
             // @ts-ignore TODO: bug
             this.ext = name.slice(index);
             this.name = name.slice(0, index - 1);
@@ -29,7 +29,7 @@ export class DeskFile {
 
     initFromPath(path: string) {
         this.path = path;
-        var components = path.split("/");
+        const components = path.split("/");
         this.name = components[components.length - 1];
         this.type = null;
         this.data = null;
@@ -37,7 +37,7 @@ export class DeskFile {
     }
 
     static initWithFile(file: File) {
-        var newFile = new DeskFile(file.id, file.name, file.type, file.ownerId, file.data);
+        const newFile = new DeskFile(file.id, file.name, file.type, file.ownerId, file.data);
         return newFile;
     }
 
@@ -52,22 +52,21 @@ export class DeskFile {
      * @param onCompletion callback function (error)
      * @returns
      */
-    loadData(onCompletion: (errorType: number) => void) {
+    loadData(onCompletion: (errorType: ErrorType) => void) {
         if (!onCompletion) return;
 
         if (this.data) {
             onCompletion(null);
             return;
         }
-        if (this.type != "BIN") {
-            let error = Object.freeze({ type: 1, message: "File is a directory" });
-            // @ts-ignore TODO: maybe error?
-            onCompletion(err);
+        if (this.type !== "BIN") {
+            const error = Object.freeze({ type: 1, message: "File is a directory" });
+            onCompletion(error);
             return;
         }
 
-        if (this.id != null) {
-            this.secretary.fileManager.loadFileDataWithId(this.id, (data: any, error: any) => {
+        if (this.id !== null) {
+            this.secretary.fileManager.loadFileDataWithId(this.id, (data: any, error: ErrorType) => {
                 if (error) {
                     onCompletion(error);
                 }
@@ -85,3 +84,5 @@ interface File {
     ownerId: string;
     data: any;
 }
+
+type ErrorType = Readonly<{ type: number; message: string }>;

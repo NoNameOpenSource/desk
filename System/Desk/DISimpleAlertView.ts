@@ -1,4 +1,5 @@
 import { DeskEvent } from "../Secretary";
+import { DIAlertView } from "./DIAlertView";
 import { DIButton } from "./DIButton";
 import { DIImageView } from "./DIImageView";
 import { DILabel } from "./DILabel";
@@ -7,12 +8,11 @@ import { DIView } from "./DIView";
 /**
  * Sample alert for the system
  */
-export class DISimpleAlertView extends DIView {
+export class DISimpleAlertView extends DIAlertView {
     autoHeight: boolean;
     buttons: DIButton[];
     alertContent: DILabel;
     icon: DIView;
-    _useTextArea: boolean;
     textArea: DIView;
 
     constructor(text: string, icon: string, className?: string, idName?: string) {

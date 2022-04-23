@@ -1,22 +1,22 @@
 export class DeskClipboard {
     dataTypes: string[];
-    data: any[];
-    constructor(dataType: string, data: any) {
-        this.dataTypes = new Array();
-        this.data = new Array();
+    data: string[];
+    constructor(dataType: string, data: string) {
+        this.dataTypes = [];
+        this.data = [];
 
         this.dataTypes.push(dataType);
         this.data.push(data);
     }
 
-    addData(dataType: string, data: any) {
+    addData(dataType: string, data: string) {
         this.dataTypes.push(dataType);
         this.data.push(data);
     }
 
     getData(dataType: string) {
-        var index = this.dataTypes.indexOf(dataType);
-        if (index == -1) return false;
+        const index = this.dataTypes.indexOf(dataType);
+        if (index === -1) return false;
         return this.data[index];
     }
 

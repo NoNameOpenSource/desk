@@ -35,8 +35,12 @@ export class DIWindow extends DIView {
     inSleep: boolean;
     titleBar: DIView;
 
-    private _z: number;
-    private _title: string;
+    protected _x: number;
+    protected _y: number;
+    protected _z: number;
+    protected _title: string;
+    protected _width: number;
+    protected _height: number;
 
     constructor(className?: string, idName?: string, title?: string, x?: number, y?: number, width?: number, height?: number, titleBarOptions = 0) {
         super(className, idName);

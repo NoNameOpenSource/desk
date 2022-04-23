@@ -4,6 +4,7 @@ export * from "./DeskClipboard";
 export * from "./DeskEvent";
 export * from "./DeskFile";
 export * from "./DeskFileUpload";
+export * from "./Drawer";
 export * from "./DrawerOpenPanel";
 export * from "./DrawerSavePanel";
 export * from "./ErrorHandler";

@@ -1,18 +1,17 @@
 import { DIButton } from "../Desk/DIButton";
 import { DIView } from "../Desk/DIView";
+import { Application } from "./Application";
+import { Drawer } from "./Drawer";
 
 export class DrawerOpenPanel extends DIView {
     type: string;
     drawerPanelContainer: DIView;
-    drawer: any;
-    cancelButton: any;
-    openButton: any;
-    delegate: any;
+    drawer: Drawer;
+    cancelButton: DIButton;
+    openButton: DIButton;
+    delegate: Application;
 
-    /**
-     * @todo use or remove folder parameter
-     */
-    constructor(delegate: any, folder: any) {
+    constructor(delegate: Application) {
         super("DrawerPanel");
 
         this.type = "openPanel";
@@ -49,15 +48,21 @@ export class DrawerOpenPanel extends DIView {
     }
 
     cancel() {
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.delegate.drawerPanelCanceled();
     }
 
     open() {
-        if (this.drawer.listView.selected.length != 1) {
+        // @ts-ignore TODO: selected is not an array
+        if (this.drawer.listView.selected.length !== 1) {
             return;
         }
-        var fileIndex = this.drawer.listView.selected[0];
-        var file = this.drawer.listData[fileIndex];
+        // @ts-ignore TODO: selected is not an array
+        const fileIndex = this.drawer.listView.selected[0];
+        const file = this.drawer.listData[fileIndex];
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.delegate.drawerPanelSelected(file);
     }
 }
