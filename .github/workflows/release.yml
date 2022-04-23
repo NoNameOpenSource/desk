@@ -1,25 +1,27 @@
 name: release
 
 on:
-    push:
-        branches: [develop]
+  push:
+    branches: [develop]
 
 jobs:
-    publish_to_github_package_registry:
-        runs-on: ubuntu-latest
+  publish_to_github_package_registry:
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-            - uses: actions/setup-node@v3
-              with:
-                  node-version: "14"
-                  cache: npm
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+          cache: npm
 
-            - run: npm ci
+      - run: npm ci
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            - name: Semantic release
-              run: npx semantic-release -b main -p @semantic-release/commit-analyzer -p @semantic-release/github -p @semantic-release/release-notes-generator -p @semantic-release/npm
-              env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Semantic release
+        run: npx semantic-release -b main -p @semantic-release/commit-analyzer -p @semantic-release/github -p @semantic-release/release-notes-generator -p @semantic-release/npm
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
