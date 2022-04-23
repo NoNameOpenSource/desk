@@ -23,7 +23,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Semantic release
-        run: npx semantic-release -b develop -p @semantic-release/commit-analyzer -p @semantic-release/github -p @semantic-release/release-notes-generator -p @semantic-release/npm
+        run: npx semantic-release -b develop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
