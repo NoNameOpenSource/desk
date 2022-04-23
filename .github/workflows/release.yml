@@ -1,8 +1,8 @@
-name: main branch
+name: release
 
 on:
     push:
-        branches: [main]
+        branches: [develop]
 
 jobs:
     publish_to_github_package_registry:
