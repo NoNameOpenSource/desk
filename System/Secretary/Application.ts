@@ -1,9 +1,11 @@
 import { DeskEvent, WorkSpace } from ".";
+import { DIApplicationDelegate } from "../Desk";
 import { DIAlertView } from "../Desk/DIAlertView";
 import { DISimpleAlertView } from "../Desk/DISimpleAlertView";
 import { DISmallAlertView } from "../Desk/DISmallAlertView";
 import { DIView } from "../Desk/DIView";
 import { DIWindow } from "../Desk/DIWindow";
+import { DeskAnimation } from "./DeskAnimation";
 
 /**
  * This class is for the Applications that will run on 'Desk System'
@@ -13,19 +15,19 @@ import { DIWindow } from "../Desk/DIWindow";
 export class Application {
     workSpace: WorkSpace;
     data: any;
-    window: any;
-    alerts: any[];
-    alertScreen: any;
-    loadingScreen: any;
-    loadingAnimation: any;
-    animations: any[];
+    window: DIWindow;
+    alerts: DIAlertView[];
+    alertScreen: DIView;
+    loadingScreen: DIView;
+    loadingAnimation: DIView;
+    animations: DeskAnimation[];
     resizable: boolean;
-    AppDelegate: any;
-    _loading: any;
+    AppDelegate: DIApplicationDelegate;
     minWidth: any;
     /** @todo spelling */
-    ainmations: any;
     deleted: boolean;
+
+    private _loading: boolean;
 
     /**
      *
@@ -66,9 +68,16 @@ export class Application {
     }
 
     didMoveToDesk() {
+        // @ts-ignore TODO: remove this conditional block that unnecessarily checks for window being a DIView
         if (this.window.child.view) {
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.window.child.view.addChildView(this.alertScreen);
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.window.child.view.addChildView(this.loadingScreen);
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.window.child.view.addChildView(this.loadingAnimation);
         } else {
             this.window.child.addChildView(this.alertScreen);
@@ -83,19 +92,19 @@ export class Application {
 
     alert(text: string, func: () => void, className: string) {
         this.alertScreen.hidden = false;
-        let alert: any;
+        let alert: DIAlertView;
         if (this.window.width < 330) alert = new DISmallAlertView(text, undefined, className);
-        else alert = new DIAlertView(text, false, className);
+        else alert = new DIAlertView(text, undefined, className);
         this.alerts.push(alert);
         if (this.window.width > 500) {
             alert.body.style.left = "calc(50% - 230px)";
         }
         alert.events.push(
             new DeskEvent(window, "keydown", (evt: any) => {
-                if (evt.keyCode == 13) {
+                if (evt.keyCode === 13) {
                     // enter key
                     alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                } else if (evt.keyCode == 27) {
+                } else if (evt.keyCode === 27) {
                     // esc
                     alert.buttons[0].buttonBody.click();
                 }
@@ -118,16 +127,16 @@ export class Application {
 
     alertSimple(text: string, frstTitle: string, scndTitle: string, frstFunc: () => void, scndFunc: () => void, className?: string) {
         this.alertScreen.hidden = false;
-        let alert: any;
+        let alert: DISimpleAlertView;
         if (this.window.width < 330) {
             alert = new DISimpleAlertView(text, undefined, className);
             this.alerts.push(alert);
             alert.events.push(
                 new DeskEvent(window, "keydown", (evt: any) => {
-                    if (evt.keyCode == 13) {
+                    if (evt.keyCode === 13) {
                         // enter key
                         alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                    } else if (evt.keyCode == 27) {
+                    } else if (evt.keyCode === 27) {
                         // esc
                         alert.buttons[0].buttonBody.click();
                     }
@@ -159,15 +168,15 @@ export class Application {
 
     alertError(titleText: string, errorMsg: string, func: () => void, className?: string) {
         this.alertScreen.hidden = false;
-        let alert = new DIAlertView(titleText, false, className);
+        let alert = new DIAlertView(titleText, undefined, className);
         if (errorMsg) alert.useTextArea(errorMsg);
         this.alerts.push(alert);
         alert.events.push(
             new DeskEvent(this.window.child.body, "keydown", (evt: any) => {
-                if (evt.keyCode == 13) {
+                if (evt.keyCode === 13) {
                     // enter key
                     alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                } else if (evt.keyCode == 27) {
+                } else if (evt.keyCode === 27) {
                     // esc
                     alert.buttons[0].buttonBody.click();
                 }
@@ -186,8 +195,10 @@ export class Application {
         alert.body.style.top = "calc(50% - ".concat(`${alert.height / 2}`, "px)");
     }
 
+    // eslint-disable-next-line class-methods-use-this
     resizeStart() {}
 
+    // eslint-disable-next-line class-methods-use-this
     resizeEnd() {}
 
     resizeWidth(width: number) {
@@ -197,23 +208,28 @@ export class Application {
         return width;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     activate() {}
 
+    // eslint-disable-next-line class-methods-use-this
     deactivate() {}
 
+    // eslint-disable-next-line class-methods-use-this
     windowMinimized() {}
 
+    // eslint-disable-next-line class-methods-use-this
     windowMaximized() {}
 
+    // eslint-disable-next-line class-methods-use-this
     backButtonTriggered() {}
 
-    beginAnimation(animation: any) {
-        this.ainmations.push(animation);
+    beginAnimation(animation: DeskAnimation) {
+        this.animations.push(animation);
     }
 
     // stopping animations is possible through the DeskAnimation. Not needed here. ...probably
 
-    endAnimation(animation: any) {
+    endAnimation(animation: DeskAnimation) {
         const i = this.animations.indexOf(animation);
         animation.delete();
         this.animations[i] = null;
@@ -221,13 +237,13 @@ export class Application {
     }
 
     windowWillClose(window: any) {
-        if (window == this.window) {
+        if (window === this.window) {
             // main window
         }
     }
 
     windowDidClose(window: any) {
-        if (window == this.window) {
+        if (window === this.window) {
             // main window
             this.delete();
         }

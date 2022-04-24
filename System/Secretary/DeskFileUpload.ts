@@ -25,7 +25,7 @@ export class DeskFileUpload extends DeskFile {
     set progress(newValue) {
         this._progress = newValue;
         // TODO: of instead of in?
-        for (let callback in this.listeners) {
+        for (const callback of this.listeners) {
             // @ts-ignore
             callback(this, this.progress);
         }

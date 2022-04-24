@@ -5,21 +5,21 @@ export class DeskEvent {
     /**
      * target element
      */
-    target;
+    target: Element;
 
     /**
      * name of the event
      */
-    method;
+    method: string;
 
     /**
      * the function that needs to be called
      */
-    evtFunc;
+    evtFunc: (this: Element, ev: any) => any;
 
     stopped: boolean;
 
-    constructor(target: any, method: any, evtFunc: any, init = true) {
+    constructor(target: Element, method: string, evtFunc: (this: Element, ev: any) => any, init = true) {
         this.target = target;
         this.method = method;
         this.evtFunc = evtFunc;

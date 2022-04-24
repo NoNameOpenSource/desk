@@ -27,7 +27,7 @@ export class DIButton extends DIView {
         super.wakeUp();
     }
 
-    setButtonEvent(evt: (this: HTMLElement, ev: any) => any) {
+    setButtonEvent(evt: (this: Element, ev: DeskEvent) => any) {
         if (this.event) this.event.delete();
         this.event = new DeskEvent(this.buttonBody, "click", evt);
     }

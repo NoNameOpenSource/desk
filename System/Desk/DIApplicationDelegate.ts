@@ -1,4 +1,6 @@
+import { Application } from "../Secretary";
+
 export interface DIApplicationDelegate {
-    init: () => void;
+    init: (app: Application) => void;
     serverScript: (str: string) => void;
 }

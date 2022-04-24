@@ -1,15 +1,16 @@
 import { DIButton } from "../Desk/DIButton";
 import { DITextField } from "../Desk/DITextField";
 import { DIView } from "../Desk/DIView";
+import { Drawer } from "./Drawer";
 import { Secretary } from "./Secretary";
 
 export class DrawerSavePanel extends DIView {
     type: string;
     drawerPanelContainer: DIView;
-    drawer: any;
-    nameField: any;
-    cancelButton: any;
-    openButton: any;
+    drawer: Drawer;
+    nameField: DIView;
+    cancelButton: DIButton;
+    openButton: DIButton;
     delegate: any;
     secretary: Secretary;
 
@@ -24,6 +25,7 @@ export class DrawerSavePanel extends DIView {
         this.drawerPanelContainer.x = 10;
         this.drawerPanelContainer.width = 340;
         // @ts-ignore TODO: what is Drawer?
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.drawer = new Drawer(this.secretary.mainWorkSpace, "DrawerPanel", { drawerType: "openPanel" });
         this.drawer.window.closeButton.hidden = true;
         this.drawer.window.minButton.hidden = true;
@@ -57,14 +59,18 @@ export class DrawerSavePanel extends DIView {
     }
 
     cancel() {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.delegate.drawerPanelCanceled();
     }
 
     save() {
-        if (this.drawer.listView.selected.length == 1) {
+        // @ts-ignore TODO: selected is not an array
+        if (this.drawer.listView.selected.length === 1) {
             return;
         }
-        var folder = this.drawer.locationData;
+        const folder = this.drawer.locationData;
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.delegate.drawerPanelSelected(folder, this.nameField.stringValue);
     }
 }

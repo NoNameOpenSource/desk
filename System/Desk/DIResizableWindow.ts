@@ -3,19 +3,15 @@ import { DeskEvent } from "../Secretary/DeskEvent";
 import { Desk } from "./Desk";
 import { DILabel } from "./DILabel";
 import { DIView } from "./DIView";
+import { DIWindow } from "./DIWindow";
 
 /**
  * Window class for the system
  */
-export class DIResizableWindow extends DIView {
+export class DIResizableWindow extends DIWindow {
     child: DIView;
     parent: DIView;
     events: DeskEvent[];
-    _x: number;
-    _y: number;
-    _z: number;
-    _width: number;
-    _height: number;
     deleted: boolean;
     resize: boolean;
     cursor: number;
@@ -25,7 +21,6 @@ export class DIResizableWindow extends DIView {
     titleField: DILabel;
     titleBarOptions: number;
     border: any[];
-    _title: string;
     closeButton: any;
     minButton: any;
     maxButton: any;

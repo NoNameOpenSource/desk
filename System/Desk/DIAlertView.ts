@@ -1,3 +1,4 @@
+import { DeskEvent } from "../Secretary";
 import { DIButton } from "./DIButton";
 import { DIImageView } from "./DIImageView";
 import { DILabel } from "./DILabel";
@@ -14,10 +15,11 @@ import { DIView } from "./DIView";
 export class DIAlertView extends DIView {
     buttons: DIButton[];
     alertContent: DILabel;
-    private _useTextArea: boolean;
     autoHeight: boolean;
     icon: DIView;
     textArea: DIView;
+
+    protected _useTextArea: boolean;
 
     constructor(text?: string, icon?: string, className?: string, idName?: string) {
         if (!className) className = "DIAlertView";
@@ -55,7 +57,7 @@ export class DIAlertView extends DIView {
         }
     }
 
-    addButton(text: string, evt: (this: HTMLElement, ev: any) => any) {
+    addButton(text: string, evt: DeskEvent) {
         const id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DIAlertViewButton"));
         this.buttons[id].setButtonEvent(evt);
