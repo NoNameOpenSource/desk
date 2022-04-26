@@ -1,6 +1,7 @@
 import { Desk } from "../Desk/Desk";
 import { DIImageView } from "../Desk/DIImageView";
 import { DIView } from "../Desk/DIView";
+import { Application } from "./Application";
 import { DeskEvent } from "./DeskEvent";
 import { Secretary } from "./Secretary";
 
@@ -8,13 +9,14 @@ import { Secretary } from "./Secretary";
  * This is a simple way to display an image
  */
 export class WorkSpace {
-    name: any;
-    icon: any;
+    name: string;
+    icon: DIImageView;
     appSettings: any;
-    appList: any;
-    apps: any[];
+    appList: string[];
+    apps: Application[];
+    // eslint-disable-next-line @typescript-eslint/ban-types
     data: Object;
-    body: any;
+    body: DIView;
     loaded: boolean;
     width: number;
     loadedMark: HTMLElement;
@@ -24,13 +26,13 @@ export class WorkSpace {
     resizeEnd: DeskEvent;
     desk: Desk;
 
-    constructor(spaceName: string, iconName: string, appList: any[], appSettings?: any[]) {
+    constructor(spaceName: string, iconName: string, appList: string[], appSettings?: any[]) {
         this.desk = Desk.getInstance();
         this.name = spaceName;
         this.icon = new DIImageView(iconName, "WorkSpaceIcon");
         this.appSettings = new DIImageView(iconName, "WorkSpaceIcon");
         this.appList = appList;
-        this.apps = new Array();
+        this.apps = [];
         this.data = new Object();
         this.body = new DIView("WorkSpace");
         this.loaded = false;
@@ -40,7 +42,7 @@ export class WorkSpace {
     }
 
     initApps() {
-        var i = 0;
+        let i = 0;
         for (; i < this.appList.length; i++) {}
     }
 
@@ -50,54 +52,72 @@ export class WorkSpace {
             this.loaded = true;
             this.loadedMark = document.createElement("DIView");
             this.loadedMark.className = "WorkSpaceIconMark";
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.icon.body.appendChild(this.loadedMark);
         } else {
-            var i = 0;
+            let i = 0;
             for (; i < this.apps.length; i++) {
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 this.apps[i].wakeUp();
             }
         }
     }
 
     putInSleep() {
-        var i = 0;
+        let i = 0;
         for (; i < this.apps.length; i++) {
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.apps[i].putInSleep();
         }
     }
 
     loadApps() {
-        var i = 0;
+        let i = 0;
         for (; i < this.appList.length; i++) {
             this.loadApp(this.appList[i], this.appSettings[i]);
         }
     }
 
     loadApp(name: string, setting: any) {
-        var i = this.apps.push(Secretary.loadApp(name, setting, this)) - 1;
+        const i = this.apps.push(Secretary.loadApp(name, setting, this)) - 1;
         this.addWindow(this.apps[i].window);
         this.apps[i].data = this.data;
         this.apps[i].workSpace = this;
         if (this.apps[i].didMoveToDesk) this.apps[i].didMoveToDesk();
         this.apps[i].window.didMoveToDesk();
         if (this.apps[i].resizable) {
-            var app = this.apps[i];
+            const app = this.apps[i];
+            // @ts-ignore
             app.rightBorder = new DIView();
+            // @ts-ignore
             app.rightBorder.body.style.height = "100%";
+            // @ts-ignore
             app.rightBorder.body.style.width = "10px";
+            // @ts-ignore
             app.rightBorder.x = app.window.x + app.window.width;
+            // @ts-ignore
             app.rightBorder.body.style.cursor = "ew-resize";
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             this.body.addChildView(this.apps[i].rightBorder);
+            // @ts-ignore
             app.rightBorder.body.app = app;
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             app.rightBorder.events.push(
                 new DeskEvent(
+                    // @ts-ignore
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     app.rightBorder.body,
                     "mousedown",
                     function (evt: Event) {
                         // @ts-ignore TODO: bug
-                        if (evt.button == 0) {
+                        if (evt.button === 0) {
                             evt.preventDefault();
                             // @ts-ignore TODO: bug
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                             this.resizeWindow(evt.target.app, evt);
                         }
                     }.bind(this)
@@ -109,6 +129,7 @@ export class WorkSpace {
     /**
      * @todo finish function or remove it
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setContextMenu(dataSource: any, delegate: any) {
         if (this.contextMenu) {
         }
@@ -124,20 +145,22 @@ export class WorkSpace {
         window.y = 0;
         window.x = this.width;
         this.width += window.width + 10; // 1 is for the border
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         this.body.addChildView(window);
         this.body.width = this.width;
     }
 
-    resizeWindow(app: any, evt: DeskEvent) {
+    resizeWindow(app: Application, evt: DeskEvent) {
         if (app.window.minButton.hidden) {
             // window is minimized
             return;
         }
-        var index = this.apps.indexOf(app) + 1;
+        const index = this.apps.indexOf(app) + 1;
         // @ts-ignore TODO: bug
-        var diff = app.rightBorder.body.getBoundingClientRect().left - evt.clientX;
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        const diff = app.rightBorder.body.getBoundingClientRect().left - evt.clientX;
         this.lastWidth = app.window.width;
-        var i = index;
+        let i = index;
         for (; i < this.apps.length; i++) {
             this.apps[i].window.body.style.transition = "none";
         }
@@ -146,13 +169,15 @@ export class WorkSpace {
         // TODO: use arrow function instead of .bind(this)
         this.resizeEvent = new DeskEvent(document, "mousemove", (evt: DeskEvent) => {
             // @ts-ignore TODO: bug
-            var width = app.resizeWidth(this.desk.body.body.scrollLeft + evt.clientX - this.desk.body.x - app.window.x + diff);
-            if (width != false) {
-                var change = this.lastWidth - width;
-                var i = index;
+            const width = app.resizeWidth(this.desk.body.body.scrollLeft + evt.clientX - this.desk.body.x - app.window.x + diff);
+            if (width !== false) {
+                // @ts-ignore
+                const change = this.lastWidth - width;
+                let i = index;
                 for (; i < this.apps.length; i++) {
                     this.apps[i].window.x -= change;
                     if (this.apps[i].resizable) {
+                        // @ts-ignore
                         this.apps[i].rightBorder.x -= change;
                     }
                 }
@@ -163,11 +188,13 @@ export class WorkSpace {
         });
 
         this.resizeEnd = new DeskEvent(window, "mouseup", (evt: DeskEvent) => {
+            // @ts-ignore
             this.resizeEvent.evtFunc(evt);
             this.resizeEvent.delete();
             app.resizeEnd();
+            // @ts-ignore
             app.rightBorder.x = app.window.x + app.window.width;
-            var i = index;
+            let i = index;
             for (; i < this.apps.length; i++) {
                 this.apps[i].window.body.style.transition = "";
             }
@@ -179,25 +206,30 @@ export class WorkSpace {
 
     dataUpdated(str: string, data: any, sender: any) {
         if (str) {
-            var i = 0;
+            let i = 0;
             for (; i < this.apps.length; i++) {
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (this.apps[i].dataUpdated) this.apps[i].dataUpdated(str, data, sender);
             }
         } else {
-            var i = 0;
+            let i = 0;
             for (; i < this.apps.length; i++) {
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 if (this.apps[i].dataUpdated) this.apps[i].dataUpdated();
             }
         }
     }
 
     updateWindows() {
-        var currentLen = 10;
-        var i = 0;
+        let currentLen = 10;
+        let i = 0;
         for (; i < this.apps.length; i++) {
             this.apps[i].window.x = currentLen;
             currentLen += this.apps[i].window.width + 10;
             if (this.apps[i].resizable) {
+                // @ts-ignore
                 this.apps[i].rightBorder.x = currentLen - 10;
             }
         }
@@ -208,16 +240,21 @@ export class WorkSpace {
     /**
      * @todo finish function or remove it
      */
-    appWillClose(app: any) {}
+    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
+    appWillClose(app: Application) {}
 
-    appDidClose(app: any) {
+    appDidClose(app: Application) {
         // check if the application have right boarder
+        // @ts-ignore
         if (app.rightBorder) {
+            // @ts-ignore
             app.rightBorder.body.app = null;
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             app.rightBorder.delete();
         }
-        let index = this.apps.indexOf(app);
-        if (index != -1) {
+        const index = this.apps.indexOf(app);
+        if (index !== -1) {
             this.apps[index] = null;
             this.apps.splice(index, 1);
             this.body.children.splice(index, 1);
@@ -226,7 +263,7 @@ export class WorkSpace {
     }
 
     delete() {
-        var i = 0;
+        let i = 0;
         for (; i < this.apps.length; i++) {
             this.apps[i].delete();
         }

@@ -2,11 +2,12 @@ import { Secretary } from "./Secretary";
 
 export class DeskFile {
     id: string;
-    name: any;
-    type: any;
+    name: string;
+    ext: string;
+    type: string;
     data: any;
     owner: any;
-    path: any;
+    path: string;
     secretary: Secretary;
 
     constructor(id: any, name: string, type: string, owner?: any, data: any = null) {

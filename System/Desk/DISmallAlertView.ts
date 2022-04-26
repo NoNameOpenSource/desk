@@ -52,7 +52,7 @@ export class DISmallAlertView extends DIAlertView {
         }
     }
 
-    addButton(text: string, evt: DeskEvent) {
+    addButton(text: string, evt: (this: Element, ev: DeskEvent) => any) {
         const id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DISmallAlertViewButton"));
         // @ts-ignore

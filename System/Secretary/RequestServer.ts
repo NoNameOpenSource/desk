@@ -1,4 +1,3 @@
-import { DeskEvent } from "./DeskEvent";
 import { Secretary } from "./Secretary";
 
 /**
@@ -57,31 +56,36 @@ export class RequestServer {
         }
     }
 
-    responseFromServer(evt: DeskEvent) {
-        if (evt.target.status === 200) {
+    responseFromServer(evt: Event) {
+        // @ts-ignore
+        const statusCode: number = evt.target.status;
+        if (statusCode === 200) {
             // .OK
             let json;
             try {
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 json = JSON.parse(evt.target.responseText);
             } catch {
+                // @ts-ignore
                 const err = Object.freeze({ type: 0, message: "Failed parse json", detail: evt.target.responseText });
                 this.callListeners(null, err);
             }
             this.callListeners(json, null);
-        } else if (evt.target.status === 404) {
+        } else if (statusCode === 404) {
             // .notFound
             const err = Object.freeze({ message: "Failed to find file" });
             this.callListeners(null, err);
-        } else if (evt.target.status === 400) {
+        } else if (statusCode === 400) {
             // .badRequest
             const err = Object.freeze({ message: "Server responsed with bad request" });
             this.callListeners(null, err);
             // @ts-ignore TODO: bug - "traget"
-        } else if (evt.traget.status === 500) {
+        } else if (statusCode === 500) {
             // .internalServerError
             const err = Object.freeze({ message: "Server responsed with internal server error" });
             this.callListeners(null, err);
-        } else if (evt.target.status === 401) {
+        } else if (statusCode === 401) {
             // .unauthorized
             const err = Object.freeze({ message: "Server responsed with unauthorized request" });
             this.callListeners(null, err);
@@ -95,6 +99,8 @@ export class RequestServer {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     callListeners(response: any, err: any) {
         for (const listener of this.listeners) {
+            // @ts-ignore
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             listener(response);
         }
     }

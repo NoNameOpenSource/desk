@@ -44,7 +44,7 @@ export class Application {
         // Init alert layer
         this.alerts = [];
         this.alertScreen = new DIView("DILoading");
-        this.alertScreen.body.style.zIndex = 100;
+        this.alertScreen.body.style.zIndex = `${100}`;
         this.alertScreen.hidden = true;
         //this._loading = true;
 
@@ -119,8 +119,7 @@ export class Application {
             if (this.alerts.length < 1) this.alertScreen.hidden = true;
             if (func) func();
         });
-        if (this.window.child.view) this.window.child.view.addChildView(alert);
-        else this.window.child.addChildView(alert);
+        this.window.child.addChildView(alert);
         alert.body.style.top = "calc(50% - ".concat(`${alert.height / 2}`, "px)");
         return alert;
     }
@@ -203,7 +202,7 @@ export class Application {
 
     resizeWidth(width: number) {
         if (width < this.minWidth) width = this.minWidth;
-        if (width == this.window.width) return <boolean>false;
+        if (width === this.window.width) return <boolean>false;
         this.window.width = width;
         return width;
     }

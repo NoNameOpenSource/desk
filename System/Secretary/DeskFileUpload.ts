@@ -22,7 +22,8 @@ export class DeskFileUpload extends DeskFile {
         this.listeners = [];
     }
 
-    set progress(newValue) {
+    // @ts-ignore
+    set progress(newValue: number) {
         this._progress = newValue;
         // TODO: of instead of in?
         for (const callback of this.listeners) {
@@ -31,6 +32,7 @@ export class DeskFileUpload extends DeskFile {
         }
     }
 
+    // @ts-ignore
     get progress() {
         return this._progress;
     }

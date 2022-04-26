@@ -1,7 +1,12 @@
+import { DIWindow } from "../Desk";
 import { Desk } from "../Desk/Desk";
+import { Application } from "./Application";
+import { DeskClipboard } from "./DeskClipboard";
 import { DeskFile } from "./DeskFile";
+import { DeskFileUpload } from "./DeskFileUpload";
 import { FileManager } from "./FileManager";
 import { RequestServer } from "./RequestServer";
+import { User } from "./User";
 import { WorkSpace } from "./WorkSpace";
 
 /**
@@ -17,31 +22,31 @@ import { WorkSpace } from "./WorkSpace";
 export class Secretary {
     private static instance: Secretary;
 
-    applications = new Array();
-    windows = new Array();
+    applications: Application[] = [];
+    windows: DIWindow[] = [];
     serverProtocol = "";
     serverName = "";
     version = "";
     getVariables = new Object();
     serverType = "";
     dataManagerURL = "";
-    workSpaces = new Array();
+    workSpaces: WorkSpace[] = [];
     mainWorkSpace: WorkSpace = null;
     plugins = new Object();
-    pluginFrames = new Array();
-    uploads = new Array();
+    pluginFrames: any[] = [];
+    uploads: any[] = [];
     currentUser: any;
-    users = new Array();
+    users: User[] = [];
     browser;
     browserVersion = "0";
     ESVersion;
-    appList = new Array();
-    clipboard: any;
+    appList: string[] = [];
+    clipboard: DeskClipboard;
     desk: Desk;
     fileManager = new FileManager();
     /** @todo use enum */
     clientMode: string;
-    application: any;
+    application: string;
 
     secretaryInstance: Secretary;
     user: any;
@@ -65,7 +70,7 @@ export class Secretary {
         this.secretaryInstance = Secretary.getInstance();
 
         // Init based on the server
-        if (this.serverType == "php") {
+        if (this.serverType === "php") {
             this.dataManagerURL = "/System/DataManager/DataManager.php";
         } else {
             this.dataManagerURL = "/System/DataManager";
@@ -89,7 +94,7 @@ export class Secretary {
         // load side menu app list
         this.loadAppList();
 
-        if (this.secretaryInstance.clientMode == "SingleApplication") {
+        if (this.secretaryInstance.clientMode === "SingleApplication") {
             this.desk.hideTopMenuBar();
             this.desk.hideWorkSpaceDock();
             this.desk.hideWallpaper();
@@ -98,15 +103,17 @@ export class Secretary {
         }
     }
 
+    // eslint-disable-next-line class-methods-use-this
     loadUserInfo() {
-        let req = new RequestServer("UserInfo");
+        const req = new RequestServer("UserInfo");
         req.addEventListener("load", function (response, err) {
             if (err) {
                 // TODO: maybe just err instead of err.detail?
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 Secretary.getInstance().alertError("Failed to load UserInfo with following error from server:", err.detail);
                 return -1;
             }
-            if (response.DataBlockStatus == 0) {
+            if (response.DataBlockStatus === 0) {
                 Secretary.getInstance().user = response.UserInfo;
             }
         });
@@ -126,9 +133,9 @@ export class Secretary {
     }
 
     quitWorkSpace(index: number) {
-        var name = this.workSpaces[index].name;
-        var icon = this.workSpaces[index].icon.imageSource;
-        var appList = this.workSpaces[index].appList;
+        const name = this.workSpaces[index].name;
+        const icon = this.workSpaces[index].icon.imageSource;
+        const appList = this.workSpaces[index].appList;
         this.workSpaces[index].delete();
         this.workSpaces[index] = new WorkSpace(name, icon, appList);
     }
@@ -136,28 +143,44 @@ export class Secretary {
     /**
      * @todo Secretary should not know about the specific applications
      */
-    static loadApp(appName: string, appSetting: any, workSpace: any) {
-        if (appName == "Terminal") {
+    static loadApp(appName: string, appSetting: any, workSpace: WorkSpace) {
+        if (appName === "Terminal") {
             // @ts-ignore
-            return new Terminal(workSpace, appName, appSetting);
-        } else if (appName == "TextEditor") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            const app: Application = new Terminal(workSpace, appName, appSetting);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return app;
+        } else if (appName === "TextEditor") {
             // @ts-ignore
-            return new TextEditor(workSpace, appName, appSetting);
-        } else if (appName == "DocReader") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            const app: Application = TextEditor(workSpace, appName, appSetting);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return app;
+        } else if (appName === "DocReader") {
             // @ts-ignore
-            return new DocReader(workSpace, appName, appSetting);
-        } else if (appName == "Debugger") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            const app: Application = DocReader(workSpace, appName, appSetting);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return app;
+        } else if (appName === "Debugger") {
             // @ts-ignore
-            return new Debugger(workSpace, appName, appSetting);
-        } else if (appName == "BeatApp") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            const app: Application = new Debugger(workSpace, appName, appSetting);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return app;
+        } else if (appName === "BeatApp") {
             // @ts-ignore TODO: BeatApp does not exist
-            return new BeatApp(workSpace, appName, appSetting);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            const app: Application = new BeatApp(workSpace, appName, appSetting);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return app;
         }
     }
 
     /**
      * @todo finish or remove this function
      */
+    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
     loadScripts(appName: string) {}
 
     setClipboard(clipboard: any) {
@@ -168,7 +191,7 @@ export class Secretary {
         this.clipboard = clipboard;
     }
 
-    getClipboard(dataType: any) {
+    getClipboard(dataType: string) {
         if (this.clipboard) {
             return this.clipboard.getData(dataType);
         } else return false;
@@ -177,7 +200,7 @@ export class Secretary {
     loadAppList() {
         this.appList;
 
-        if (this.secretaryInstance.clientMode == "SingleApplication") {
+        if (this.secretaryInstance.clientMode === "SingleApplication") {
             this.secretaryInstance.appList = [this.secretaryInstance.application];
             return;
         }
@@ -187,10 +210,11 @@ export class Secretary {
             if (err) {
                 // the system errors should be handled with a new way
                 // TODO: maybe just err instead of err.detail?
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 Secretary.getInstance().alertError("Failed to load ProgramList with following error from server:", err.detail);
                 return -1;
             }
-            if (response.DataBlockStatus == 0) {
+            if (response.DataBlockStatus === 0) {
                 Secretary.getInstance().appList = response.ProgramList;
             }
 
@@ -201,23 +225,24 @@ export class Secretary {
     }
 
     loadWorkSpaces() {
-        if (this.secretaryInstance.clientMode == "SingleApplication") {
-            let workSpace = new WorkSpace("main", null, [this.secretaryInstance.application], []);
+        if (this.secretaryInstance.clientMode === "SingleApplication") {
+            const workSpace = new WorkSpace("main", null, [this.secretaryInstance.application], []);
             this.secretaryInstance.workSpaces.push(workSpace);
             this.secretaryInstance.setMainWorkSpace(this.secretaryInstance.workSpaces[0]);
-            let app = this.secretaryInstance.workSpaces[0].apps[0];
-            let resize = () => {
-                let width = window.innerWidth;
-                let height = window.innerHeight;
+            const app: Application = this.secretaryInstance.workSpaces[0].apps[0];
+            const resize = () => {
+                const width = window.innerWidth;
+                //const height = window.innerHeight;
 
-                this.secretaryInstance.workSpaces[0].apps[0].resize(width, height);
+                //app.resize(width, height);
+                app.resizeWidth(width);
             };
             window.addEventListener("resize", resize);
             resize();
             return;
         }
 
-        let req = new RequestServer("WorkSpaces");
+        const req = new RequestServer("WorkSpaces");
         req.addEventListener("load", (response, err) => {
             if (err) {
                 // the system errors should be handled with a new way
@@ -225,13 +250,17 @@ export class Secretary {
                 this.secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", err.detail);
                 return -1;
             }
-            if (response.DataBlockStatus == 0) {
-                var i = 0;
+            if (response.DataBlockStatus === 0) {
+                let i = 0;
                 for (; i < response.WorkSpaces.length; i++) {
-                    var tmpWS = new WorkSpace(
+                    const tmpWS = new WorkSpace(
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].name,
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon, ".png"),
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].apps,
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].settings
                     );
                     this.secretaryInstance.workSpaces.push(tmpWS);
@@ -244,18 +273,20 @@ export class Secretary {
         req.send();
     }
 
+    // eslint-disable-next-line class-methods-use-this
     loadPlugins() {}
 
+    // eslint-disable-next-line class-methods-use-this
     checkESVersion() {
         try {
             const objects = { Gibson: "Les Paul", Fender: "Stratocaster" };
-            if (Object.values(objects)[0] == "Les Paul") return 8;
+            if (Object.values(objects)[0] === "Les Paul") return 8;
         } catch (e) {}
 
         try {
-            var x = 0;
+            let x = 0;
             x = 3 ** 4;
-            if (x == 81) return 7;
+            if (x === 81) return 7;
         } catch (e) {}
 
         // the minimum supported version of this program is 6
@@ -263,19 +294,20 @@ export class Secretary {
         return 6;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     checkBrowser() {
         type Browser = {
             name: string;
             version: string;
         };
-        let browser = <Browser>{};
-        if (navigator.userAgent.indexOf("Chrome") != -1) {
+        const browser = <Browser>{};
+        if (navigator.userAgent.indexOf("Chrome") !== -1) {
             browser.name = "Chrome";
-        } else if (navigator.userAgent.indexOf("Safari") != -1) {
+        } else if (navigator.userAgent.indexOf("Safari") !== -1) {
             browser.name = "Safari";
-        } else if (navigator.userAgent.indexOf("Firefox") != -1) {
-            if (navigator.userAgent.indexOf("Seamonkey") == -1) browser.name = "Firefox";
-        } else if (navigator.userAgent.indexOf("Opera") != -1) {
+        } else if (navigator.userAgent.indexOf("Firefox") !== -1) {
+            if (navigator.userAgent.indexOf("Seamonkey") === -1) browser.name = "Firefox";
+        } else if (navigator.userAgent.indexOf("Opera") !== -1) {
             browser.name = "Opera";
         }
 
@@ -284,10 +316,10 @@ export class Secretary {
             return browser;
         }
 
-        var index = navigator.userAgent.indexOf(browser.name);
-        var versionStr = navigator.userAgent.slice(index + browser.name.length + 1);
+        let index = navigator.userAgent.indexOf(browser.name);
+        let versionStr = navigator.userAgent.slice(index + browser.name.length + 1);
         index = versionStr.indexOf(" ");
-        if (index == -1) {
+        if (index === -1) {
             index = versionStr.length;
         }
         versionStr = versionStr.slice(0, index);
@@ -300,17 +332,17 @@ export class Secretary {
     }
 
     urlForFile(file: File | number) {
-        if (typeof file == "number") {
+        if (typeof file === "number") {
             return this.urlForFileId(file);
         }
         if (file.id) {
             return this.urlForFileId(file.id);
         }
-        var components = file.path.split("/");
-        if (components[0] == "~") {
+        const components = file.path.split("/");
+        if (components[0] === "~") {
             // user directory
         } else {
-            if (components[1] == "Networks") {
+            if (components[1] === "Networks") {
                 // user directory
             } else {
                 // system (root) directory
@@ -320,41 +352,47 @@ export class Secretary {
     }
 
     urlForFileId(fileId: any) {
-        if (this.serverType == "php") {
+        if (this.serverType === "php") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/system/DataManager/DownloadBIN.php?file=".concat(fileId);
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/System/DownloadBIN?file=".concat(fileId);
         }
     }
 
-    urlForStream(fileId: string) {
-        if (this.serverType == "php") {
+    urlForStream(fileId: any) {
+        if (this.serverType === "php") {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/system/DataManager/Stream.php?file=".concat(fileId);
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/System/Stream?file=".concat(fileId);
         }
     }
 
     loadFileWithId(fileId: any, onCompletion: (data: Blob, error: any) => void, sync?: boolean) {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         xhr.open("GET", this.urlForFile(fileId), !sync);
         xhr.addEventListener("load", function (evt) {
             // @ts-ignore
-            if (evt.target.status == 200) {
+            if (evt.target.status === 200) {
                 // .OK
                 // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 onCompletion(evt.target.response);
                 // @ts-ignore
-            } else if (evt.target.status == 404) {
+            } else if (evt.target.status === 404) {
                 // .notFound
                 // @ts-ignore
-            } else if (evt.target.status == 400) {
+            } else if (evt.target.status === 400) {
                 // .badRequest
                 // @ts-ignore
-            } else if (evt.traget.status == 500) {
+            } else if (evt.traget.status === 500) {
                 // .internalServerError
                 // @ts-ignore
-            } else if (evt.target.status == 401) {
+            } else if (evt.target.status === 401) {
                 // .unauthorized
             } else {
                 // .unknown error
@@ -365,22 +403,23 @@ export class Secretary {
 
     loadFileInFolder(folderId: any, fileName: string, onCompletion: (data: Blob, error: any) => void) {
         if (!onCompletion) return;
-        var req = new RequestServer("FileInFolder");
+        const req = new RequestServer("FileInFolder");
         req.addData("Folder", folderId);
         req.addData("File", fileName);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
-                let err = Object.freeze({ titleText: "Failed to load file with following error from server:", errMsg: responseErr.detail });
+                const err = Object.freeze({ titleText: "Failed to load file with following error from server:", errMsg: responseErr.detail });
                 onCompletion(null, err);
                 return -1;
             }
-            if (response.DataBlockStatus == 0) {
-                if (response.FileInFolder.status == 0) {
+            if (response.DataBlockStatus === 0) {
+                if (response.FileInFolder.status === 0) {
                     // file found
                     this.loadFileWithId(response.FileInFolder.file.id, onCompletion);
-                } else if (response.FileInFolder.status == 1) {
+                } else if (response.FileInFolder.status === 1) {
                     // 404 not found!
-                    let err = Object.freeze({ titleText: "File does not exist" });
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                    const err = Object.freeze({ titleText: "File does not exist" });
                 }
             }
         });
@@ -390,13 +429,17 @@ export class Secretary {
     /**
      * @todo remove or use this function
      */
+    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
     loadFileWithPath(path: string, onCompletion: () => void) {}
 
+    // eslint-disable-next-line class-methods-use-this
     openDrawer(option: { drawerType: string }) {
         option.drawerType = "openPanel";
-        var drawer = Secretary.loadApp("Drawer", option, null);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const drawer = Secretary.loadApp("Drawer", option, null);
     }
 
+    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
     receivedMessageFromServer(message: string) {}
 
     /**
@@ -411,22 +454,22 @@ export class Secretary {
      *  	1 : server error
      */
     uploadFile(
-        htmlFileObject: any,
-        file: any,
+        htmlFileObject: File,
+        file: DeskFileUpload,
         onCompletion: (file: DeskFile, error: any) => void,
         onProgress: (file: DeskFile, loaded: boolean, total?: number) => void
     ) {
-        var req = new RequestServer("FileUpload", true);
+        const req = new RequestServer("FileUpload", true);
         req.addData("File", htmlFileObject);
         req.addData("FileId", file.id);
         this.uploads.push(file);
         req.addEventListener("load", (response, responseErr) => {
             file.didFinishUpload();
-            var index = this.uploads.indexOf(file);
+            const index = this.uploads.indexOf(file);
             this.uploads.splice(index, 1);
             // Analysis received data
             if (responseErr) {
-                var err = Object.freeze({
+                const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
                     detail: responseErr.detail,
@@ -434,7 +477,7 @@ export class Secretary {
                 onCompletion(file, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
+            if (response.DataBlockStatus !== 0) {
                 const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
@@ -444,7 +487,7 @@ export class Secretary {
                 return;
             }
             response = response.FileUpload;
-            if (response.UpdateResult != 0) {
+            if (response.UpdateResult !== 0) {
                 // file did not uploaded with an error
                 const err = Object.freeze({
                     type: response.UpdateResult + 2,
@@ -458,7 +501,7 @@ export class Secretary {
             if (!name) {
                 name = file.name;
             } else {
-                let ext = file.name.match(/\.[^\.]+$/)[0];
+                const ext = file.name.match(/\.[^\.]+$/)[0];
                 file.ext = ext.slice(1);
                 file.name = name.slice(0, name.length - 1);
             }
@@ -467,6 +510,7 @@ export class Secretary {
 
         // Progress handler
         req.ajax.upload.addEventListener("progress", function (evt) {
+            // eslint-disable-next-line node/prefer-global/console
             console.log(`progress event called with ${evt.loaded} / ${evt.total}`);
             file.progress = evt.loaded / evt.total;
             if (onProgress) {
@@ -487,7 +531,8 @@ export class Secretary {
      * errorType
      *  1 : server error
      */
-    getUserInfo = function (userId: string, onCompletion: (errorType: number) => void) {};
+    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
+    getUserInfo(userId: string, onCompletion: (errorType: number) => void) {}
 }
 
 type File = {

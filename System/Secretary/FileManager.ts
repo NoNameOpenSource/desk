@@ -22,6 +22,7 @@ export class FileManager {
         return trash;
     }
 
+    // @ts-ignore
     // eslint-disable-next-line class-methods-use-this
     get networkFolder() {
         const network = new DeskFile(2, "네트워크", "NWK");
@@ -74,30 +75,31 @@ export class FileManager {
             if (evt.target.status === 200) {
                 // .OK
                 // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 onCompletion(evt.target.response, null);
                 // @ts-ignore
             } else if (evt.target.status === 404) {
                 // .notFound
-                var err = Object.freeze({ message: "Failed to find file" });
+                const err = Object.freeze({ message: "Failed to find file" });
                 onCompletion(null, err);
                 // @ts-ignore
             } else if (evt.target.status === 400) {
                 // .badRequest
-                var err = Object.freeze({ message: "Server responded with bad request" });
+                const err = Object.freeze({ message: "Server responded with bad request" });
                 onCompletion(null, err);
                 // @ts-ignore
             } else if (evt.traget.status === 500) {
                 // .internalServerError
-                var err = Object.freeze({ message: "Server responded with internal server error" });
+                const err = Object.freeze({ message: "Server responded with internal server error" });
                 onCompletion(null, err);
                 // @ts-ignore
             } else if (evt.target.status === 401) {
                 // .unauthorized
-                var err = Object.freeze({ message: "Server responded with unauthorized request" });
+                const err = Object.freeze({ message: "Server responded with unauthorized request" });
                 onCompletion(null, err);
             } else {
                 // .unknown error
-                var err = Object.freeze({ message: "Unknown error occurred" });
+                const err = Object.freeze({ message: "Unknown error occurred" });
                 onCompletion(null, err);
             }
         });
@@ -120,30 +122,31 @@ export class FileManager {
             if (evt.target.status === 200) {
                 // .OK
                 // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 onCompletion(evt.target.response, null);
                 // @ts-ignore
             } else if (evt.target.status === 404) {
                 // .notFound
-                var err = Object.freeze({ message: "Failed to find file" });
+                const err = Object.freeze({ message: "Failed to find file" });
                 onCompletion(null, err);
                 // @ts-ignore
             } else if (evt.target.status === 400) {
                 // .badRequest
-                var err = Object.freeze({ message: "Server responded with bad request" });
+                const err = Object.freeze({ message: "Server responded with bad request" });
                 onCompletion(null, err);
                 // @ts-ignore
             } else if (evt.traget.status === 500) {
                 // .internalServerError
-                var err = Object.freeze({ message: "Server responded with internal server error" });
+                const err = Object.freeze({ message: "Server responded with internal server error" });
                 onCompletion(null, err);
                 // @ts-ignore
             } else if (evt.target.status === 401) {
                 // .unauthorized
-                var err = Object.freeze({ message: "Server responded with unauthorized request" });
+                const err = Object.freeze({ message: "Server responded with unauthorized request" });
                 onCompletion(null, err);
             } else {
                 // .unknown error
-                var err = Object.freeze({ message: "Unknown error occurred" });
+                const err = Object.freeze({ message: "Unknown error occurred" });
                 onCompletion(null, err);
             }
         });
@@ -242,7 +245,9 @@ export class FileManager {
                     path = path.slice(0, path.length - 1);
                 }
             }
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < response.FileList.length; i++) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 const file = DeskFile.initWithFile(response.FileList[i]);
                 if (path) file.path = path + "/" + file.name;
                 files.push(file);
@@ -258,6 +263,7 @@ export class FileManager {
      * @param path path of the file
      * @returns
      */
+    // eslint-disable-next-line class-methods-use-this
     getFileByPath(path: string, onCompletion: (file: DeskFile, error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("FileByPath");
@@ -299,6 +305,7 @@ export class FileManager {
                     return;
                 }
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const file = DeskFile.initWithFile(response.File);
             file.path = path;
             onCompletion(file, null);
@@ -313,6 +320,7 @@ export class FileManager {
      * @param onCompletion callback function (addedFolderId, error)
      * @returns
      */
+    // eslint-disable-next-line class-methods-use-this
     addFolder(folder: any, folderName: string, onCompletion: (addedFolderId: string, error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("AddDirectory");
@@ -355,6 +363,7 @@ export class FileManager {
                 onCompletion(null, err);
                 return;
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             onCompletion(response.FolderId, null);
         });
         req.send();
@@ -408,10 +417,13 @@ export class FileManager {
                 onCompletion(null, null, err);
                 return;
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const location = DeskFile.initWithFile(response.Location);
             location.path = this.networkFolder.path + "/" + location.name;
             const files = [];
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < response.FileList.length; i++) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 const file = DeskFile.initWithFile(response.FileList[i]);
                 file.path = location.path + "/" + file.name;
                 files.push(file);
@@ -429,14 +441,14 @@ export class FileManager {
      * @returns
      */
     uploadFiles(
-        htmlFileObjects: any[],
+        htmlFileObjects: File[],
         location: string,
         onCompletion: (file: DeskFile, error: any) => void,
         onProgress: (file: DeskFile, loaded: boolean, total: number) => void,
         altNames: string[]
     ) {
         if (!onCompletion) return;
-        const names = [];
+        const names: string[] = [];
         for (let i = 0; i < htmlFileObjects.length; i++) {
             if (htmlFileObjects[i].size >= 4294967296) {
                 // 4GB files
@@ -465,7 +477,7 @@ export class FileManager {
                 onCompletion(null, err);
                 return;
             }
-            if (response.DataBlockStatus != 0) {
+            if (response.DataBlockStatus !== 0) {
                 const err = Object.freeze({
                     type: 1,
                     message: "Failed to add new folder with following error from server",
@@ -475,6 +487,7 @@ export class FileManager {
                 return;
             }
             response = response.FileUploadRequest;
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const errors = [];
             for (let i = 0; i < response.fileIds.length; i++) {
                 if (response.fileIds[i] < 0) {
@@ -482,13 +495,16 @@ export class FileManager {
                     const err = Object.freeze({ type: 2, message: "'" + names[i] + "'이름이 이미 사용중 입니다. 업로드에 실패하였습니다." });
                     onCompletion(null, err);
                 } else {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     const file = new DeskFileUpload(response.fileIds[i], names[i]);
                     file.location = location;
                     file.size = htmlFileObjects[i].size;
                     if (file.size < 1000000000)
                         // file approximately less than 1GB
+                        // @ts-ignore
                         this.secretary.uploadFile(htmlFileObjects[i], file, onCompletion, onProgress);
                     // @ts-ignore TODO: bug
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     else this.secretary.uploadBigFile(htmlFileObjects[i], file, onCompletion, onProgress);
                 }
             }
@@ -504,6 +520,7 @@ export class FileManager {
      * @param onCompletion callback function (error)
      * @returns
      */
+    // eslint-disable-next-line class-methods-use-this
     renameFile(file: DeskFile, name: string, onCompletion: (error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("RenameFile");
@@ -552,6 +569,7 @@ export class FileManager {
      * @param onCompletion callback function (addedDeskFile, error)
      * @returns
      */
+    // eslint-disable-next-line class-methods-use-this
     touch(name: string, folder: any, onCompletion: (addedDeskFile: DeskFile, errorType: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("AddBlankFile");
@@ -596,10 +614,12 @@ export class FileManager {
      * @param onCompletion callback function (conflictedFiles, error)
      * @returns
      */
+    // eslint-disable-next-line class-methods-use-this
     copyFiles(files: any[], folder: any, onCompletion: (conflictedFiles: any[], error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("CopyFiles");
         const fileIds = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < files.length; i++) {
             fileIds.push(files[i].id);
         }
@@ -639,9 +659,11 @@ export class FileManager {
             }
             // check conflicted files
             const conflictedFiles = [];
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < response.ConflictFiles.length; i++) {
+                // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let j = 0; j < files.length; j++) {
-                    if (files[j].name == response.ConflictFiles[i].name) {
+                    if (files[j].name === response.ConflictFiles[i].name) {
                         conflictedFiles.push(files[j]);
                         break;
                     }
@@ -659,10 +681,12 @@ export class FileManager {
      * @param folder folder to paste the move
      * @param onCompletion callback function (conflictedFiles, error)
      */
+    // eslint-disable-next-line class-methods-use-this
     moveFiles(files: any[], folder: any, onCompletion: (conflictedFiles: any[], error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("MoveFiles");
         const fileIds = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < files.length; i++) {
             fileIds.push(files[i].id);
         }
@@ -702,9 +726,11 @@ export class FileManager {
             }
             // check conflicted files
             const conflictedFiles = [];
+            // eslint-disable-next-line @typescript-eslint/prefer-for-of
             for (let i = 0; i < response.ConflictFiles.length; i++) {
+                // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let j = 0; j < files.length; j++) {
-                    if (files[j].name == response.ConflictFiles[i].name) {
+                    if (files[j].name === response.ConflictFiles[i].name) {
                         conflictedFiles.push(files[j]);
                         break;
                     }
@@ -721,10 +747,12 @@ export class FileManager {
      * @param files DeskFile objects to throw into trash can
      * @param onCompletion callback function (errorType)
      */
+    // eslint-disable-next-line class-methods-use-this
     trashFiles(files: any[], onCompletion: (error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("TrashFiles");
         const fileIds = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < files.length; i++) {
             fileIds.push(files[i].id);
         }
@@ -760,10 +788,12 @@ export class FileManager {
      * @param files DeskFile objects to delete
      * @param onCompletion callback function (error)
      */
+    // eslint-disable-next-line class-methods-use-this
     deleteFiles(files: any[], onCompletion: (error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("DeleteFiles");
         const fileIds = [];
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < files.length; i++) {
             fileIds.push(files[i].id);
         }
