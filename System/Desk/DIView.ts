@@ -1,4 +1,4 @@
-import { compute, Constraint, DrawableObject, LayoutDefinition, Parent } from "@nonameopensource/constrain";
+import { Constraint, DrawableObject, LayoutDefinition, LayoutEngine, Parent } from "@nonameopensource/constrain";
 import { DeskAnimation, DeskEvent } from "../Secretary";
 import { DIViewController } from "./DIViewController";
 
@@ -56,7 +56,7 @@ export class DIView implements DrawableObject, Parent {
             // TODO: how should we deal with the units?
 
             // update children
-            compute(this);
+            LayoutEngine.compute(this);
         };
         this.atLeastOneChildWillBeUpdated = () => {
             // always allow children to be updated for now
