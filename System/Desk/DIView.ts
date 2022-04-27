@@ -1,10 +1,11 @@
+import { compute, Constraint, DrawableObject, LayoutDefinition, Parent } from "@nonameopensource/constrain";
 import { DeskAnimation, DeskEvent } from "../Secretary";
 import { DIViewController } from "./DIViewController";
 
 /**
  * View class for the items that will be displayed on the screen
  */
-export class DIView {
+export class DIView implements DrawableObject, Parent {
     textBody: HTMLInputElement;
     canHaveChild = true;
     /** Array of child views of this view */
@@ -28,6 +29,10 @@ export class DIView {
 
     private _hidden: boolean;
 
+    update: (rect: LayoutDefinition) => void;
+    atLeastOneChildWillBeUpdated: () => boolean;
+    constraints: Constraint[];
+
     /**
      * @todo accept only a string for className and idName params and pass undefined instead of false when necessary
      */
@@ -39,6 +44,24 @@ export class DIView {
         this.animations = [];
         this._hidden = false;
         this._inSleep = false;
+
+        this.constraints = [];
+        this.update = (rect: LayoutDefinition) => {
+            this._x = rect.x;
+            this._y = rect.y;
+            this._width = rect.width;
+            this._height = rect.height;
+
+            // TODO: should we perform the DOM update here?
+            // TODO: how should we deal with the units?
+
+            // update children
+            compute(this);
+        };
+        this.atLeastOneChildWillBeUpdated = () => {
+            // always allow children to be updated for now
+            return true;
+        };
     }
 
     addChildView(child: DIView) {
@@ -95,6 +118,14 @@ export class DIView {
             animation.delete();
         }
         this.events.length = 0;
+    }
+
+    addConstraint(constraint: Constraint) {
+        this.constraints.push(constraint);
+    }
+
+    clearConstraints() {
+        this.constraints = [];
     }
 
     // eslint-disable-next-line class-methods-use-this
