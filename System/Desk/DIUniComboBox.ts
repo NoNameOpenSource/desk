@@ -383,6 +383,7 @@ export class DIUniComboBox extends DIView {
         this.dropDownView.body.style.maxHeight = `${this.cellHeight * 5}px`;
         this.dropDownView.cellHeight = this.cellHeight;
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         this.event = new DeskEvent(this._window.body, "mousedown", this.mouseDown.bind(this));
         this.keyEvent = this.events.length;
         this.events.push(new DeskEvent(this.body, "keydown", this.keyDown.bind(this)));

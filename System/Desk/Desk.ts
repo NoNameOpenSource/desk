@@ -1,3 +1,4 @@
+import { Application } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
 import { Secretary } from "../Secretary/Secretary";
 import { DeskMenu } from "./DeskMenu";
@@ -212,7 +213,7 @@ export class Desk {
         return false;
     }
 
-    setUpContextMenu(body: any, delegate: any) {
+    setUpContextMenu(body: Element, delegate: any) {
         return new DeskEvent(body, "contextmenu", (evt: Event) => {
             evt.preventDefault();
             // TODO: spelling
@@ -252,7 +253,7 @@ export class Desk {
         this.dragEvent = new DeskEvent(
             document.body,
             "mousemove",
-            (evt: any) => {
+            (evt: { clientX: number; clientY: number }) => {
                 // find where the cursor is on
                 if (evt.clientY < this.deskInstance.headerHeight) {
                     // client on header
@@ -261,7 +262,7 @@ export class Desk {
                         // client on dock
                     } else {
                         let i = 0;
-                        let app;
+                        let app: Application;
                         for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
                             app = this.secretary.mainWorkSpace.apps[i];
                             if (app.allowDrag) {
@@ -291,7 +292,7 @@ export class Desk {
         this.dropEvent = new DeskEvent(
             document.body,
             "mouseup",
-            (evt: any) => {
+            (evt: { clientX: number; clientY: number }) => {
                 // find where the cursor is on
                 // @ts-ignore TODO: bug
                 if (evt.clientY < this.instance.headerHeight) {
@@ -306,10 +307,8 @@ export class Desk {
                             app = this.secretary.mainWorkSpace.apps[i];
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
-                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                     app.dragEnd(true, clipboard, evt.clientX, evt.clientY);
                                 } else {
-                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                     app.dragEnd(false);
                                 }
                             }
@@ -458,6 +457,7 @@ export class Desk {
         alert.events.push(
             new DeskEvent(
                 // @ts-ignore window.body does not exist
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 window.body,
                 "keydown",
                 (evt: KeyboardEvent) => {

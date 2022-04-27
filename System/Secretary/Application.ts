@@ -26,6 +26,10 @@ export class Application {
     minWidth: any;
     /** @todo spelling */
     deleted: boolean;
+    allowDrag: boolean;
+    dragStart: (arg0: any) => void;
+    dragOn: (x: number, y: number) => void;
+    dragEnd: (arg0: boolean, arg1?: any, x?: number, y?: number) => void;
 
     private _loading: boolean;
 

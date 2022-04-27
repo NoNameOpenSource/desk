@@ -19,7 +19,7 @@ export class DIUploadButton extends DIButton {
         });
     }
 
-    setButtonEvent(evt: any) {
+    setButtonEvent(evt: (this: Element, ev: any) => any) {
         if (this.event) this.event.delete();
         this.event = new DeskEvent(this.inputBody, "change", evt);
     }

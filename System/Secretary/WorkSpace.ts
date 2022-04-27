@@ -166,7 +166,6 @@ export class WorkSpace {
         }
         app.resizeStart();
 
-        // TODO: use arrow function instead of .bind(this)
         this.resizeEvent = new DeskEvent(document, "mousemove", (evt: DeskEvent) => {
             // @ts-ignore TODO: bug
             const width = app.resizeWidth(this.desk.body.body.scrollLeft + evt.clientX - this.desk.body.x - app.window.x + diff);

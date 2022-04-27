@@ -33,7 +33,7 @@ export class FileManager {
     // eslint-disable-next-line class-methods-use-this
     isHomeFolder(folder: DeskFile) {
         if (folder.id !== null) {
-            if (folder.id === 0) return true;
+            if (folder.id === "0") return true;
             else return false;
         }
         const components = folder.path.split("/");
@@ -174,8 +174,9 @@ export class FileManager {
                 if (response.FileInFolder.status === 0) {
                     // file found
                     this.secretary.loadFileWithId(response.FileInFolder.file.id, onCompletion);
-                } else if (response.FileInFolder.status == 1) {
+                } else if (response.FileInFolder.status === 1) {
                     // 404 not found!
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     const err = Object.freeze({ type: 2, message: "File does not exist" });
                 }
             }
@@ -189,7 +190,7 @@ export class FileManager {
      * @param folder DeskFile folder to list files
      * @returns
      */
-    listInFolder(folder: any, onCompletion: (fileList: any, locationData: any, error: any) => void) {
+    listInFolder(folder: DeskFile, onCompletion: (fileList: any, locationData: any, error: any) => void) {
         if (!onCompletion) return;
         if (folder.owner !== this.secretary.currentUser.id && this.isHomeFolder(folder)) {
             this.requestRemoteDrive(folder.owner, onCompletion);
@@ -197,7 +198,7 @@ export class FileManager {
         }
         const req = new RequestServer("FileList");
         req.addData("Path", folder.path);
-        if (folder.id !== null && folder.id !== -1) {
+        if (folder.id !== null && folder.id !== "-1") {
             req.addData("Location", folder.id);
         }
         req.addEventListener("load", (response, responseErr) => {
@@ -230,12 +231,13 @@ export class FileManager {
             }
             response = response.FileList;
             const files = [];
-            if (folder.id === 0) {
+            if (folder.id === "0") {
                 // home folder
                 // add networks and trash
                 files.push(this.trashcan);
                 files.push(this.networkFolder);
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const location = DeskFile.initWithFile(response.Location);
             if (location.path === null) location.path = folder.path;
 

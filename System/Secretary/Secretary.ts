@@ -247,7 +247,7 @@ export class Secretary {
             if (err) {
                 // the system errors should be handled with a new way
                 // TODO: maybe just err instead of err.detail?
-                this.secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", err.detail);
+                this.secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", <string>err.detail);
                 return -1;
             }
             if (response.DataBlockStatus === 0) {
@@ -457,7 +457,7 @@ export class Secretary {
         htmlFileObject: File,
         file: DeskFileUpload,
         onCompletion: (file: DeskFile, error: any) => void,
-        onProgress: (file: DeskFile, loaded: boolean, total?: number) => void
+        onProgress: (file: DeskFile, loaded: number, total?: number) => void
     ) {
         const req = new RequestServer("FileUpload", true);
         req.addData("File", htmlFileObject);

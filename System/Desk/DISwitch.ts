@@ -40,8 +40,9 @@ export class DISwitch extends DIView {
         super.wakeUp();
     }
 
-    setSwitchEvent(evt: any) {
+    setSwitchEvent(evt: (this: Element, ev: any) => any) {
         if (this.event) this.event.delete();
+        // @ts-ignore TODO: make DeskEvent accept a Pick containing only the properties it needs
         this.event = new DeskEvent(this.switchBody.firstChild, "change", evt);
     }
 

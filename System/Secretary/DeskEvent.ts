@@ -5,7 +5,7 @@ export class DeskEvent {
     /**
      * target element
      */
-    target: Element;
+    target: Element | Document | Window;
 
     /**
      * name of the event
@@ -19,7 +19,7 @@ export class DeskEvent {
 
     stopped: boolean;
 
-    constructor(target: Element, method: string, evtFunc: (this: Element, ev: any) => any, init = true) {
+    constructor(target: Element | Document | Window, method: string, evtFunc: (this: Element, ev: any) => any, init = true) {
         this.target = target;
         this.method = method;
         this.evtFunc = evtFunc;
