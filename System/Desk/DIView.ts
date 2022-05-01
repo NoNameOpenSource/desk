@@ -29,8 +29,6 @@ export class DIView implements DrawableObject, Parent {
 
     private _hidden: boolean;
 
-    update: (rect: LayoutDefinition) => void;
-    atLeastOneChildWillBeUpdated: () => boolean;
     constraints: Constraint[];
 
     /**
@@ -44,24 +42,7 @@ export class DIView implements DrawableObject, Parent {
         this.animations = [];
         this._hidden = false;
         this._inSleep = false;
-
         this.constraints = [];
-        this.update = (rect: LayoutDefinition) => {
-            this._x = rect.x;
-            this._y = rect.y;
-            this._width = rect.width;
-            this._height = rect.height;
-
-            // TODO: should we perform the DOM update here?
-            // TODO: how should we deal with the units?
-
-            // update children
-            LayoutEngine.compute(this);
-        };
-        this.atLeastOneChildWillBeUpdated = () => {
-            // always allow children to be updated for now
-            return true;
-        };
     }
 
     addChildView(child: DIView) {
@@ -158,6 +139,25 @@ export class DIView implements DrawableObject, Parent {
         for (const child of this.children) {
             child.wakeUp();
         }
+    }
+
+    update(rect: LayoutDefinition) {
+        this._x = rect.x;
+        this._y = rect.y;
+        this._width = rect.width;
+        this._height = rect.height;
+
+        // TODO: should we perform the DOM update here?
+        // TODO: how should we deal with the units?
+
+        // update children
+        LayoutEngine.compute(this);
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    atLeastOneChildWillBeUpdated() {
+        // always allow children to be updated for now
+        return true;
     }
 
     get x() {
