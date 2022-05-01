@@ -114,14 +114,14 @@ export class DIWorkSpaceDock extends DIView {
                     this.secretary.setMainWorkSpace(this.secretary.workSpaces[this.workSpaceIndex]);
                 } else if (this.contextList[index] === "Quit") {
                     this.secretary.quitWorkSpace(this.workSpaceIndex);
-                    this.update();
+                    return this.update();
                 } else if (this.contextList[index] === "Restart") {
                 }
             }
         }
     }
 
-    update() {
+    async update() {
         this.unplugChildViews();
         let i = 0;
         for (; i < this.secretary.workSpaces.length; i++) {

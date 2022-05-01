@@ -35,6 +35,6 @@
         "npm": "8"
     },
     "dependencies": {
-        "@nonameopensource/constrain": "^1.4.0"
+        "@nonameopensource/constrain": "^1.4.1"
     }
 }

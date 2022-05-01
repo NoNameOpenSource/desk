@@ -5,7 +5,7 @@ import { DIViewController } from "./DIViewController";
 /**
  * View class for the items that will be displayed on the screen
  */
-export class DIView implements Constrain.DrawableObject, Constrain.Parent {
+export class DIView implements Constrain.DrawableObject {
     textBody: HTMLInputElement;
     canHaveChild = true;
     /** Array of child views of this view */
@@ -18,6 +18,7 @@ export class DIView implements Constrain.DrawableObject, Constrain.Parent {
     animations: DeskAnimation[];
     deleted: boolean;
     _controller: DIViewController;
+    constraintGroup: Constrain.LayoutEngine.ConstraintGroup;
 
     /** x coordinate */
     protected _x = 0;
@@ -28,8 +29,6 @@ export class DIView implements Constrain.DrawableObject, Constrain.Parent {
     protected _inSleep: boolean;
 
     private _hidden: boolean;
-
-    constraints: Constrain.Constraint[];
 
     /**
      * @todo accept only a string for className and idName params and pass undefined instead of false when necessary
@@ -42,7 +41,11 @@ export class DIView implements Constrain.DrawableObject, Constrain.Parent {
         this.animations = [];
         this._hidden = false;
         this._inSleep = false;
-        this.constraints = [];
+        this.constraintGroup = {
+            constraints: [],
+            dirty: false,
+            tree: undefined,
+        };
     }
 
     addChildView(child: DIView) {
@@ -102,11 +105,11 @@ export class DIView implements Constrain.DrawableObject, Constrain.Parent {
     }
 
     addConstraint(constraint: Constrain.Constraint) {
-        this.constraints.push(constraint);
+        this.constraintGroup.constraints.push(constraint);
     }
 
     clearConstraints() {
-        this.constraints = [];
+        this.constraintGroup.constraints = [];
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -141,7 +144,7 @@ export class DIView implements Constrain.DrawableObject, Constrain.Parent {
         }
     }
 
-    update(rect: Constrain.LayoutDefinition) {
+    async update(rect: Constrain.LayoutDefinition) {
         this._x = rect.x;
         this._y = rect.y;
         this._width = rect.width;
@@ -151,7 +154,8 @@ export class DIView implements Constrain.DrawableObject, Constrain.Parent {
         // TODO: how should we deal with the units?
 
         // update children
-        Constrain.LayoutEngine.compute(this);
+        // TODO: we'd prefer to just return this promise and remove the async qualifier from the method
+        await Constrain.LayoutEngine.compute(this);
     }
 
     // eslint-disable-next-line class-methods-use-this
