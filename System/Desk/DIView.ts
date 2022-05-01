@@ -1,10 +1,11 @@
+import * as Constrain from "@nonameopensource/constrain";
 import { DeskAnimation, DeskEvent } from "../Secretary";
 import { DIViewController } from "./DIViewController";
 
 /**
  * View class for the items that will be displayed on the screen
  */
-export class DIView {
+export class DIView implements Constrain.DrawableObject, Constrain.Parent {
     textBody: HTMLInputElement;
     canHaveChild = true;
     /** Array of child views of this view */
@@ -28,6 +29,8 @@ export class DIView {
 
     private _hidden: boolean;
 
+    constraints: Constrain.Constraint[];
+
     /**
      * @todo accept only a string for className and idName params and pass undefined instead of false when necessary
      */
@@ -39,6 +42,7 @@ export class DIView {
         this.animations = [];
         this._hidden = false;
         this._inSleep = false;
+        this.constraints = [];
     }
 
     addChildView(child: DIView) {
@@ -97,6 +101,14 @@ export class DIView {
         this.events.length = 0;
     }
 
+    addConstraint(constraint: Constrain.Constraint) {
+        this.constraints.push(constraint);
+    }
+
+    clearConstraints() {
+        this.constraints = [];
+    }
+
     // eslint-disable-next-line class-methods-use-this
     didMoveToParent() {}
 
@@ -127,6 +139,25 @@ export class DIView {
         for (const child of this.children) {
             child.wakeUp();
         }
+    }
+
+    update(rect: Constrain.LayoutDefinition) {
+        this._x = rect.x;
+        this._y = rect.y;
+        this._width = rect.width;
+        this._height = rect.height;
+
+        // TODO: should we perform the DOM update here?
+        // TODO: how should we deal with the units?
+
+        // update children
+        Constrain.LayoutEngine.compute(this);
+    }
+
+    // eslint-disable-next-line class-methods-use-this
+    atLeastOneChildWillBeUpdated() {
+        // always allow children to be updated for now
+        return true;
     }
 
     get x() {
