@@ -1,11 +1,11 @@
-import { Constraint, DrawableObject, LayoutDefinition, LayoutEngine, Parent } from "@nonameopensource/constrain";
+import * as Constrain from "@nonameopensource/constrain";
 import { DeskAnimation, DeskEvent } from "../Secretary";
 import { DIViewController } from "./DIViewController";
 
 /**
  * View class for the items that will be displayed on the screen
  */
-export class DIView implements DrawableObject, Parent {
+export class DIView implements Constrain.DrawableObject, Constrain.Parent {
     textBody: HTMLInputElement;
     canHaveChild = true;
     /** Array of child views of this view */
@@ -29,7 +29,7 @@ export class DIView implements DrawableObject, Parent {
 
     private _hidden: boolean;
 
-    constraints: Constraint[];
+    constraints: Constrain.Constraint[];
 
     /**
      * @todo accept only a string for className and idName params and pass undefined instead of false when necessary
@@ -101,7 +101,7 @@ export class DIView implements DrawableObject, Parent {
         this.events.length = 0;
     }
 
-    addConstraint(constraint: Constraint) {
+    addConstraint(constraint: Constrain.Constraint) {
         this.constraints.push(constraint);
     }
 
@@ -141,7 +141,7 @@ export class DIView implements DrawableObject, Parent {
         }
     }
 
-    update(rect: LayoutDefinition) {
+    update(rect: Constrain.LayoutDefinition) {
         this._x = rect.x;
         this._y = rect.y;
         this._width = rect.width;
@@ -151,7 +151,7 @@ export class DIView implements DrawableObject, Parent {
         // TODO: how should we deal with the units?
 
         // update children
-        LayoutEngine.compute(this);
+        Constrain.LayoutEngine.compute(this);
     }
 
     // eslint-disable-next-line class-methods-use-this
