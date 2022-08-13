@@ -12,7 +12,7 @@ import { DIView } from "./DIView";
 import { DIWorkSpaceDock } from "./DIWorkSpaceDock";
 
 /** Singleton */
-export let instance: Desk;
+export let deskInstance: Desk;
 
 /**
  * 생성자
@@ -74,11 +74,11 @@ export class Desk {
     dropEsc: DeskEvent;
 
     public static getInstance() {
-        if (!instance) {
-            instance = new Desk();
+        if (!deskInstance) {
+            deskInstance = new Desk();
         }
 
-        return instance;
+        return deskInstance;
     }
 
     private constructor() {
@@ -254,7 +254,7 @@ export class Desk {
             "mousemove",
             (evt: { clientX: number; clientY: number }) => {
                 // find where the cursor is on
-                if (evt.clientY < instance.headerHeight) {
+                if (evt.clientY < deskInstance.headerHeight) {
                     // client on header
                 } else {
                     if (evt.clientX < this.body.x) {
@@ -400,7 +400,7 @@ export class Desk {
 
     // eslint-disable-next-line class-methods-use-this
     closeWindow(window: DIResizableWindow) {
-        if (window === instance.currentWindow) instance.currentWindow = null;
+        if (window === deskInstance.currentWindow) deskInstance.currentWindow = null;
         window.delete();
         window = null;
     }
@@ -408,13 +408,13 @@ export class Desk {
     // eslint-disable-next-line class-methods-use-this
     bringWindowFront(window: any) {
         if (window.deleted) return false;
-        if (window === instance.currentWindow) return false;
+        if (window === deskInstance.currentWindow) return false;
         // @ts-ignore TODO: do we mean "delete" instead of "deleted"?
-        if (instance.currentWindow && !instance.currentWindow.deleted) instance.currentWindow.putInSleep();
-        window.z = instance.windowsIndex;
-        instance.windowsIndex += 1;
-        instance.currentWindow = window;
-        instance.currentWindow.wakeUp();
+        if (deskInstance.currentWindow && !deskInstance.currentWindow.deleted) deskInstance.currentWindow.putInSleep();
+        window.z = deskInstance.windowsIndex;
+        deskInstance.windowsIndex += 1;
+        deskInstance.currentWindow = window;
+        deskInstance.currentWindow.wakeUp();
     }
 
     static getFontHeight(font: string, size: number) {

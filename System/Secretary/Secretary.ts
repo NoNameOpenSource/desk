@@ -10,7 +10,7 @@ import { User } from "./User";
 import { WorkSpace } from "./WorkSpace";
 
 /** Singleton */
-export let instance: Secretary;
+export let secretaryInstance: Secretary;
 
 /**
  * 생성자
@@ -59,11 +59,11 @@ export class Secretary {
      * just one instance of each subclass around.
      */
     public static getInstance() {
-        if (!instance) {
-            instance = new Secretary();
+        if (!secretaryInstance) {
+            secretaryInstance = new Secretary();
         }
 
-        return instance;
+        return secretaryInstance;
     }
 
     private constructor() {
