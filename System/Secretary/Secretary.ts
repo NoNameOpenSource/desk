@@ -206,7 +206,7 @@ export class Secretary {
         }
 
         const req = new RequestServer("ProgramList");
-        req.addEventListener("load", function (response, err) {
+        req.addEventListener("load", (response, err) => {
             if (err) {
                 // the system errors should be handled with a new way
                 // TODO: maybe just err instead of err.detail?
@@ -219,7 +219,7 @@ export class Secretary {
             }
 
             // reload desk menu
-            Desk.getInstance().deskMenu.reloadData();
+            this.desk.deskMenu.reloadData();
         });
         req.send();
     }
