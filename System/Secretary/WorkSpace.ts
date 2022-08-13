@@ -3,7 +3,7 @@ import { DIImageView } from "../Desk/DIImageView";
 import { DIView } from "../Desk/DIView";
 import { Application } from "./Application";
 import { DeskEvent } from "./DeskEvent";
-import { Secretary } from "./Secretary";
+import { secretaryInstance } from "./Singleton";
 
 /**
  * This is a simple way to display an image
@@ -81,7 +81,7 @@ export class WorkSpace {
     }
 
     loadApp(name: string, setting: any) {
-        const i = this.apps.push(Secretary.loadApp(name, setting, this)) - 1;
+        const i = this.apps.push(secretaryInstance.loadApp(name, setting, this)) - 1;
         this.addWindow(this.apps[i].window);
         this.apps[i].data = this.data;
         this.apps[i].workSpace = this;

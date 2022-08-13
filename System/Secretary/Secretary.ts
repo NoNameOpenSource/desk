@@ -6,11 +6,9 @@ import { DeskFile } from "./DeskFile";
 import { DeskFileUpload } from "./DeskFileUpload";
 import { FileManager } from "./FileManager";
 import { RequestServer } from "./RequestServer";
+import * as SecretarySingleton from "./Singleton";
 import { User } from "./User";
 import { WorkSpace } from "./WorkSpace";
-
-/** Singleton */
-export let secretaryInstance: Secretary;
 
 /**
  * 생성자
@@ -38,9 +36,9 @@ export class Secretary {
     uploads: any[] = [];
     currentUser: any;
     users: User[] = [];
-    browser;
+    browser: Browser;
     browserVersion = "0";
-    ESVersion;
+    ESVersion: number;
     appList: string[] = [];
     clipboard: DeskClipboard;
     desk: Desk;
@@ -57,16 +55,17 @@ export class Secretary {
      * just one instance of each subclass around.
      */
     public static getInstance() {
-        if (!secretaryInstance) {
-            secretaryInstance = new Secretary();
+        if (!SecretarySingleton.secretaryInstance) {
+            SecretarySingleton.set(new Secretary());
         }
 
-        return secretaryInstance;
+        return SecretarySingleton.secretaryInstance;
     }
 
-    private constructor() {
+    private constructor() {}
+
+    init() {
         this.desk = Desk.getInstance();
-        secretaryInstance = Secretary.getInstance();
 
         // Init based on the server
         if (this.serverType === "php") {
@@ -93,7 +92,7 @@ export class Secretary {
         // load side menu app list
         this.loadAppList();
 
-        if (secretaryInstance.clientMode === "SingleApplication") {
+        if (this.clientMode === "SingleApplication") {
             this.desk.hideTopMenuBar();
             this.desk.hideWorkSpaceDock();
             this.desk.hideWallpaper();
@@ -120,13 +119,13 @@ export class Secretary {
     }
 
     setMainWorkSpace(workSpace: WorkSpace) {
-        if (secretaryInstance.mainWorkSpace) {
-            secretaryInstance.mainWorkSpace.putInSleep();
+        if (this.mainWorkSpace) {
+            this.mainWorkSpace.putInSleep();
         }
         workSpace.wakeUp();
-        secretaryInstance.mainWorkSpace = workSpace;
+        this.mainWorkSpace = workSpace;
         this.desk.body.unplugChildViews();
-        this.desk.body.addChildView(secretaryInstance.mainWorkSpace.body);
+        this.desk.body.addChildView(this.mainWorkSpace.body);
         // Update dock
         // eslint-disable-next-line node/prefer-global/console
         this.desk.workSpaceDock.update().catch(console.error);
@@ -143,7 +142,8 @@ export class Secretary {
     /**
      * @todo Secretary should not know about the specific applications
      */
-    static loadApp(appName: string, appSetting: any, workSpace: WorkSpace) {
+    // eslint-disable-next-line class-methods-use-this
+    loadApp(appName: string, appSetting: any, workSpace: WorkSpace) {
         if (appName === "Terminal") {
             // @ts-ignore
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -200,8 +200,8 @@ export class Secretary {
     loadAppList() {
         this.appList;
 
-        if (secretaryInstance.clientMode === "SingleApplication") {
-            secretaryInstance.appList = [secretaryInstance.application];
+        if (this.clientMode === "SingleApplication") {
+            this.appList = [this.application];
             return;
         }
 
@@ -226,11 +226,11 @@ export class Secretary {
 
     // eslint-disable-next-line class-methods-use-this
     loadWorkSpaces() {
-        if (secretaryInstance.clientMode === "SingleApplication") {
-            const workSpace = new WorkSpace("main", null, [secretaryInstance.application], []);
-            secretaryInstance.workSpaces.push(workSpace);
-            secretaryInstance.setMainWorkSpace(secretaryInstance.workSpaces[0]);
-            const app: Application = secretaryInstance.workSpaces[0].apps[0];
+        if (this.clientMode === "SingleApplication") {
+            const workSpace = new WorkSpace("main", null, [this.application], []);
+            this.workSpaces.push(workSpace);
+            this.setMainWorkSpace(this.workSpaces[0]);
+            const app: Application = this.workSpaces[0].apps[0];
             const resize = () => {
                 const width = window.innerWidth;
                 //const height = window.innerHeight;
@@ -248,7 +248,7 @@ export class Secretary {
             if (err) {
                 // the system errors should be handled with a new way
                 // TODO: maybe just err instead of err.detail?
-                secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", <string>err.detail);
+                this.alertError("Failed to load WorkSpaces with following error from server:", <string>err.detail);
                 return -1;
             }
             if (response.DataBlockStatus === 0) {
@@ -264,12 +264,12 @@ export class Secretary {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].settings
                     );
-                    secretaryInstance.workSpaces.push(tmpWS);
+                    this.workSpaces.push(tmpWS);
                 }
             }
 
             // Set first work space as main space
-            secretaryInstance.setMainWorkSpace(secretaryInstance.workSpaces[0]);
+            this.setMainWorkSpace(this.workSpaces[0]);
         });
         req.send();
     }
@@ -297,10 +297,6 @@ export class Secretary {
 
     // eslint-disable-next-line class-methods-use-this
     checkBrowser() {
-        type Browser = {
-            name: string;
-            version: string;
-        };
         const browser = <Browser>{};
         if (navigator.userAgent.indexOf("Chrome") !== -1) {
             browser.name = "Chrome";
@@ -437,7 +433,7 @@ export class Secretary {
     openDrawer(option: { drawerType: string }) {
         option.drawerType = "openPanel";
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const drawer = Secretary.loadApp("Drawer", option, null);
+        const drawer = this.loadApp("Drawer", option, null);
     }
 
     // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
@@ -542,4 +538,9 @@ type File = {
     name: string;
     progress: number;
     ext: string;
+};
+
+type Browser = {
+    name: string;
+    version: string;
 };

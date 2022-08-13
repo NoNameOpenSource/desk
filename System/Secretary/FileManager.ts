@@ -1,23 +1,21 @@
 import { DeskFile } from "./DeskFile";
 import { DeskFileUpload } from "./DeskFileUpload";
 import { RequestServer } from "./RequestServer";
-import { Secretary } from "./Secretary";
+import { secretaryInstance } from "./Singleton";
 
 export class FileManager {
-    secretary: Secretary;
+    constructor() {}
 
-    constructor() {
-        this.secretary = Secretary.getInstance();
-    }
-
+    // eslint-disable-next-line class-methods-use-this
     get homeFolder() {
-        const homeFolder = new DeskFile(0, "My Cloud", "DIR", this.secretary.currentUser.id);
+        const homeFolder = new DeskFile(0, "My Cloud", "DIR", secretaryInstance.currentUser.id);
         homeFolder.path = "~";
         return homeFolder;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     get trashcan() {
-        const trash = new DeskFile(1, "휴지통", "RCB", this.secretary.currentUser.id);
+        const trash = new DeskFile(1, "휴지통", "RCB", secretaryInstance.currentUser.id);
         trash.path = "~/.Trash";
         return trash;
     }
@@ -66,9 +64,10 @@ export class FileManager {
      *
      * @param fileId id of the file
      */
+    // eslint-disable-next-line class-methods-use-this
     loadFileDataWithId(fileId: string, onCompletion: (data: Blob, error: any) => void) {
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", this.secretary.urlForFileId(fileId));
+        xhr.open("GET", secretaryInstance.urlForFileId(fileId));
         xhr.responseType = "blob";
         xhr.addEventListener("load", function (evt) {
             // @ts-ignore
@@ -113,9 +112,10 @@ export class FileManager {
      *
      * @param fileId id of the file
      */
+    // eslint-disable-next-line class-methods-use-this
     loadFileTextWithId(fileId: string, onCompletion: (data: Blob, error: any) => void) {
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", this.secretary.urlForFileId(fileId));
+        xhr.open("GET", secretaryInstance.urlForFileId(fileId));
         xhr.responseType = "text";
         xhr.addEventListener("load", function (evt) {
             // @ts-ignore
@@ -159,6 +159,7 @@ export class FileManager {
      * @param fileName name of the file to find in the folder
      * @returns
      */
+    // eslint-disable-next-line class-methods-use-this
     loadFileInFolder(folderId: string, fileName: string, onCompletion: (file: Blob, error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("FileInFolder");
@@ -173,7 +174,7 @@ export class FileManager {
             if (response.DataBlockStatus === 0) {
                 if (response.FileInFolder.status === 0) {
                     // file found
-                    this.secretary.loadFileWithId(response.FileInFolder.file.id, onCompletion);
+                    secretaryInstance.loadFileWithId(response.FileInFolder.file.id, onCompletion);
                 } else if (response.FileInFolder.status === 1) {
                     // 404 not found!
                     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -192,7 +193,7 @@ export class FileManager {
      */
     listInFolder(folder: DeskFile, onCompletion: (fileList: any, locationData: any, error: any) => void) {
         if (!onCompletion) return;
-        if (folder.owner !== this.secretary.currentUser.id && this.isHomeFolder(folder)) {
+        if (folder.owner !== secretaryInstance.currentUser.id && this.isHomeFolder(folder)) {
             this.requestRemoteDrive(folder.owner, onCompletion);
             return;
         }
@@ -504,7 +505,7 @@ export class FileManager {
                     if (file.size < 1000000000)
                         // file approximately less than 1GB
                         // @ts-ignore
-                        this.secretary.uploadFile(htmlFileObjects[i], file, onCompletion, onProgress);
+                        secretaryInstance.uploadFile(htmlFileObjects[i], file, onCompletion, onProgress);
                     // @ts-ignore TODO: bug
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     else this.secretary.uploadBigFile(htmlFileObjects[i], file, onCompletion, onProgress);

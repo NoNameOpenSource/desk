@@ -1,4 +1,4 @@
-import { Secretary } from "./Secretary";
+import { secretaryInstance } from "./Singleton";
 
 /**
  * This class is dedicated to seding ajax request with formData.
@@ -22,18 +22,15 @@ export class RequestServer {
     ajax: XMLHttpRequest;
     url: string;
     listeners: ((response: Record<string, any>, error: any) => void)[];
-    secretary: Secretary;
 
     /**
      * @todo type dataBlock
      */
     constructor(dataBlock: any, useMultipart?: boolean) {
-        this.secretary = Secretary.getInstance();
-
-        this.url = this.secretary.dataManagerURL;
+        this.url = secretaryInstance.dataManagerURL;
         this.ajax = new XMLHttpRequest();
         this.listeners = [];
-        if (useMultipart || this.secretary.serverType === "php") this.useMultipart = true;
+        if (useMultipart || secretaryInstance.serverType === "php") this.useMultipart = true;
         else this.useMultipart = false;
         if (this.useMultipart) this.formData = new FormData();
         else this.formData = new Object();

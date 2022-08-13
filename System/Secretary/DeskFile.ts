@@ -1,5 +1,4 @@
-import { Secretary } from "./Secretary";
-
+import { secretaryInstance } from "./Singleton";
 export class DeskFile {
     id: string;
     name: string;
@@ -8,11 +7,9 @@ export class DeskFile {
     data: any;
     owner: any;
     path: string;
-    secretary: Secretary;
     location: string | number;
 
     constructor(id: any, name: string, type: string, owner?: any, data: any = null) {
-        this.secretary = Secretary.getInstance();
         this.id = id;
         this.name = name;
         this.type = type;
@@ -68,7 +65,7 @@ export class DeskFile {
         }
 
         if (this.id !== null) {
-            this.secretary.fileManager.loadFileDataWithId(this.id, (data: any, error: ErrorType) => {
+            secretaryInstance.fileManager.loadFileDataWithId(this.id, (data: any, error: ErrorType) => {
                 if (error) {
                     onCompletion(error);
                 }

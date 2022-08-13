@@ -2,7 +2,6 @@ import { DIButton } from "../Desk/DIButton";
 import { DITextField } from "../Desk/DITextField";
 import { DIView } from "../Desk/DIView";
 import { Drawer } from "./Drawer";
-import { Secretary } from "./Secretary";
 
 export class DrawerSavePanel extends DIView {
     type: string;
@@ -12,12 +11,9 @@ export class DrawerSavePanel extends DIView {
     cancelButton: DIButton;
     openButton: DIButton;
     delegate: any;
-    secretary: Secretary;
 
     constructor(delegate: any) {
         super("DrawerPanel");
-
-        this.secretary = Secretary.getInstance();
 
         this.type = "savePanel";
 
@@ -26,7 +22,7 @@ export class DrawerSavePanel extends DIView {
         this.drawerPanelContainer.width = 340;
         // @ts-ignore TODO: what is Drawer?
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        this.drawer = new Drawer(this.secretary.mainWorkSpace, "DrawerPanel", { drawerType: "openPanel" });
+        this.drawer = new Drawer(secretaryInstance.mainWorkSpace, "DrawerPanel", { drawerType: "openPanel" });
         this.drawer.window.closeButton.hidden = true;
         this.drawer.window.minButton.hidden = true;
         this.drawer.minWidth = 340;
