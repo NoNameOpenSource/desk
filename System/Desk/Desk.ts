@@ -79,6 +79,9 @@ export class Desk {
     }
 
     private constructor() {
+        // eslint-disable-next-line node/prefer-global/console
+        console.debug("instantiating Desk");
+
         // Draw wallpaper
         this.wallpaper = new DIImageView("/System/Desk/Resources/Wallpaper/Blured/default.png", "DIWallpaper");
         document.body.appendChild(this.wallpaper.body);

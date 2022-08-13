@@ -62,7 +62,10 @@ export class Secretary {
         return SecretarySingleton.secretaryInstance;
     }
 
-    private constructor() {}
+    private constructor() {
+        // eslint-disable-next-line node/prefer-global/console
+        console.debug("instantiating desk");
+    }
 
     init() {
         this.desk = Desk.getInstance();
