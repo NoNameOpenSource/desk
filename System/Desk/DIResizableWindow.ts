@@ -1,9 +1,9 @@
 import { Application } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
-import { Desk } from "./Desk";
 import { DILabel } from "./DILabel";
 import { DIView } from "./DIView";
 import { DIWindow } from "./DIWindow";
+import { deskInstance } from "./Singleton";
 
 /**
  * Window class for the system
@@ -25,11 +25,9 @@ export class DIResizableWindow extends DIWindow {
     minButton: any;
     maxButton: any;
     app: Application;
-    desk: Desk;
 
     constructor(className: string, idName: string, title: string, x: number, y: number, width: number, height: number, titleBarOptions = 1) {
         super();
-        this.desk = Desk.getInstance();
         this.child;
         this.parent;
         this.events = [];
@@ -77,8 +75,8 @@ export class DIResizableWindow extends DIWindow {
             // If primary button
             // Convert coord.
             const x = evt.clientX - this.x;
-            const y = this.desk.screenHeight - evt.clientY - this.y;
-            this.desk.bringWindowFront(this);
+            const y = deskInstance.screenHeight - evt.clientY - this.y;
+            deskInstance.bringWindowFront(this);
             if (this.resize && (x < 5 || x > this.width - 5)) {
                 // Resizing window in X
             } else if (this.height - y < 0) {
@@ -86,7 +84,7 @@ export class DIResizableWindow extends DIWindow {
                 evt.preventDefault(); // Disable text selection
                 // @ts-ignore TODO: bug
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                this.desk.beginWindowDrag(this, evt.clientX, evt.clientY);
+                deskInstance.beginWindowDrag(this, evt.clientX, evt.clientY);
                 return false; // Disable text selection
             }
         }
@@ -94,7 +92,7 @@ export class DIResizableWindow extends DIWindow {
 
     changeCursor(cursor: any) {
         if (cursor === this.cursor) return false;
-        this.body.style.setProperty("cursor", this.desk.cursor[cursor], "important");
+        this.body.style.setProperty("cursor", deskInstance.cursor[cursor], "important");
         this.cursor = cursor;
     }
 
@@ -160,7 +158,7 @@ export class DIResizableWindow extends DIWindow {
 
     set x(value) {
         if (value < 20 - this.width) value = 20 - this.width;
-        if (value > this.desk.screenWidth - 20) value = this.desk.screenWidth - 20;
+        if (value > deskInstance.screenWidth - 20) value = deskInstance.screenWidth - 20;
         this._x = value;
         this.body.style.left = `${value}px`;
     }

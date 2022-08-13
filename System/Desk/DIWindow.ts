@@ -1,11 +1,11 @@
 import { Application } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
-import { Secretary } from "../Secretary/Secretary";
-import { Desk } from "./Desk";
+import { secretaryInstance } from "../Secretary/Singleton";
 import { DIImageView } from "./DIImageView";
 import { DILabel } from "./DILabel";
 import { DIToolbar } from "./DIToolbar";
 import { DIView } from "./DIView";
+import { deskInstance } from "./Singleton";
 
 /**
  * Window class for the system
@@ -30,8 +30,6 @@ export class DIWindow extends DIView {
     toolbar: DIToolbar;
     regWidth: number;
     app: Application;
-    secretary: Secretary;
-    desk: Desk;
     inSleep: boolean;
     titleBar: DIView;
 
@@ -45,8 +43,6 @@ export class DIWindow extends DIView {
     constructor(className?: string, idName?: string, title?: string, x?: number, y?: number, width?: number, height?: number, titleBarOptions = 0) {
         super(className, idName);
 
-        this.secretary = Secretary.getInstance();
-        this.desk = Desk.getInstance();
         this.child;
         this.parent;
         this.events = [];
@@ -76,15 +72,15 @@ export class DIWindow extends DIView {
                 this.titleField = new DILabel(title, "DIWindowTitle");
                 this.titleBar.addChildView(this.titleField);
                 if (titleBarOptions < 2) {
-                    this.closeButton = new DIImageView(this.desk.getDeskUI["CloseButton"], "DIWindowButton");
+                    this.closeButton = new DIImageView(deskInstance.getDeskUI["CloseButton"], "DIWindowButton");
                     this.closeButton.events.push(new DeskEvent(this.closeButton.imageBody, "click", this.close.bind(this)));
                     this.titleBar.addChildView(this.closeButton);
                     if (titleBarOptions < 1) {
-                        this.minButton = new DIImageView(this.desk.getDeskUI["MinimizeButton"], "DIWindowButton");
+                        this.minButton = new DIImageView(deskInstance.getDeskUI["MinimizeButton"], "DIWindowButton");
                         this.minButton.x = this.titleSize;
                         this.titleBar.addChildView(this.minButton);
                         this.minButton.events.push(new DeskEvent(this.minButton.imageBody, "click", this.minimize.bind(this)));
-                        this.maxButton = new DIImageView(this.desk.getDeskUI["MaximizeButton"], "DIWindowButton");
+                        this.maxButton = new DIImageView(deskInstance.getDeskUI["MaximizeButton"], "DIWindowButton");
                         this.maxButton.y = this.titleSize;
                         this.titleBar.addChildView(this.maxButton);
                         this.maxButton.hidden = true;
@@ -117,7 +113,7 @@ export class DIWindow extends DIView {
         // Convert coord.
         const x = evt.clientX - this.x;
         const y = evt.clientY - this.y - 28;
-        this.desk.bringWindowFront(this);
+        deskInstance.bringWindowFront(this);
         if (this.resize && (x < 5 || x > this.width - 5)) {
             // Resizing window in X
         } else if (y < 20) {
@@ -146,7 +142,7 @@ export class DIWindow extends DIView {
             this.child.putInSleep();
             this.body.removeChild(this.child.body);
         }
-        this.secretary.mainWorkSpace.updateWindows();
+        secretaryInstance.mainWorkSpace.updateWindows();
     }
 
     maximize() {
@@ -165,12 +161,12 @@ export class DIWindow extends DIView {
             this.body.appendChild(this.child.body);
             this.child.wakeUp();
         }
-        this.secretary.mainWorkSpace.updateWindows();
+        secretaryInstance.mainWorkSpace.updateWindows();
     }
 
     changeCursor(cursor: any) {
         if (cursor === this.cursor) return false;
-        this.body.style.setProperty("cursor", this.desk.cursor[cursor], "important");
+        this.body.style.setProperty("cursor", deskInstance.cursor[cursor], "important");
         this.cursor = cursor;
     }
 

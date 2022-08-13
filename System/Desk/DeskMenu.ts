@@ -1,4 +1,4 @@
-import { Secretary } from "../Secretary/Secretary";
+import { secretaryInstance } from "../Secretary/Singleton";
 import { DeskMenuListViewCell } from "./DeskMenuListViewCell";
 import { DIDragListView } from "./DIDragListView";
 import { DIListView } from "./DIListView";
@@ -9,7 +9,6 @@ export class DeskMenu extends DIView {
     listViewContainer: DIView;
     listView: DIDragListView;
     cellHeight: number;
-    secretary: Secretary;
     // TODO: type
     contextMenu: any;
     // TODO: type
@@ -17,8 +16,6 @@ export class DeskMenu extends DIView {
 
     constructor() {
         super(null, "DeskMenu");
-
-        this.secretary = Secretary.getInstance();
 
         // this is not active for default
         this._active = false;
@@ -44,7 +41,7 @@ export class DeskMenu extends DIView {
 
     // ListView Delegate Section
     numberOfRows(listView: DIDragListView) {
-        if (listView === this.listView) return this.secretary.appList.length;
+        if (listView === this.listView) return secretaryInstance.appList.length;
         if (listView === this.contextMenu) return this.contextList.length;
     }
 
@@ -52,8 +49,8 @@ export class DeskMenu extends DIView {
         if (listView === this.listView) {
             const cell = new DeskMenuListViewCell();
             cell.width = this.width - 32;
-            cell.name.stringValue = this.secretary.appList[row];
-            cell.icon.imageSource = "/System/Secretary/AppIcon/" + this.secretary.appList[row] + ".png";
+            cell.name.stringValue = secretaryInstance.appList[row];
+            cell.icon.imageSource = "/System/Secretary/AppIcon/" + secretaryInstance.appList[row] + ".png";
             return cell;
         }
     }
@@ -65,7 +62,7 @@ export class DeskMenu extends DIView {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 listView.deselectAll();
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                this.secretary.mainWorkSpace.loadApp(this.secretary.appList[index], []);
+                secretaryInstance.mainWorkSpace.loadApp(secretaryInstance.appList[index], []);
             }
         }
     }

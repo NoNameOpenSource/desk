@@ -1,6 +1,6 @@
 import { Application } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
-import { Secretary } from "../Secretary/Secretary";
+import { secretaryInstance } from "../Secretary/Singleton";
 import { DeskMenu } from "./DeskMenu";
 import { DIAlertView } from "./DIAlertView";
 import { DIImageView } from "./DIImageView";
@@ -10,9 +10,7 @@ import { DIListViewCell } from "./DIListViewCell";
 import { DIResizableWindow } from "./DIResizableWindow";
 import { DIView } from "./DIView";
 import { DIWorkSpaceDock } from "./DIWorkSpaceDock";
-
-/** Singleton */
-export let deskInstance: Desk;
+import * as DeskSingleton from "./Singleton";
 
 /**
  * 생성자
@@ -23,7 +21,6 @@ export let deskInstance: Desk;
  * @property -MySQL	: 1
  */
 export class Desk {
-    secretary: Secretary;
     useHeader = true;
     useNav = false;
     useFooter = false;
@@ -74,16 +71,14 @@ export class Desk {
     dropEsc: DeskEvent;
 
     public static getInstance() {
-        if (!deskInstance) {
-            deskInstance = new Desk();
+        if (!DeskSingleton.deskInstance) {
+            DeskSingleton.set(new Desk());
         }
 
-        return deskInstance;
+        return DeskSingleton.deskInstance;
     }
 
     private constructor() {
-        this.secretary = Secretary.getInstance();
-
         // Draw wallpaper
         this.wallpaper = new DIImageView("/System/Desk/Resources/Wallpaper/Blured/default.png", "DIWallpaper");
         document.body.appendChild(this.wallpaper.body);
@@ -229,10 +224,10 @@ export class Desk {
 
     startDrag(clipboard: any, view: DIView, x: number, y: number, originalX: number, originalY: number) {
         let i = 0;
-        for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
-            if (this.secretary.mainWorkSpace.apps[i].allowDrag) {
+        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
+            if (secretaryInstance.mainWorkSpace.apps[i].allowDrag) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                this.secretary.mainWorkSpace.apps[i].dragStart(clipboard);
+                secretaryInstance.mainWorkSpace.apps[i].dragStart(clipboard);
             }
         }
         this.dragEnded = false;
@@ -254,7 +249,7 @@ export class Desk {
             "mousemove",
             (evt: { clientX: number; clientY: number }) => {
                 // find where the cursor is on
-                if (evt.clientY < deskInstance.headerHeight) {
+                if (evt.clientY < this.headerHeight) {
                     // client on header
                 } else {
                     if (evt.clientX < this.body.x) {
@@ -262,8 +257,8 @@ export class Desk {
                     } else {
                         let i = 0;
                         let app: Application;
-                        for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
-                            app = this.secretary.mainWorkSpace.apps[i];
+                        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
+                            app = secretaryInstance.mainWorkSpace.apps[i];
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
                                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -302,8 +297,8 @@ export class Desk {
                     } else {
                         let i = 0;
                         let app;
-                        for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
-                            app = this.secretary.mainWorkSpace.apps[i];
+                        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
+                            app = secretaryInstance.mainWorkSpace.apps[i];
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
                                     app.dragEnd(true, clipboard, evt.clientX, evt.clientY);
@@ -361,8 +356,8 @@ export class Desk {
                 }
                 let i = 0;
                 let app;
-                for (; i < this.secretary.mainWorkSpace.apps.length; i++) {
-                    app = this.secretary.mainWorkSpace.apps[i];
+                for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
+                    app = secretaryInstance.mainWorkSpace.apps[i];
                     if (app.allowDrag) {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                         app.dragEnd(false);
@@ -400,7 +395,7 @@ export class Desk {
 
     // eslint-disable-next-line class-methods-use-this
     closeWindow(window: DIResizableWindow) {
-        if (window === deskInstance.currentWindow) deskInstance.currentWindow = null;
+        if (window === this.currentWindow) this.currentWindow = null;
         window.delete();
         window = null;
     }
@@ -408,13 +403,13 @@ export class Desk {
     // eslint-disable-next-line class-methods-use-this
     bringWindowFront(window: any) {
         if (window.deleted) return false;
-        if (window === deskInstance.currentWindow) return false;
+        if (window === this.currentWindow) return false;
         // @ts-ignore TODO: do we mean "delete" instead of "deleted"?
-        if (deskInstance.currentWindow && !deskInstance.currentWindow.deleted) deskInstance.currentWindow.putInSleep();
-        window.z = deskInstance.windowsIndex;
-        deskInstance.windowsIndex += 1;
-        deskInstance.currentWindow = window;
-        deskInstance.currentWindow.wakeUp();
+        if (this.currentWindow && !this.currentWindow.deleted) this.currentWindow.putInSleep();
+        window.z = this.windowsIndex;
+        this.windowsIndex += 1;
+        this.currentWindow = window;
+        this.currentWindow.wakeUp();
     }
 
     static getFontHeight(font: string, size: number) {

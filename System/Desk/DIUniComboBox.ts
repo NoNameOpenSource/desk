@@ -1,8 +1,8 @@
 import { DeskEvent } from "../Secretary/DeskEvent";
-import { Desk } from "./Desk";
 import { DIListView } from "./DIListView";
 import { DIPopUpCell } from "./DIPopUpCell";
 import { DIView } from "./DIView";
+import { deskInstance } from "./Singleton";
 
 /**
  * This is better version of DIComboBox to support international languages that uses combinations of characters to type
@@ -29,15 +29,12 @@ export class DIUniComboBox extends DIView {
     event: DeskEvent;
     _window: any;
     _editable: boolean;
-    desk: Desk;
 
     constructor(className?: string, idName?: string, inputClass?: string, selectClass?: string, inputId?: string, selectId?: string) {
         if (!className) className = "DIUniComboBox";
         if (!inputClass) inputClass = "DIUniComboBoxInput";
         if (!selectClass) selectClass = "DIUniComboBoxSelect";
         super(className, idName);
-
-        this.desk = Desk.getInstance();
 
         // @ts-ignore TODO: bug
         this.textBody = document.createElement("p");
@@ -108,7 +105,7 @@ export class DIUniComboBox extends DIView {
                 this.dropDownViewTriggered = true;
                 this.dropDownView.hidden = false;
                 this.dropDownView.reloadData();
-                if (this.body.getBoundingClientRect().bottom + this.cellHeight * 5 > this.desk.screenHeight) {
+                if (this.body.getBoundingClientRect().bottom + this.cellHeight * 5 > deskInstance.screenHeight) {
                     this.dropDownView.body.style.top = "";
                     this.dropDownView.body.style.bottom = `${this.height}px`;
                     this.dropDownView.body.style.boxShadow = "0px -6px 10px 0px rgba(0,0,0,0.3)";

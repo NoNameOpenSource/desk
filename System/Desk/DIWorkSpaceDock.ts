@@ -1,19 +1,16 @@
 import { WorkSpace } from "../Secretary";
 import { DeskEvent } from "../Secretary/DeskEvent";
-import { Secretary } from "../Secretary/Secretary";
-import { Desk } from "./Desk";
+import { secretaryInstance } from "../Secretary/Singleton";
 import { DILabel } from "./DILabel";
 import { DIListView } from "./DIListView";
 import { DIListViewCell } from "./DIListViewCell";
 import { DIView } from "./DIView";
+import { deskInstance } from "./Singleton";
 
 /**
  * This is a simple way to display an image
  */
 export class DIWorkSpaceDock extends DIView {
-    secretary: Secretary;
-    desk: Desk;
-
     // TODO: should we initialize this in the constructor? It's used in listDidSelectRowAtIndex();
     // Or maybe it should exist in DIView?
     workSpaceIndex: number;
@@ -25,8 +22,6 @@ export class DIWorkSpaceDock extends DIView {
 
     constructor(idName: string) {
         super(null, idName);
-        this.secretary = Secretary.getInstance();
-        this.desk = Desk.getInstance();
 
         // Init for context menu
         this.contextMenu = new DIListView(this, this, 1, "DIContextMenu");
@@ -38,9 +33,9 @@ export class DIWorkSpaceDock extends DIView {
                 evt.preventDefault();
                 const index = Math.floor((evt.clientY - 28) / 64); // 28 for y of this view
                 this.workSpaceIndex = index;
-                if (index >= 0 && index < this.secretary.workSpaces.length) {
-                    if (this.secretary.workSpaces[index].loaded) {
-                        if (this.secretary.workSpaces[index] === this.secretary.mainWorkSpace) this.contextList = ["Restart"];
+                if (index >= 0 && index < secretaryInstance.workSpaces.length) {
+                    if (secretaryInstance.workSpaces[index].loaded) {
+                        if (secretaryInstance.workSpaces[index] === secretaryInstance.mainWorkSpace) this.contextList = ["Restart"];
                         else this.contextList = ["Quit"];
                     } else {
                         this.contextList = ["Open"];
@@ -66,7 +61,7 @@ export class DIWorkSpaceDock extends DIView {
                         this.clearContextMenu();
                         this.contextEvent.delete();
                         this.contextEvent = null;
-                        if (evt.clientY > Desk.getInstance().headerHeight && evt.clientX < 64) {
+                        if (evt.clientY > deskInstance.headerHeight && evt.clientX < 64) {
                             evt.stopPropagation();
                             evt.preventDefault();
                             if (!this.preventClick) {
@@ -111,9 +106,9 @@ export class DIWorkSpaceDock extends DIView {
                 }
                 this.clearContextMenu();
                 if (this.contextList[index] === "Open") {
-                    this.secretary.setMainWorkSpace(this.secretary.workSpaces[this.workSpaceIndex]);
+                    secretaryInstance.setMainWorkSpace(secretaryInstance.workSpaces[this.workSpaceIndex]);
                 } else if (this.contextList[index] === "Quit") {
-                    this.secretary.quitWorkSpace(this.workSpaceIndex);
+                    secretaryInstance.quitWorkSpace(this.workSpaceIndex);
                     return this.update();
                 } else if (this.contextList[index] === "Restart") {
                 }
@@ -124,29 +119,30 @@ export class DIWorkSpaceDock extends DIView {
     async update() {
         this.unplugChildViews();
         let i = 0;
-        for (; i < this.secretary.workSpaces.length; i++) {
-            this.addChildView(this.secretary.workSpaces[i].icon);
-            this.secretary.workSpaces[i].icon.y = i * 64;
-            if (this.secretary.workSpaces[i].icon.events.length < 1) {
+        for (; i < secretaryInstance.workSpaces.length; i++) {
+            this.addChildView(secretaryInstance.workSpaces[i].icon);
+            secretaryInstance.workSpaces[i].icon.y = i * 64;
+            if (secretaryInstance.workSpaces[i].icon.events.length < 1) {
                 // TODO: use fat arrow function instead of .bind
-                this.secretary.workSpaces[i].icon.events.push(
+                secretaryInstance.workSpaces[i].icon.events.push(
                     // eslint-disable-next-line @typescript-eslint/no-loop-func
-                    new DeskEvent(this.secretary.workSpaces[i].icon.body, "click", () => {
+                    new DeskEvent(secretaryInstance.workSpaces[i].icon.body, "click", () => {
                         // @ts-ignore
-                        this.secretary.workSpaces[i].desk.workSpaceDock.clicked(this);
+                        secretaryInstance.workSpaces[i].desk.workSpaceDock.clicked(this);
                     })
                 );
             }
-            this.secretary.workSpaces[i].icon.body.style.background = "";
-            if (this.secretary.mainWorkSpace === this.secretary.workSpaces[i]) {
-                this.secretary.workSpaces[i].icon.body.style.background = "rgba(52,152,219, 0.4)";
+            secretaryInstance.workSpaces[i].icon.body.style.background = "";
+            if (secretaryInstance.mainWorkSpace === secretaryInstance.workSpaces[i]) {
+                secretaryInstance.workSpaces[i].icon.body.style.background = "rgba(52,152,219, 0.4)";
             }
         }
     }
 
+    // eslint-disable-next-line class-methods-use-this
     clicked(workSpace: WorkSpace) {
-        if (!(this.secretary.mainWorkSpace === workSpace)) {
-            this.secretary.setMainWorkSpace(workSpace);
+        if (!(secretaryInstance.mainWorkSpace === workSpace)) {
+            secretaryInstance.setMainWorkSpace(workSpace);
         }
     }
 
