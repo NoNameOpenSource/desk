@@ -1,4 +1,4 @@
-import { Secretary } from "./Secretary";
+import type { Secretary } from "./Secretary";
 
 export let secretaryInstance: Secretary;
 
