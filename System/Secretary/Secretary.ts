@@ -9,6 +9,9 @@ import { RequestServer } from "./RequestServer";
 import { User } from "./User";
 import { WorkSpace } from "./WorkSpace";
 
+/** Singleton */
+export let instance: Secretary;
+
 /**
  * 생성자
  *
@@ -20,8 +23,6 @@ import { WorkSpace } from "./WorkSpace";
  * @todo use fetch api throughout
  */
 export class Secretary {
-    private static instance: Secretary;
-
     applications: Application[] = [];
     windows: DIWindow[] = [];
     serverProtocol = "";
@@ -57,12 +58,12 @@ export class Secretary {
      * This implementation let you subclass the Singleton class while keeping
      * just one instance of each subclass around.
      */
-    public static getInstance(): Secretary {
-        if (!Secretary.instance) {
-            Secretary.instance = new Secretary();
+    public static getInstance() {
+        if (!instance) {
+            instance = new Secretary();
         }
 
-        return Secretary.instance;
+        return instance;
     }
 
     private constructor() {
@@ -129,7 +130,8 @@ export class Secretary {
         this.desk.body.unplugChildViews();
         this.desk.body.addChildView(this.secretaryInstance.mainWorkSpace.body);
         // Update dock
-        this.desk.workSpaceDock.update();
+        // eslint-disable-next-line node/prefer-global/console
+        this.desk.workSpaceDock.update().catch(console.error);
     }
 
     quitWorkSpace(index: number) {

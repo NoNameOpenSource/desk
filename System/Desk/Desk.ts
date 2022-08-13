@@ -11,6 +11,9 @@ import { DIResizableWindow } from "./DIResizableWindow";
 import { DIView } from "./DIView";
 import { DIWorkSpaceDock } from "./DIWorkSpaceDock";
 
+/** Singleton */
+export let instance: Desk;
+
 /**
  * 생성자
  *
@@ -20,8 +23,6 @@ import { DIWorkSpaceDock } from "./DIWorkSpaceDock";
  * @property -MySQL	: 1
  */
 export class Desk {
-    private static instance: Desk;
-
     secretary: Secretary;
     useHeader = true;
     useNav = false;
@@ -70,20 +71,18 @@ export class Desk {
     currentDragApp: any;
     dragEvent: DeskEvent;
     dropEvent: DeskEvent;
-    deskInstance: Desk;
     dropEsc: DeskEvent;
 
     public static getInstance() {
-        if (!Desk.instance) {
-            Desk.instance = new Desk();
+        if (!instance) {
+            instance = new Desk();
         }
 
-        return Desk.instance;
+        return instance;
     }
 
     private constructor() {
         this.secretary = Secretary.getInstance();
-        this.deskInstance = Desk.getInstance();
 
         // Draw wallpaper
         this.wallpaper = new DIImageView("/System/Desk/Resources/Wallpaper/Blured/default.png", "DIWallpaper");
@@ -255,7 +254,7 @@ export class Desk {
             "mousemove",
             (evt: { clientX: number; clientY: number }) => {
                 // find where the cursor is on
-                if (evt.clientY < this.deskInstance.headerHeight) {
+                if (evt.clientY < instance.headerHeight) {
                     // client on header
                 } else {
                     if (evt.clientX < this.body.x) {
@@ -399,21 +398,23 @@ export class Desk {
         else return "/System/Secretary/Icon/file.png";
     }
 
+    // eslint-disable-next-line class-methods-use-this
     closeWindow(window: DIResizableWindow) {
-        if (window === this.deskInstance.currentWindow) this.deskInstance.currentWindow = null;
+        if (window === instance.currentWindow) instance.currentWindow = null;
         window.delete();
         window = null;
     }
 
+    // eslint-disable-next-line class-methods-use-this
     bringWindowFront(window: any) {
         if (window.deleted) return false;
-        if (window === this.deskInstance.currentWindow) return false;
+        if (window === instance.currentWindow) return false;
         // @ts-ignore TODO: do we mean "delete" instead of "deleted"?
-        if (this.deskInstance.currentWindow && !this.deskInstance.currentWindow.deleted) this.deskInstance.currentWindow.putInSleep();
-        window.z = this.deskInstance.windowsIndex;
-        this.deskInstance.windowsIndex += 1;
-        this.deskInstance.currentWindow = window;
-        this.deskInstance.currentWindow.wakeUp();
+        if (instance.currentWindow && !instance.currentWindow.deleted) instance.currentWindow.putInSleep();
+        window.z = instance.windowsIndex;
+        instance.windowsIndex += 1;
+        instance.currentWindow = window;
+        instance.currentWindow.wakeUp();
     }
 
     static getFontHeight(font: string, size: number) {
