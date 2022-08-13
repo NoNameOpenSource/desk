@@ -9,6 +9,7 @@ export class DeskFile {
     owner: any;
     path: string;
     secretary: Secretary;
+    location: string | number;
 
     constructor(id: any, name: string, type: string, owner?: any, data: any = null) {
         this.secretary = Secretary.getInstance();
