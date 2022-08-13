@@ -48,8 +48,6 @@ export class Secretary {
     /** @todo use enum */
     clientMode: string;
     application: string;
-
-    secretaryInstance: Secretary;
     user: any;
 
     /**
@@ -68,7 +66,7 @@ export class Secretary {
 
     private constructor() {
         this.desk = Desk.getInstance();
-        this.secretaryInstance = Secretary.getInstance();
+        secretaryInstance = Secretary.getInstance();
 
         // Init based on the server
         if (this.serverType === "php") {
@@ -95,7 +93,7 @@ export class Secretary {
         // load side menu app list
         this.loadAppList();
 
-        if (this.secretaryInstance.clientMode === "SingleApplication") {
+        if (secretaryInstance.clientMode === "SingleApplication") {
             this.desk.hideTopMenuBar();
             this.desk.hideWorkSpaceDock();
             this.desk.hideWallpaper();
@@ -122,13 +120,13 @@ export class Secretary {
     }
 
     setMainWorkSpace(workSpace: WorkSpace) {
-        if (this.secretaryInstance.mainWorkSpace) {
-            this.secretaryInstance.mainWorkSpace.putInSleep();
+        if (secretaryInstance.mainWorkSpace) {
+            secretaryInstance.mainWorkSpace.putInSleep();
         }
         workSpace.wakeUp();
-        this.secretaryInstance.mainWorkSpace = workSpace;
+        secretaryInstance.mainWorkSpace = workSpace;
         this.desk.body.unplugChildViews();
-        this.desk.body.addChildView(this.secretaryInstance.mainWorkSpace.body);
+        this.desk.body.addChildView(secretaryInstance.mainWorkSpace.body);
         // Update dock
         // eslint-disable-next-line node/prefer-global/console
         this.desk.workSpaceDock.update().catch(console.error);
@@ -202,8 +200,8 @@ export class Secretary {
     loadAppList() {
         this.appList;
 
-        if (this.secretaryInstance.clientMode === "SingleApplication") {
-            this.secretaryInstance.appList = [this.secretaryInstance.application];
+        if (secretaryInstance.clientMode === "SingleApplication") {
+            secretaryInstance.appList = [secretaryInstance.application];
             return;
         }
 
@@ -226,12 +224,13 @@ export class Secretary {
         req.send();
     }
 
+    // eslint-disable-next-line class-methods-use-this
     loadWorkSpaces() {
-        if (this.secretaryInstance.clientMode === "SingleApplication") {
-            const workSpace = new WorkSpace("main", null, [this.secretaryInstance.application], []);
-            this.secretaryInstance.workSpaces.push(workSpace);
-            this.secretaryInstance.setMainWorkSpace(this.secretaryInstance.workSpaces[0]);
-            const app: Application = this.secretaryInstance.workSpaces[0].apps[0];
+        if (secretaryInstance.clientMode === "SingleApplication") {
+            const workSpace = new WorkSpace("main", null, [secretaryInstance.application], []);
+            secretaryInstance.workSpaces.push(workSpace);
+            secretaryInstance.setMainWorkSpace(secretaryInstance.workSpaces[0]);
+            const app: Application = secretaryInstance.workSpaces[0].apps[0];
             const resize = () => {
                 const width = window.innerWidth;
                 //const height = window.innerHeight;
@@ -249,7 +248,7 @@ export class Secretary {
             if (err) {
                 // the system errors should be handled with a new way
                 // TODO: maybe just err instead of err.detail?
-                this.secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", <string>err.detail);
+                secretaryInstance.alertError("Failed to load WorkSpaces with following error from server:", <string>err.detail);
                 return -1;
             }
             if (response.DataBlockStatus === 0) {
@@ -265,12 +264,12 @@ export class Secretary {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].settings
                     );
-                    this.secretaryInstance.workSpaces.push(tmpWS);
+                    secretaryInstance.workSpaces.push(tmpWS);
                 }
             }
 
             // Set first work space as main space
-            this.secretaryInstance.setMainWorkSpace(this.secretaryInstance.workSpaces[0]);
+            secretaryInstance.setMainWorkSpace(secretaryInstance.workSpaces[0]);
         });
         req.send();
     }
