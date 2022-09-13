@@ -2,8 +2,13 @@
     "name": "@nonameopensource/desk",
     "version": "0.0.0",
     "description": "Desk User Interface",
-    "main": "dist/index.js",
-    "types": "types/index.d.ts",
+    "type": "module",
+    "exports": {
+        ".": {
+            "types": "./types/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
     "scripts": {
         "compile": "rm -rf dist && rm -rf types && tsc",
         "watch": "tsc -w true",
@@ -24,7 +29,7 @@
     },
     "homepage": "https://github.com/NoNameOpenSource/desk#readme",
     "devDependencies": {
-        "@nonameopensource/eslint-config-typescript": "^1.2.1",
+        "@nonameopensource/eslint-config-typescript": "^1.2.2",
         "@tsconfig/node16": "^1.0.2",
         "eslint": "^8.14.0",
         "prettier": "^2.6.2",
