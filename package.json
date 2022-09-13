@@ -29,11 +29,10 @@
     },
     "homepage": "https://github.com/NoNameOpenSource/desk#readme",
     "devDependencies": {
-        "@nonameopensource/eslint-config-typescript": "^1.2.2",
-        "@tsconfig/node16": "^1.0.2",
-        "eslint": "^8.14.0",
-        "prettier": "^2.6.2",
-        "typescript": "^4.6.4"
+        "@nonameopensource/eslint-config-ts-fe": "^1.0.3",
+        "eslint": "^8.23.1",
+        "prettier": "^2.7.1",
+        "typescript": "^4.8.3"
     },
     "engines": {
         "node": "16",

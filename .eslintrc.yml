@@ -1,2 +1,2 @@
 extends:
-    - "@nonameopensource/eslint-config-typescript"
+    - "@nonameopensource/eslint-config-ts-fe"
