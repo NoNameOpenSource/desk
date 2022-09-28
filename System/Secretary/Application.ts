@@ -72,22 +72,9 @@ export class Application {
     }
 
     didMoveToDesk() {
-        // @ts-ignore TODO: remove this conditional block that unnecessarily checks for window being a DIView
-        if (this.window.child.view) {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            this.window.child.view.addChildView(this.alertScreen);
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            this.window.child.view.addChildView(this.loadingScreen);
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            this.window.child.view.addChildView(this.loadingAnimation);
-        } else {
-            this.window.child.addChildView(this.alertScreen);
-            this.window.child.addChildView(this.loadingScreen);
-            this.window.child.addChildView(this.loadingAnimation);
-        }
+        this.window.child.addChildView(this.alertScreen);
+        this.window.child.addChildView(this.loadingScreen);
+        this.window.child.addChildView(this.loadingAnimation);
         if (this._loading === undefined) {
             this._loading = true;
             this.loading = false;
