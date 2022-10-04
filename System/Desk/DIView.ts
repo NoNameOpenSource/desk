@@ -37,6 +37,7 @@ export class DIView implements Constrain.DrawableObject {
         this.body = document.createElement("DIView");
         if (className) this.body.className = className;
         if (idName) this.body.id = idName;
+        this.children = [];
         this.events = [];
         this.animations = [];
         this._hidden = false;
