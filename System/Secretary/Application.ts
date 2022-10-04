@@ -39,7 +39,7 @@ export class Application {
      *
      * @todo should resizable be a boolean?
      */
-    constructor(workSpace: WorkSpace, appName: string, windowClass?: string, resizable?: number) {
+    constructor(workSpace: WorkSpace, appName: string, appSettings?: Record<string, unknown>, windowClass?: string, resizable?: number) {
         this.workSpace = workSpace;
         this.data = workSpace.data;
         this.window = new DIWindow(windowClass, undefined, appName, resizable);

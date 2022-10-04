@@ -67,7 +67,7 @@ export class Secretary {
         console.debug("Instantiating Secretary");
     }
 
-    init(args: { apps: Record<string, typeof Application> }) {
+    init(args: { apps: Record<string, { class: typeof Application; settings?: Record<string, unknown> }> }) {
         this.desk = Desk.getInstance();
 
         // Init based on the server
@@ -150,6 +150,7 @@ export class Secretary {
 
     loadApp(appName: string, appSetting: any, workSpace: WorkSpace) {
         const application = this.registeredAppMap[appName];
+        console.debug("this.registeredAppMap", this.registeredAppMap);
         console.debug("appName", appName);
         console.debug("application", application);
         const app = new application(workSpace, appName);
