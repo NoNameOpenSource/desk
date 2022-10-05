@@ -63,8 +63,7 @@ export class Secretary {
     }
 
     private constructor() {
-        // eslint-disable-next-line node/prefer-global/console
-        console.debug("instantiating desk");
+        console.debug("Instantiating Secretary");
     }
 
     init() {
@@ -130,7 +129,6 @@ export class Secretary {
         this.desk.body.unplugChildViews();
         this.desk.body.addChildView(this.mainWorkSpace.body);
         // Update dock
-        // eslint-disable-next-line node/prefer-global/console
         this.desk.workSpaceDock.update().catch(console.error);
     }
 
@@ -510,7 +508,6 @@ export class Secretary {
 
         // Progress handler
         req.ajax.upload.addEventListener("progress", function (evt) {
-            // eslint-disable-next-line node/prefer-global/console
             console.log(`progress event called with ${evt.loaded} / ${evt.total}`);
             file.progress = evt.loaded / evt.total;
             if (onProgress) {
