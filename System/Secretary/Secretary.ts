@@ -1,6 +1,7 @@
 import { DIWindow } from "../Desk";
 import { Desk } from "../Desk/Desk";
-import { Application } from "./Application";
+import type { JsonMap } from "../Secretary/Application";
+import { Application, ApplicationFactory } from "./Application";
 import { DeskClipboard } from "./DeskClipboard";
 import { DeskFile } from "./DeskFile";
 import { DeskFileUpload } from "./DeskFileUpload";
@@ -40,7 +41,7 @@ export class Secretary {
     browserVersion = "0";
     ESVersion: number;
     appList: string[] = [];
-    registeredAppMap: Record<string, typeof Application>;
+    registeredAppMap: Record<string, { create: ApplicationFactory; settings: JsonMap }>;
     clipboard: DeskClipboard;
     desk: Desk;
     fileManager = new FileManager();
@@ -67,7 +68,7 @@ export class Secretary {
         console.debug("Instantiating Secretary");
     }
 
-    init(args: { apps: Record<string, { class: typeof Application; settings?: Record<string, unknown> }> }) {
+    init(args: { apps: Record<string, { create: ApplicationFactory; settings: JsonMap }> }) {
         this.desk = Desk.getInstance();
 
         // Init based on the server
@@ -107,7 +108,7 @@ export class Secretary {
         }
     }
 
-    registerApps(apps: Record<string, typeof Application>) {
+    registerApps(apps: Record<string, { create: ApplicationFactory; settings: JsonMap }>) {
         this.registeredAppMap = apps;
     }
 
@@ -148,13 +149,12 @@ export class Secretary {
         this.workSpaces[index] = new WorkSpace(name, icon, appList);
     }
 
-    loadApp(appName: string, appSetting: any, workSpace: WorkSpace) {
+    loadApp(appName: string, appSettings: JsonMap, workSpace: WorkSpace) {
         const application = this.registeredAppMap[appName];
-        console.debug("this.registeredAppMap", this.registeredAppMap);
-        console.debug("appName", appName);
-        console.debug("application", application);
-        const app = new application(workSpace, appName);
-        return app;
+
+        // TODO: merge appSettings with application.settings
+
+        return application.create(workSpace, appName, application.settings);
     }
 
     /**

@@ -12,7 +12,7 @@ import { DeskAnimation } from "./DeskAnimation";
  *
  * Application gets loaded from Secretary Class
  */
-export class Application {
+export abstract class Application {
     workSpace: WorkSpace;
     data: any;
     window: DIWindow;
@@ -282,3 +282,12 @@ export class Application {
         this.workSpace = null;
     }
 }
+
+// https://github.com/microsoft/TypeScript/issues/1897#issuecomment-338650717
+export interface JsonMap {
+    [key: string]: AnyJson;
+}
+type JsonArray = AnyJson[];
+export type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
+
+export type ApplicationFactory = (workSpace: WorkSpace, appName: string, appSettings: JsonMap) => Application;

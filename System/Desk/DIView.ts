@@ -42,6 +42,7 @@ export class DIView implements Constrain.DrawableObject {
         this.animations = [];
         this._hidden = false;
         this._inSleep = false;
+        // @ts-ignore
         this.constraintGroup = {
             constraints: [],
             dirty: false,
