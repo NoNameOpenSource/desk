@@ -64,9 +64,7 @@ export class Secretary {
         return SecretarySingleton.secretaryInstance;
     }
 
-    private constructor() {
-        console.debug("Instantiating Secretary");
-    }
+    private constructor() {}
 
     init(args: { apps: Record<string, { create: ApplicationFactory; settings: JsonMap }> }) {
         this.desk = Desk.getInstance();
@@ -238,7 +236,7 @@ export class Secretary {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].name,
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                        "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon, ".png"),
+                        "/System/Desk/Resources/AppIcon/".concat(response.WorkSpaces[i].icon, ".png"),
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].apps,
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

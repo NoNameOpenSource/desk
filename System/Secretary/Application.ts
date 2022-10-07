@@ -27,9 +27,6 @@ export abstract class Application {
     /** @todo spelling */
     deleted: boolean;
     allowDrag: boolean;
-    dragStart: (arg0: any) => void;
-    dragOn: (x: number, y: number) => void;
-    dragEnd: (arg0: boolean, arg1?: any, x?: number, y?: number) => void;
 
     private _loading: boolean;
 
@@ -198,11 +195,13 @@ export abstract class Application {
         alert.body.style.top = "calc(50% - ".concat(`${alert.height / 2}`, "px)");
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    resizeStart() {}
+    abstract dragStart(arg0: any): void;
+    abstract dragOn(x: number, y: number): void;
+    abstract dragEnd(arg0: boolean, arg1?: any, x?: number, y?: number): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    resizeEnd() {}
+    abstract resizeStart(): void;
+
+    abstract resizeEnd(): void;
 
     resizeWidth(width: number) {
         if (width < this.minWidth) width = this.minWidth;
@@ -211,20 +210,15 @@ export abstract class Application {
         return width;
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    activate() {}
+    abstract activate(): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    deactivate() {}
+    abstract deactivate(): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    windowMinimized() {}
+    abstract windowMinimized(): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    windowMaximized() {}
+    abstract windowMaximized(): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    backButtonTriggered() {}
+    abstract backButtonTriggered(): void;
 
     beginAnimation(animation: DeskAnimation) {
         this.animations.push(animation);
