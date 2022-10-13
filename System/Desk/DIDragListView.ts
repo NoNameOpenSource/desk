@@ -153,7 +153,7 @@ export class DIDragListView extends DIListView {
      * @param name
      * @todo use or remove this function
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     getCustomCellById(name: string) {}
 
     /**
