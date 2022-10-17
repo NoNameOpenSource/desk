@@ -9,6 +9,7 @@ import { DIListView } from "./DIListView";
 import { DIListViewCell } from "./DIListViewCell";
 import { DIResizableWindow } from "./DIResizableWindow";
 import { DIView } from "./DIView";
+import { DIWindow } from "./DIWindow";
 import { DIWorkSpaceDock } from "./DIWorkSpaceDock";
 import * as DeskSingleton from "./Singleton";
 
@@ -29,28 +30,23 @@ export class Desk {
     headerHeight = 28;
     headerHide = false;
 
-    header;
-    body;
-    headerLogo;
+    header: DIView;
+    body: DIView;
+    headerLogo: DIImageView;
     topMenu: DIView;
 
-    windows: any[];
+    windows: DIWindow[];
     windowsIndex = 11;
     currentWindow: DIResizableWindow;
 
-    cursor;
+    cursor: string[];
 
-    dragPointX: any;
-    dragPointY: any;
-    dragPointA: any;
-    dragWindow: any;
+    screenHeight: number;
+    screenWidth: number;
 
-    screenHeight;
-    screenWidth;
-
-    alerts: any[];
-    alertScreen;
-    wallpaper;
+    alerts: DIAlertView[];
+    alertScreen: DIView;
+    wallpaper: DIImageView;
     workSpaceDock: DIWorkSpaceDock;
 
     contextMenu: DIListView;
@@ -64,8 +60,8 @@ export class Desk {
     contextEvent: DeskEvent;
 
     dragEnded: boolean;
-    lastDragApp: any;
-    currentDragApp: any;
+    lastDragApp: Application;
+    currentDragApp: Application;
     dragEvent: DeskEvent;
     dropEvent: DeskEvent;
     dropEsc: DeskEvent;
