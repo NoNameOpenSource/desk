@@ -269,7 +269,7 @@ export class Desk {
             false
         );
 
-        this.dragEvent.target.addEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
+        this.dragEvent.target.addEventListener(this.dragEvent.method, this.dragEvent.listener, true);
 
         this.dropEvent = new DeskEvent(
             document.body,
@@ -316,11 +316,11 @@ export class Desk {
                 this.lastDragApp = null;
                 this.currentDragApp = null;
 
-                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
+                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.listener, true);
                 this.dragEvent.stopped = true;
                 this.dragEvent.delete();
                 this.dragEvent = null;
-                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
+                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.listener, false);
                 this.dropEvent.stopped = true;
                 this.dropEvent.delete();
                 this.dropEvent = null;
@@ -331,7 +331,7 @@ export class Desk {
             false
         ); // use bubbling instead of capturing
 
-        this.dropEvent.target.addEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
+        this.dropEvent.target.addEventListener(this.dropEvent.method, this.dropEvent.listener, false);
 
         this.dropEsc = new DeskEvent(window, "keydown", (evt: any) => {
             if (evt.keyCode === 27) {
@@ -359,13 +359,14 @@ export class Desk {
                     view.delete();
                     view = null;
                 }, 300);
+
                 this.lastDragApp = null;
                 this.currentDragApp = null;
-                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
+                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.listener, true);
                 this.dragEvent.stopped = true;
                 this.dragEvent.delete();
                 this.dragEvent = null;
-                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
+                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.listener, false);
                 this.dropEvent.stopped = true;
                 this.dropEvent.delete();
                 this.dropEvent = null;

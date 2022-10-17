@@ -1,3 +1,7 @@
+export interface DeskEventListener {
+    (this: Element, ev: any): any;
+}
+
 /**
  * Represents and handles an event
  */
@@ -15,28 +19,28 @@ export class DeskEvent {
     /**
      * the function that needs to be called
      */
-    evtFunc: (this: Element, ev: any) => any;
+    listener: DeskEventListener;
 
     stopped: boolean;
 
-    constructor(target: Element | Document | Window, method: string, evtFunc: (this: Element, ev: any) => any, init = true) {
+    constructor(target: Element | Document | Window, method: string, listener: DeskEventListener, init = true) {
         this.target = target;
         this.method = method;
-        this.evtFunc = evtFunc;
-        if (init) target.addEventListener(method, evtFunc, true);
+        this.listener = listener;
+        if (init) target.addEventListener(method, listener, true);
         this.stopped = false;
     }
 
     stop() {
         if (!this.stopped) {
-            this.target.removeEventListener(this.method, this.evtFunc, true);
+            this.target.removeEventListener(this.method, this.listener, true);
             this.stopped = true;
         }
     }
 
     resume() {
         if (this.stopped) {
-            this.target.addEventListener(this.method, this.evtFunc, true);
+            this.target.addEventListener(this.method, this.listener, true);
             this.stopped = false;
         }
     }
@@ -45,6 +49,6 @@ export class DeskEvent {
         this.stop();
         this.target = null;
         this.method = null;
-        this.evtFunc = null;
+        this.listener = null;
     }
 }

@@ -188,7 +188,7 @@ export class WorkSpace {
 
         this.resizeEnd = new DeskEvent(window, "mouseup", (evt: DeskEvent) => {
             // @ts-ignore
-            this.resizeEvent.evtFunc(evt);
+            this.resizeEvent.listener(evt);
             this.resizeEvent.delete();
             app.resizeEnd();
             // @ts-ignore
