@@ -1,6 +1,7 @@
 import { DIWindow } from "../Desk";
 import { Desk } from "../Desk/Desk";
-import { Application } from "./Application";
+import type { JsonMap } from "../Secretary/Application";
+import { Application, ApplicationFactory } from "./Application";
 import { DeskClipboard } from "./DeskClipboard";
 import { DeskFile } from "./DeskFile";
 import { DeskFileUpload } from "./DeskFileUpload";
@@ -40,6 +41,7 @@ export class Secretary {
     browserVersion = "0";
     ESVersion: number;
     appList: string[] = [];
+    registeredAppMap: Record<string, { create: ApplicationFactory; settings: JsonMap }>;
     clipboard: DeskClipboard;
     desk: Desk;
     fileManager = new FileManager();
@@ -62,18 +64,16 @@ export class Secretary {
         return SecretarySingleton.secretaryInstance;
     }
 
-    private constructor() {
-        console.debug("Instantiating Secretary");
-    }
+    private constructor() {}
 
-    init() {
+    init(args: { apps: Record<string, { create: ApplicationFactory; settings: JsonMap }> }) {
         this.desk = Desk.getInstance();
 
         // Init based on the server
         if (this.serverType === "php") {
             this.dataManagerURL = "/System/DataManager/DataManager.php";
         } else {
-            this.dataManagerURL = "/System/DataManager";
+            this.dataManagerURL = "http://localhost:3009/System/DataManager";
         }
 
         // Detect Browser
@@ -94,6 +94,9 @@ export class Secretary {
         // load side menu app list
         this.loadAppList();
 
+        // register the user's apps
+        this.registerApps(args.apps);
+
         if (this.clientMode === "SingleApplication") {
             this.desk.hideTopMenuBar();
             this.desk.hideWorkSpaceDock();
@@ -101,6 +104,10 @@ export class Secretary {
             this.desk.body.body.style.transition = "none";
             this.workSpaces[0].fullScreen(this.workSpaces[0].apps[0].window);
         }
+    }
+
+    registerApps(apps: Record<string, { create: ApplicationFactory; settings: JsonMap }>) {
+        this.registeredAppMap = apps;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -140,42 +147,12 @@ export class Secretary {
         this.workSpaces[index] = new WorkSpace(name, icon, appList);
     }
 
-    /**
-     * @todo Secretary should not know about the specific applications
-     */
-    // eslint-disable-next-line class-methods-use-this
-    loadApp(appName: string, appSetting: any, workSpace: WorkSpace) {
-        if (appName === "Terminal") {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const app: Application = new Terminal(workSpace, appName, appSetting);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return app;
-        } else if (appName === "TextEditor") {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const app: Application = TextEditor(workSpace, appName, appSetting);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return app;
-        } else if (appName === "DocReader") {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const app: Application = DocReader(workSpace, appName, appSetting);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return app;
-        } else if (appName === "Debugger") {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const app: Application = new Debugger(workSpace, appName, appSetting);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return app;
-        } else if (appName === "BeatApp") {
-            // @ts-ignore TODO: BeatApp does not exist
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const app: Application = new BeatApp(workSpace, appName, appSetting);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return app;
-        }
+    loadApp(appName: string, appSettings: JsonMap, workSpace: WorkSpace) {
+        const application = this.registeredAppMap[appName];
+
+        // TODO: merge appSettings with application.settings
+
+        return application.create(workSpace, appName, application.settings);
     }
 
     /**
@@ -259,7 +236,7 @@ export class Secretary {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].name,
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                        "/System/Secretary/AppIcon/".concat(response.WorkSpaces[i].icon, ".png"),
+                        "/System/Desk/Resources/AppIcon/".concat(response.WorkSpaces[i].icon, ".png"),
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                         response.WorkSpaces[i].apps,
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

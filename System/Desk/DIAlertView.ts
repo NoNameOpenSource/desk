@@ -2,6 +2,7 @@ import { DeskEvent } from "../Secretary";
 import { DIButton } from "./DIButton";
 import { DIImageView } from "./DIImageView";
 import { DILabel } from "./DILabel";
+import { DITextField } from "./DITextField";
 import { DIView } from "./DIView";
 
 /**
@@ -18,6 +19,7 @@ export class DIAlertView extends DIView {
     autoHeight: boolean;
     icon: DIView;
     textArea: DIView;
+    public textField: DITextField;
 
     protected _useTextArea: boolean;
 

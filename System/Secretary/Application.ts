@@ -12,7 +12,7 @@ import { DeskAnimation } from "./DeskAnimation";
  *
  * Application gets loaded from Secretary Class
  */
-export class Application {
+export abstract class Application {
     workSpace: WorkSpace;
     data: any;
     window: DIWindow;
@@ -40,7 +40,7 @@ export class Application {
      *
      * @todo should resizable be a boolean?
      */
-    constructor(workSpace: WorkSpace, appName: string, windowClass?: string, resizable?: number) {
+    constructor(workSpace: WorkSpace, appName: string, appSettings?: Record<string, unknown>, windowClass?: string, resizable?: number) {
         this.workSpace = workSpace;
         this.data = workSpace.data;
         this.window = new DIWindow(windowClass, undefined, appName, resizable);
@@ -186,11 +186,13 @@ export class Application {
         alert.body.style.top = "calc(50% - ".concat(`${alert.height / 2}`, "px)");
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    resizeStart() {}
+    abstract dragStart(arg0: any): void;
+    abstract dragOn(x: number, y: number): void;
+    abstract dragEnd(arg0: boolean, arg1?: any, x?: number, y?: number): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    resizeEnd() {}
+    abstract resizeStart(): void;
+
+    abstract resizeEnd(): void;
 
     resizeWidth(width: number) {
         if (width < this.minWidth) width = this.minWidth;
@@ -199,20 +201,15 @@ export class Application {
         return width;
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    activate() {}
+    abstract activate(): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    deactivate() {}
+    abstract deactivate(): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    windowMinimized() {}
+    abstract windowMinimized(): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    windowMaximized() {}
+    abstract windowMaximized(): void;
 
-    // eslint-disable-next-line class-methods-use-this
-    backButtonTriggered() {}
+    abstract backButtonTriggered(): void;
 
     beginAnimation(animation: DeskAnimation) {
         this.animations.push(animation);
@@ -270,3 +267,12 @@ export class Application {
         this.workSpace = null;
     }
 }
+
+// https://github.com/microsoft/TypeScript/issues/1897#issuecomment-338650717
+export interface JsonMap {
+    [key: string]: AnyJson;
+}
+type JsonArray = AnyJson[];
+export type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
+
+export type ApplicationFactory = (workSpace: WorkSpace, appName: string, appSettings: JsonMap) => Application;

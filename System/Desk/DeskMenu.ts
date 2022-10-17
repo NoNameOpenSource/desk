@@ -50,7 +50,7 @@ export class DeskMenu extends DIView {
             const cell = new DeskMenuListViewCell();
             cell.width = this.width - 32;
             cell.name.stringValue = secretaryInstance.appList[row];
-            cell.icon.imageSource = "/System/Secretary/AppIcon/" + secretaryInstance.appList[row] + ".png";
+            cell.icon.imageSource = "/System/Desk/Resources/AppIcon/" + secretaryInstance.appList[row] + ".png";
             return cell;
         }
     }

@@ -6,14 +6,15 @@ import { DIView } from "./DIView";
  */
 export class DIButton extends DIView {
     event: DeskEvent;
-    buttonBody: HTMLButtonElement;
+    buttonBody: HTMLImageElement;
+    public input: HTMLInputElement;
 
     constructor(text: string, className?: string, idName?: string) {
         if (!className) className = "DIButton";
         super(className, idName);
         this.canHaveChild = false;
         this.event;
-        this.buttonBody = document.createElement("button");
+        this.buttonBody = document.createElement("img");
         if (text) this.buttonBody.textContent = text;
         this.body.appendChild(this.buttonBody);
         this._width = 290;

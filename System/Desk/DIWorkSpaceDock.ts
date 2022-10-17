@@ -118,8 +118,7 @@ export class DIWorkSpaceDock extends DIView {
 
     async update() {
         this.unplugChildViews();
-        let i = 0;
-        for (; i < secretaryInstance.workSpaces.length; i++) {
+        for (let i = 0; i < secretaryInstance.workSpaces.length; i++) {
             this.addChildView(secretaryInstance.workSpaces[i].icon);
             secretaryInstance.workSpaces[i].icon.y = i * 64;
             if (secretaryInstance.workSpaces[i].icon.events.length < 1) {

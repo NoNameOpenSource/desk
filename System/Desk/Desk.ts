@@ -75,8 +75,6 @@ export class Desk {
     }
 
     private constructor() {
-        console.debug("Instantiating Desk");
-
         // Draw wallpaper
         this.wallpaper = new DIImageView("/System/Desk/Resources/Wallpaper/Blured/default.png", "DIWallpaper");
         document.body.appendChild(this.wallpaper.body);
@@ -378,8 +376,8 @@ export class Desk {
     }
 
     static getIconOf(file: { type: string }) {
-        if (file.type === "mp4") return "/System/Secretary/Icon/video.png";
-        else return "/System/Secretary/Icon/file.png";
+        if (file.type === "mp4") return "/System/Desk/Resources/Icon/video.png";
+        else return "/System/Desk/Resources/Icon/file.png";
     }
 
     closeWindow(window: DIResizableWindow) {

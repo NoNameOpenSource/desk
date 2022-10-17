@@ -81,7 +81,8 @@ export class WorkSpace {
     }
 
     loadApp(name: string, setting: any) {
-        const i = this.apps.push(secretaryInstance.loadApp(name, setting, this)) - 1;
+        const loadedApp = secretaryInstance.loadApp(name, setting, this);
+        const i = this.apps.push(loadedApp) - 1;
         this.addWindow(this.apps[i].window);
         this.apps[i].data = this.data;
         this.apps[i].workSpace = this;
