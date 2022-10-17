@@ -252,7 +252,6 @@ export class Desk {
                             app = secretaryInstance.mainWorkSpace.apps[i];
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
-                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                     app.dragOn(evt.clientX, evt.clientY);
                                 }
                             }
@@ -262,7 +261,6 @@ export class Desk {
                 view.x = evt.clientX + difX;
                 view.y = evt.clientY + difY;
                 if (this.currentDragApp !== this.lastDragApp) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (this.lastDragApp) this.lastDragApp.dragLeft();
                 }
                 this.lastDragApp = this.currentDragApp;

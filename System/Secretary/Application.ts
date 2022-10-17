@@ -30,6 +30,7 @@ export class Application {
     dragStart: (arg0: any) => void;
     dragOn: (x: number, y: number) => void;
     dragEnd: (arg0: boolean, arg1?: any, x?: number, y?: number) => void;
+    dragLeft: () => void;
 
     private _loading: boolean;
 
