@@ -151,7 +151,8 @@ export class Desk {
         this.deskMenu.width = 200;
         this.deskMenu.x = -1 * this.deskMenu.width;
         this.deskMenu.y = 28;
-        this.headerLogo.events.push(new DeskEvent(this.headerLogo.body, "click", this.launchDeskMenu.bind(this)));
+
+        this.headerLogo.events.push(new DeskEvent(this.headerLogo.body, "click", () => this.launchDeskMenu()));
         document.body.appendChild(this.deskMenu.body);
     }
 
