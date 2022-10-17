@@ -395,7 +395,6 @@ export class Desk {
         else return "/System/Secretary/Icon/file.png";
     }
 
-    // eslint-disable-next-line class-methods-use-this
     closeWindow(window: DIResizableWindow) {
         if (window === this.currentWindow) this.currentWindow = null;
         window.delete();
