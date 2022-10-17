@@ -451,30 +451,17 @@ export class Desk {
         let alert = new DIAlertView(titleText, undefined, "DIAlertView");
         alert.useTextArea(errorMsg);
         this.alerts.push(alert);
-        // @ts-ignore window.body does not exist
         alert.events.push(
-            new DeskEvent(
-                // @ts-ignore window.body does not exist
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                window.body,
-                "keydown",
-                (evt: KeyboardEvent) => {
-                    if (evt.keyCode === 13) {
-                        // enter key
-                        // @ts-ignore
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                        alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                    } else if (evt.keyCode === 27) {
-                        // esc
-                        // @ts-ignore
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                        alert.buttons[0].buttonBody.click();
-                    }
-                    // @ts-ignore TODO: do we want stopPropagation?
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                    evt.stopPropagate();
+            // TODO: What is the body we want? body in Desk object attributes or body of HTML document - Bong-oh
+            new DeskEvent(document.body, "keydown", (evt: KeyboardEvent) => {
+                if (evt.key === "Enter") {
+                    alert.buttons[alert.buttons.length - 1].buttonBody.click();
+                } else if (evt.key === "Escape") {
+                    alert.buttons[0].buttonBody.click();
                 }
-            )
+                // TODO: Do we want stopPropagation?
+                evt.stopPropagation();
+            })
         );
         alert.addButton("Ok", () => {
             const i = this.alerts.indexOf(alert);
