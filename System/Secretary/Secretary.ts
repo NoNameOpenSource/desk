@@ -346,31 +346,23 @@ export class Secretary {
         }
     }
 
-    loadFileWithId(fileId: any, onCompletion: (data: Blob, error: any) => void, sync?: boolean) {
+    loadFileWithId(fileId: number, onCompletion: (data: Blob, error?: any) => void, sync?: boolean) {
         const xhr = new XMLHttpRequest();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         xhr.open("GET", this.urlForFile(fileId), !sync);
-        xhr.addEventListener("load", function (evt) {
-            // @ts-ignore
-            if (evt.target.status === 200) {
-                // .OK
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onCompletion(evt.target.response);
-                // @ts-ignore
-            } else if (evt.target.status === 404) {
-                // .notFound
-                // @ts-ignore
-            } else if (evt.target.status === 400) {
-                // .badRequest
-                // @ts-ignore
-            } else if (evt.traget.status === 500) {
-                // .internalServerError
-                // @ts-ignore
-            } else if (evt.target.status === 401) {
-                // .unauthorized
+        xhr.addEventListener("load", () => {
+            if (xhr.status === 200) {
+                // OK
+                onCompletion(xhr.response as Blob);
+            } else if (xhr.status === 404) {
+                // Not Found
+            } else if (xhr.status === 400) {
+                // Bad Request
+            } else if (xhr.status === 500) {
+                // InternalServerError
+            } else if (xhr.status === 401) {
+                // Unauthorized
             } else {
-                // .unknown error
+                // Unknown Error
             }
         });
         xhr.send();
