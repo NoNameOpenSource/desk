@@ -220,13 +220,8 @@ export class Desk {
 
     // TODO: What is the clipboard type? - Bono
     startDrag(clipboard: any, view: DIView, x: number, y: number, originalX: number, originalY: number) {
-        let i = 0;
-        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
-            if (secretaryInstance.mainWorkSpace.apps[i].allowDrag) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                secretaryInstance.mainWorkSpace.apps[i].dragStart(clipboard);
-            }
-        }
+        secretaryInstance.mainWorkSpace.apps.forEach((app) => app.allowDrag && app.dragStart(clipboard));
+
         this.dragEnded = false;
 
         document.body.appendChild(view.body);
