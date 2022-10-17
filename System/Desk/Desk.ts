@@ -401,11 +401,11 @@ export class Desk {
         window = null;
     }
 
-    // eslint-disable-next-line class-methods-use-this
+    // TODO: What is the type of window? - Bono
     bringWindowFront(window: any) {
         if (window.deleted) return false;
         if (window === this.currentWindow) return false;
-        // @ts-ignore TODO: do we mean "delete" instead of "deleted"?
+        // TODO: do we mean "delete" instead of "deleted"?
         if (this.currentWindow && !this.currentWindow.deleted) this.currentWindow.putInSleep();
         window.z = this.windowsIndex;
         this.windowsIndex += 1;
