@@ -118,27 +118,19 @@ export class DIWorkSpaceDock extends DIView {
 
     async update() {
         this.unplugChildViews();
-        for (let i = 0; i < secretaryInstance.workSpaces.length; i++) {
-            this.addChildView(secretaryInstance.workSpaces[i].icon);
-            secretaryInstance.workSpaces[i].icon.y = i * 64;
-            if (secretaryInstance.workSpaces[i].icon.events.length < 1) {
-                // TODO: use fat arrow function instead of .bind
-                secretaryInstance.workSpaces[i].icon.events.push(
-                    // eslint-disable-next-line @typescript-eslint/no-loop-func
-                    new DeskEvent(secretaryInstance.workSpaces[i].icon.body, "click", () => {
-                        // @ts-ignore
-                        secretaryInstance.workSpaces[i].desk.workSpaceDock.clicked(this);
-                    })
-                );
+        secretaryInstance.workSpaces.forEach((_workSpace: WorkSpace, idx: number) => {
+            this.addChildView(_workSpace.icon);
+            _workSpace.icon.y = idx * 64;
+            if (_workSpace.icon.events.length < 1) {
+                _workSpace.icon.events.push(new DeskEvent(_workSpace.icon.body, "click", () => _workSpace.desk.workSpaceDock.clicked(_workSpace)));
             }
-            secretaryInstance.workSpaces[i].icon.body.style.background = "";
-            if (secretaryInstance.mainWorkSpace === secretaryInstance.workSpaces[i]) {
-                secretaryInstance.workSpaces[i].icon.body.style.background = "rgba(52,152,219, 0.4)";
+            _workSpace.icon.body.style.background = "";
+            if (secretaryInstance.mainWorkSpace === _workSpace) {
+                _workSpace.icon.body.style.background = "rgba(52,152,219, 0.4)";
             }
-        }
+        });
     }
 
-    // eslint-disable-next-line class-methods-use-this
     clicked(workSpace: WorkSpace) {
         if (!(secretaryInstance.mainWorkSpace === workSpace)) {
             secretaryInstance.setMainWorkSpace(workSpace);
