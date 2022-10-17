@@ -157,7 +157,7 @@ export class Desk {
     }
 
     //	Context Menu
-    showContextMenu(list: any, delegate: any, x: number, y: number) {
+    showContextMenu(list: string[], delegate: any, x: number, y: number) {
         this.contextList = list;
         this.contextMenu.delegate = delegate;
         this.contextMenu.reloadData();
@@ -167,7 +167,7 @@ export class Desk {
             this.contextEvent.delete();
             this.contextEvent = null;
         }
-        this.contextEvent = new DeskEvent(document.body, "mousedown", (evt: any) => {
+        this.contextEvent = new DeskEvent(document.body, "mousedown", (evt: MouseEvent) => {
             if (
                 !(
                     this.contextMenu.body.getBoundingClientRect().left <= evt.clientX &&
@@ -206,21 +206,19 @@ export class Desk {
         return false;
     }
 
-    setUpContextMenu(body: Element, delegate: any) {
-        return new DeskEvent(body, "contextmenu", (evt: Event) => {
+    setUpContextMenu(body: HTMLElement, delegate: any) {
+        return new DeskEvent(body, "contextmenu", (evt: MouseEvent) => {
             evt.preventDefault();
-            // TODO: spelling
-            // @ts-ignore
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const list = delegate.prepareContexMenu(body, evt.clientX, evt.clientY);
+            const list = delegate.prepareContextMenu(body, evt.clientX, evt.clientY);
             if (list) {
-                // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 this.showContextMenu(list, delegate, evt.clientX, evt.clientY);
             }
         });
     }
 
+    // TODO: What is the clipboard type? - Bono
     startDrag(clipboard: any, view: DIView, x: number, y: number, originalX: number, originalY: number) {
         let i = 0;
         for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
@@ -242,11 +240,10 @@ export class Desk {
         this.lastDragApp = null;
         this.currentDragApp = null;
 
-        // TODO: use a fat arrow function instead of .bind(this)
         this.dragEvent = new DeskEvent(
             document.body,
             "mousemove",
-            (evt: { clientX: number; clientY: number }) => {
+            (evt: MouseEvent) => {
                 // find where the cursor is on
                 if (evt.clientY < this.headerHeight) {
                     // client on header
@@ -281,11 +278,10 @@ export class Desk {
 
         this.dragEvent.target.addEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
 
-        // TODO: use a fat arrow function instead of .bind(this)
         this.dropEvent = new DeskEvent(
             document.body,
             "mouseup",
-            (evt: { clientX: number; clientY: number }) => {
+            (evt: MouseEvent) => {
                 // find where the cursor is on
                 // @ts-ignore TODO: bug
                 if (evt.clientY < this.instance.headerHeight) {
@@ -398,8 +394,7 @@ export class Desk {
         window = null;
     }
 
-    // TODO: What is the type of window? - Bono
-    bringWindowFront(window: any) {
+    bringWindowFront(window: DIResizableWindow) {
         if (window.deleted) return false;
         if (window === this.currentWindow) return false;
         // TODO: do we mean "delete" instead of "deleted"?
@@ -430,7 +425,7 @@ export class Desk {
         // load logo as inline svg file
         const ajax = new XMLHttpRequest();
         ajax.open("GET", this.headerLogo.imageSource);
-        ajax.addEventListener("load", (evt) => {
+        ajax.addEventListener("load", (evt: ProgressEvent<XMLHttpRequestEventTarget>) => {
             this.headerLogo.imageBody.remove();
             this.headerLogo.imageBody = document.createElement("SVG");
             this.headerLogo.body.appendChild(this.headerLogo.imageBody);
