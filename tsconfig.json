@@ -1,31 +1,19 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
-        // TODO: turn this on eventually
-        "useDefineForClassFields": false,
-        "module": "ESNext",
-        "lib": ["ESNext", "DOM"],
-        "moduleResolution": "Node",
+        "target": "ES2015",
+        "module": "ES2020",
+        "lib": ["ES2020", "DOM"],
+        "forceConsistentCasingInFileNames": true,
         // TODO: turn this on eventually
         "strictNullChecks": false,
         "noImplicitAny": true,
         "useUnknownInCatchVariables": false,
         "sourceMap": true,
-        "resolveJsonModule": true,
-        "isolatedModules": true,
         "esModuleInterop": true,
-        // "noEmit": true,
-        // "noUnusedLocals": true,
-        // "noUnusedParameters": true,
-        // "noImplicitReturns": true,
-        "skipLibCheck": true,
-        "outDir": "dist",
+        "moduleResolution": "Node",
         "declaration": true,
-        "declarationDir": "types",
-        "removeComments": false
+        "outDir": "./dist",
+        "declarationDir": "./types"
     },
-    "include": ["System"],
-    "ts-node": {
-        "files": true
-    }
+    "include": ["./System"]
 }

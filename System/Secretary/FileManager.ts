@@ -69,35 +69,28 @@ export class FileManager {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", secretaryInstance.urlForFileId(fileId));
         xhr.responseType = "blob";
-        xhr.addEventListener("load", function (evt) {
-            // @ts-ignore
-            if (evt.target.status === 200) {
-                // .OK
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onCompletion(evt.target.response, null);
-                // @ts-ignore
-            } else if (evt.target.status === 404) {
-                // .notFound
+        xhr.addEventListener("load", () => {
+            if (xhr.status === 200) {
+                // OK
+                onCompletion(xhr.response as Blob, null);
+            } else if (xhr.status === 404) {
+                // Not Found
                 const err = Object.freeze({ message: "Failed to find file" });
                 onCompletion(null, err);
-                // @ts-ignore
-            } else if (evt.target.status === 400) {
-                // .badRequest
+            } else if (xhr.status === 400) {
+                // Bad Request
                 const err = Object.freeze({ message: "Server responded with bad request" });
                 onCompletion(null, err);
-                // @ts-ignore
-            } else if (evt.traget.status === 500) {
-                // .internalServerError
+            } else if (xhr.status === 500) {
+                // Internal Server Error
                 const err = Object.freeze({ message: "Server responded with internal server error" });
                 onCompletion(null, err);
-                // @ts-ignore
-            } else if (evt.target.status === 401) {
-                // .unauthorized
+            } else if (xhr.status === 401) {
+                // Unauthorized
                 const err = Object.freeze({ message: "Server responded with unauthorized request" });
                 onCompletion(null, err);
             } else {
-                // .unknown error
+                // Unknown error
                 const err = Object.freeze({ message: "Unknown error occurred" });
                 onCompletion(null, err);
             }
@@ -117,35 +110,28 @@ export class FileManager {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", secretaryInstance.urlForFileId(fileId));
         xhr.responseType = "text";
-        xhr.addEventListener("load", function (evt) {
-            // @ts-ignore
-            if (evt.target.status === 200) {
-                // .OK
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onCompletion(evt.target.response, null);
-                // @ts-ignore
-            } else if (evt.target.status === 404) {
-                // .notFound
+        xhr.addEventListener("load", () => {
+            if (xhr.status === 200) {
+                // OK
+                onCompletion(xhr.response as Blob, null);
+            } else if (xhr.status === 404) {
+                // Not Found
                 const err = Object.freeze({ message: "Failed to find file" });
                 onCompletion(null, err);
-                // @ts-ignore
-            } else if (evt.target.status === 400) {
-                // .badRequest
+            } else if (xhr.status === 400) {
+                // Bad Request
                 const err = Object.freeze({ message: "Server responded with bad request" });
                 onCompletion(null, err);
-                // @ts-ignore
-            } else if (evt.traget.status === 500) {
-                // .internalServerError
+            } else if (xhr.status === 500) {
+                // Internal Server Error
                 const err = Object.freeze({ message: "Server responded with internal server error" });
                 onCompletion(null, err);
-                // @ts-ignore
-            } else if (evt.target.status === 401) {
-                // .unauthorized
+            } else if (xhr.status === 401) {
+                //Unauthorized
                 const err = Object.freeze({ message: "Server responded with unauthorized request" });
                 onCompletion(null, err);
             } else {
-                // .unknown error
+                // Unknown Error
                 const err = Object.freeze({ message: "Unknown error occurred" });
                 onCompletion(null, err);
             }

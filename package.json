@@ -3,12 +3,12 @@
     "version": "0.0.0",
     "description": "Desk User Interface",
     "type": "module",
-    "exports": {
-        ".": {
-            "types": "./types/index.d.ts",
-            "import": "./dist/index.js"
-        }
-    },
+    "module": "./dist/index.js",
+    "types": "./types/index.d.ts",
+    "files": [
+        "dist/",
+        "types/"
+    ],
     "scripts": {
         "compile": "rm -rf dist && rm -rf types && tsc",
         "watch": "rm -rf dist && rm -rf types && tsc -w true",
@@ -30,12 +30,12 @@
     "homepage": "https://github.com/NoNameOpenSource/desk#readme",
     "devDependencies": {
         "@nonameopensource/eslint-config-ts-fe": "^1.0.3",
-        "eslint": "^8.23.1",
+        "eslint": "^8.25.0",
         "prettier": "^2.7.1",
-        "typescript": "^4.8.3"
+        "typescript": "^4.8.4"
     },
     "dependencies": {
-        "@nonameopensource/constrain": "^1.4.1"
+        "@nonameopensource/constrain": "^1.5.0"
     },
     "engines": {
         "node": "16",
