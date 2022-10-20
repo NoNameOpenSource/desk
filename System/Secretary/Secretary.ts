@@ -364,7 +364,7 @@ export class Secretary {
             } else if (evt.target.status === 400) {
                 // .badRequest
                 // @ts-ignore
-            } else if (evt.traget.status === 500) {
+            } else if (evt.target.status === 500) {
                 // .internalServerError
                 // @ts-ignore
             } else if (evt.target.status === 401) {
