@@ -3,12 +3,12 @@
     "version": "0.0.0",
     "description": "Desk User Interface",
     "type": "module",
-    "exports": {
-        ".": {
-            "types": "./types/index.d.ts",
-            "import": "./dist/index.js"
-        }
-    },
+    "module": "./dist/index.js",
+    "types": "./types/index.d.ts",
+    "files": [
+        "dist/",
+        "types/"
+    ],
     "scripts": {
         "compile": "rm -rf dist && rm -rf types && tsc",
         "watch": "rm -rf dist && rm -rf types && tsc -w true",
