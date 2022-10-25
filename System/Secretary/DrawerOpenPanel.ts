@@ -1,7 +1,7 @@
 import { DIButton } from "../Desk/DIButton";
 import { DIView } from "../Desk/DIView";
+import { Drawer } from "../Drawer/Drawer";
 import { Application } from "./Application";
-import { Drawer } from "./Drawer";
 
 export class DrawerOpenPanel extends DIView {
     type: string;
