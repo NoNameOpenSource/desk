@@ -83,16 +83,13 @@ export class Drawer extends Application {
         this.listAddButton.buttonBody.setAttribute("src", Desk.getInstance().getDeskUI.AddButton);
         this.listAddButton.body.appendChild(this.listAddButton.buttonBody);
         this.listAddButton.input = document.createElement("input");
-        this.listAddButton.setButtonEvent(
-            () =>
-                new DeskEvent(this.listAddButton.input, "add", () => {
-                    if (!this.loading) {
-                        if (this.searchListView.hidden && this.grayLayer.hidden && this.currentAnimation < 0) {
-                            this.setAddDirView();
-                        }
-                    }
-                })
-        );
+        this.listAddButton.setButtonEvent(() => {
+            if (!this.loading) {
+                if (this.searchListView.hidden && this.grayLayer.hidden && this.currentAnimation < 0) {
+                    this.setAddDirView();
+                }
+            }
+        });
         this.listNavigator.addChildView(this.listAddButton);
         // Init upload button
         this.uploadButton = new DIButton("Upload", "DrawerUploadButton");
@@ -100,7 +97,7 @@ export class Drawer extends Application {
         this.uploadButton.buttonBody = document.createElement("img");
         this.uploadButton.buttonBody.className = "DINavigatorIcon";
         this.uploadButton.buttonBody.setAttribute("src", Desk.getInstance().getDeskUI.UploadButton);
-        this.uploadButton.setButtonEvent(() => new DeskEvent(this.uploadButton.input, "change", () => {}));
+        this.uploadButton.setButtonEvent(() => this.uploadButton.input.click());
         this.uploadButton.body.appendChild(this.uploadButton.buttonBody);
         this.uploadButton.input = document.createElement("input");
         this.uploadButton.input.setAttribute("type", "file");
