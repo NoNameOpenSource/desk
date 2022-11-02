@@ -1,4 +1,4 @@
-import { DIImageView, DILabel, DIListViewCell } from "../Desk";
+import { DIImageView, DILabel, DIListViewCell, DIView } from "../Desk";
 
 export class DrawerListViewCell extends DIListViewCell {
     icon: DIImageView;
@@ -11,7 +11,8 @@ export class DrawerListViewCell extends DIListViewCell {
         this.addChildView(this.name);
     }
 
-    addChildView(icon: any) {
+    addChildView(view: DIView) {
+        super.addChildView(view);
         return true;
     }
 }
