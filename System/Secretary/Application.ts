@@ -27,10 +27,6 @@ export abstract class Application {
     /** @todo spelling */
     deleted: boolean;
     allowDrag: boolean;
-    dragStart: (arg0: any) => void;
-    dragOn: (x: number, y: number) => void;
-    dragEnd: (arg0: boolean, arg1?: any, x?: number, y?: number) => void;
-    dragLeft: () => void;
 
     private _loading: boolean;
 
@@ -189,9 +185,9 @@ export abstract class Application {
     abstract dragStart(arg0: any): void;
     abstract dragOn(x: number, y: number): void;
     abstract dragEnd(arg0: boolean, arg1?: any, x?: number, y?: number): void;
+    abstract dragLeft(): void;
 
     abstract resizeStart(): void;
-
     abstract resizeEnd(): void;
 
     resizeWidth(width: number) {

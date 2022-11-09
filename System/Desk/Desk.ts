@@ -281,10 +281,7 @@ export class Desk {
                     if (evt.clientX < this.body.x) {
                         // client on dock
                     } else {
-                        let i = 0;
-                        let app;
-                        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
-                            app = secretaryInstance.mainWorkSpace.apps[i];
+                        secretaryInstance.mainWorkSpace.apps.forEach((app) => {
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
                                     app.dragEnd(true, clipboard, evt.clientX, evt.clientY);
@@ -292,7 +289,7 @@ export class Desk {
                                     app.dragEnd(false);
                                 }
                             }
-                        }
+                        });
                     }
                 }
 
@@ -303,7 +300,7 @@ export class Desk {
                     view.body.style.transition = "all .3s ease";
                     view.x = originalX;
                     view.y = originalY;
-                    setTimeout(function () {
+                    setTimeout(() => {
                         view.delete();
                         view = null;
                     }, 300);
@@ -331,29 +328,24 @@ export class Desk {
 
         this.dropEvent.target.addEventListener(this.dropEvent.method, this.dropEvent.listener, false);
 
-        this.dropEsc = new DeskEvent(window, "keydown", (evt: any) => {
-            if (evt.keyCode === 27) {
-                // esc
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                if (this.currentDragApp !== null) this.currentDragApp.dragLeft();
+        this.dropEsc = new DeskEvent(window, "keydown", (evt: KeyboardEvent) => {
+            if (evt.key === "Escape") {
+                if (this.currentDragApp !== null) {
+                    this.currentDragApp.dragLeft();
+                }
+
                 if (this.currentDragApp !== this.lastDragApp) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (this.lastDragApp) this.lastDragApp.dragLeft();
                 }
-                let i = 0;
-                let app;
-                for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
-                    app = secretaryInstance.mainWorkSpace.apps[i];
-                    if (app.allowDrag) {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                        app.dragEnd(false);
-                    }
-                }
+
+                secretaryInstance.mainWorkSpace.apps.forEach((app) => app.allowDrag && app.dragEnd(false));
+
                 // canceling drag
                 view.body.style.transition = "all .3s ease";
                 view.x = originalX;
                 view.y = originalY;
-                setTimeout(function () {
+
+                setTimeout(() => {
                     view.delete();
                     view = null;
                 }, 300);
@@ -452,8 +444,14 @@ export class Desk {
             this.alerts.splice(i, 1);
             alert.delete();
             alert = null;
-            if (this.alerts.length < 1) this.alertScreen.hidden = true;
-            if (func) func();
+
+            if (this.alerts.length < 1) {
+                this.alertScreen.hidden = true;
+            }
+
+            if (func) {
+                func();
+            }
         });
         document.body.appendChild(alert.body);
         alert.didMoveToDesk();
