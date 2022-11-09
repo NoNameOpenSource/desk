@@ -136,7 +136,6 @@ export class DIWindow extends DIView {
         this.titleField.textBody.style.width = "".concat(`${this.body.clientHeight - 62}`, "px");
         this.titleField.textBody.style.textAlign = "left";
         this.titleField.textBody.style.transform = "rotate(90deg)";
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (this.app.windowMinimized) this.app.windowMinimized();
         if (this.child) {
             this.child.putInSleep();
@@ -155,7 +154,6 @@ export class DIWindow extends DIView {
         this.titleField.textBody.style.width = "";
         this.titleField.textBody.style.textAlign = "";
         this.titleField.textBody.style.transform = "";
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         if (this.app && this.app.windowMaximized) this.app.windowMaximized();
         if (this.child) {
             this.body.appendChild(this.child.body);
