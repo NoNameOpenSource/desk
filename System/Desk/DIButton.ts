@@ -41,11 +41,8 @@ export class DIButton extends DIView {
         this.buttonBody.textContent = value;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     get width() {
-        // @ts-ignore TODO: bug - maybe use this._width?
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return _width;
+        return this._width;
     }
 
     set width(value: number) {
