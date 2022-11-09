@@ -164,7 +164,6 @@ export class DIView implements Constrain.DrawableObject {
         await Constrain.LayoutEngine.compute(this);
     }
 
-    // eslint-disable-next-line class-methods-use-this
     atLeastOneChildWillBeUpdated() {
         // always allow children to be updated for now
         return true;
