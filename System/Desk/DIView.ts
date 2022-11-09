@@ -114,8 +114,12 @@ export class DIView implements Constrain.DrawableObject {
         this.constraintGroup.constraints = [];
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    didMoveToParent() {}
+    /**
+     * @todo implement or remove
+     */
+    didMoveToParent() {
+        throw new Error("Method not implemented.");
+    }
 
     didMoveToDesk() {
         this.onDesk = true;
