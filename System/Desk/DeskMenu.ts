@@ -54,7 +54,9 @@ export class DeskMenu extends DIView {
         }
     }
 
-    // TODO: Not DIListView, only DIDragView? -> listDidSelectRowAtIndex(listView: DIListView, index: number)
+    /**
+     *  @todo: Not DIListView, only DIDragView? -> listDidSelectRowAtIndex(listView: DIListView, index: number)
+     */
     listDidSelectRowAtIndex(listView: DIDragListView, index: number) {
         if (this.listView === listView) {
             if (index >= 0) {
