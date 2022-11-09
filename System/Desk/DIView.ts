@@ -1,4 +1,5 @@
 import * as Constrain from "@nonameopensource/constrain";
+import { ConstraintGroup } from "@nonameopensource/constrain/types/layout-engine";
 import { DeskAnimation, DeskEvent } from "../Secretary";
 import { DIViewController } from "./DIViewController";
 
@@ -42,12 +43,10 @@ export class DIView implements Constrain.DrawableObject {
         this.animations = [];
         this._hidden = false;
         this._inSleep = false;
-        // @ts-ignore
-        this.constraintGroup = {
-            constraints: [],
+        this.constraintGroup = Object.assign(new ConstraintGroup([]), {
             dirty: false,
             tree: undefined,
-        };
+        });
     }
 
     addChildView(child: DIView) {
