@@ -55,13 +55,13 @@ export class DeskMenu extends DIView {
         }
     }
 
-    listDidSelectRowAtIndex(listView: DIListView, index: number) {
-        if (listView === this.listView) {
+    // TODO: Not DIListView, only DIDragView? -> listDidSelectRowAtIndex(listView: DIListView, index: number)
+    listDidSelectRowAtIndex(listView: DIDragListView, index: number) {
+        if (this.listView === listView) {
             if (index >= 0) {
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 listView.deselectAll();
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 secretaryInstance.mainWorkSpace.loadApp(secretaryInstance.appList[index], []);
             }
         }
