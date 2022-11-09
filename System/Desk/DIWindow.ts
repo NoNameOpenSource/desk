@@ -190,8 +190,9 @@ export class DIWindow extends DIView {
     /**
      * @todo implement or remove
      */
-    // eslint-disable-next-line class-methods-use-this
-    didMoveToParent() {}
+    didMoveToParent() {
+        throw new Error("Method not implemented.");
+    }
 
     didMoveToDesk() {
         if (this.toolbar) {
