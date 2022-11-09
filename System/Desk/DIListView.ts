@@ -25,19 +25,33 @@ export class DIListView extends DIView {
     // TODO: create an enum for cellClickType
     // TODO: type dataSource and delegate
     constructor(dataSource: any, delegate: any, cellClickType: number, className: string, idName?: string) {
-        if (!className) className = "DIListView";
+        if (!className) {
+            className = "DIListView";
+        }
+
         super(className, idName);
+
         if (dataSource) {
             this.dataSource = dataSource;
         }
-        if (delegate) this.delegate = delegate;
-        this.cellClickType = cellClickType;
-        if (cellClickType === 0) {
-        } else if (cellClickType === 1) {
-            this.event = new DeskEvent(this.body, "click", this.clicked.bind(this));
-        } else if (cellClickType === 2) {
-            this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+
+        if (delegate) {
+            this.delegate = delegate;
         }
+
+        switch ((this.cellClickType = cellClickType)) {
+            case 0:
+                break;
+            case 1:
+                this.event = new DeskEvent(this.body, "click", (evt: MouseEvent) => this.clicked(evt));
+                break;
+            case 2:
+                this.events.push(new DeskEvent(this.body, "mousedown", (evt: MouseEvent) => this.mouseDown(evt)));
+                break;
+            default:
+                break;
+        }
+
         this.cellHeight = 0;
         this.selectedIndex = -1;
 
