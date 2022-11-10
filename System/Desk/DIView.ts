@@ -162,7 +162,6 @@ export class DIView implements Constrain.DrawableObject {
         // TODO: how should we deal with the units?
 
         // update children
-        // TODO: we'd prefer to just return this promise and remove the async qualifier from the method
         this.constraintGroup.computeOrder();
         this.constraintGroup.compute();
     }
