@@ -47,14 +47,14 @@ export class DIDropDownView extends DIListView {
     }
 
     highlightCell(index: number) {
-        // @ts-ignore TODO: bug
-        if (selected === this.children[index]) return false;
+        if (this.selected === this.children[index]) return false;
+
         if (this.selected) {
             this.selected.deselect();
         }
+
         this.selected = this.children[index];
-        // @ts-ignore TODO: maybe just selected instead of selected()
-        this.selected.selected();
+        this.selected.select();
         this.selectedIndex = index;
     }
 }
