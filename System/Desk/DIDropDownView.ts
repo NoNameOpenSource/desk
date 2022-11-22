@@ -36,13 +36,14 @@ export class DIDropDownView extends DIListView {
 
     mouseUp() {
         this.events[this.moveEvent].delete();
+
         document.documentElement.style.cursor = "";
-        // @ts-ignore TODO: not sure how to fix this
-        document.documentElement.style["-webkit-user-select"] = "";
+        document.documentElement.style.userSelect = "";
+
         this.events[this.moveEvent + 1].delete();
-        // @ts-ignore TODO: bug
         this.events.splice(this.mouseEvent, 2);
-        this.didSelectRowAtIndex();
+
+        this.didSelectRowAtIndex(this.selectedIndex);
     }
 
     highlightCell(index: number) {
