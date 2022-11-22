@@ -10,22 +10,24 @@ export class DIDropDownView extends DIListView {
         if (dataSource) {
             this.dataSource = dataSource;
         }
-        this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+        this.events.push(new DeskEvent(this.body, "mousedown", (evt: MouseEvent) => this.mouseDown(evt)));
         this.moveEvent = null;
     }
 
     mouseDown(evt: MouseEvent) {
         evt.preventDefault();
+
         this.highlightCell(Math.floor((evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight));
         this.moveEvent = this.events.length;
+
         document.documentElement.style.cursor = "default";
-        // @ts-ignore TODO: not sure how to fix this
-        document.documentElement.style["-webkit-user-select"] = "none";
-        this.events.push(new DeskEvent(document, "mousemove", this.mouseMove.bind(this)));
-        this.events.push(new DeskEvent(document, "mouseup", this.mouseUp.bind(this)));
+        document.documentElement.style.userSelect = "none";
+
+        this.events.push(new DeskEvent(document, "mousemove", (evt: MouseEvent) => this.mouseMove(evt)));
+        this.events.push(new DeskEvent(document, "mouseup", () => this.mouseUp()));
     }
 
-    mouseMove(evt: any) {
+    mouseMove(evt: MouseEvent) {
         const body = this.body.getBoundingClientRect();
         if (evt.clientX > body.left && evt.clientX < body.right) {
             // If y is higher than top, top becomes y. If y is lower than bottom, bottom becomes y.
