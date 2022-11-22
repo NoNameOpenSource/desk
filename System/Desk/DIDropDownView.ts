@@ -42,9 +42,7 @@ export class DIDropDownView extends DIListView {
         this.events[this.moveEvent + 1].delete();
         // @ts-ignore TODO: bug
         this.events.splice(this.mouseEvent, 2);
-        // @ts-ignore TODO: bug TODO: maybe this.didSelectRowAtIndex()
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        didSelectRowAtIndex();
+        this.didSelectRowAtIndex();
     }
 
     highlightCell(index: number) {
