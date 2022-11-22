@@ -43,10 +43,7 @@ export class DIView implements Constrain.DrawableObject {
         this.animations = [];
         this._hidden = false;
         this._inSleep = false;
-        this.constraintGroup = Object.assign(new ConstraintGroup([]), {
-            dirty: false,
-            tree: undefined,
-        });
+        this.constraintGroup = new Constrain.LayoutEngine.ConstraintGroup(this, []);
     }
 
     addChildView(child: DIView) {
@@ -107,6 +104,17 @@ export class DIView implements Constrain.DrawableObject {
 
     addConstraint(constraint: Constrain.Constraint) {
         this.constraintGroup.constraints.push(constraint);
+        this.constraintGroup.computeOrder();
+        this.constraintGroup.compute();
+    }
+
+    addConstraints(constraints: Constrain.Constraint[]): void;
+    addConstraints(...constraints: Constrain.Constraint[]): void;
+    addConstraints(constraints: unknown): void {
+        const cs = constraints as Constrain.Constraint[];
+        this.constraintGroup.constraints.push(...cs);
+        this.constraintGroup.computeOrder();
+        this.constraintGroup.compute();
     }
 
     clearConstraints() {
@@ -159,8 +167,8 @@ export class DIView implements Constrain.DrawableObject {
         // TODO: how should we deal with the units?
 
         // update children
-        // TODO: we'd prefer to just return this promise and remove the async qualifier from the method
-        await Constrain.LayoutEngine.compute(this);
+        this.constraintGroup.computeOrder();
+        this.constraintGroup.compute();
     }
 
     atLeastOneChildWillBeUpdated() {
