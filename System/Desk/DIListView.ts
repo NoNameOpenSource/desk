@@ -70,20 +70,21 @@ export class DIListView extends DIView {
         super.wakeUp();
     }
 
-    mouseDown(evt: any) {
+    mouseDown(evt: MouseEvent) {
         if (evt.button === 0) {
             this.highlightCellAtIndex(Math.floor((this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight));
+
             this.moveEvent = this.events.length;
-            // @ts-ignore TODO: not sure how to fix this
-            document.documentElement.style["-webkit-user-select"] = "none";
+
+            document.documentElement.style.userSelect = "none";
             document.documentElement.style.cursor = "default";
-            this.events.push(new DeskEvent(document, "mousemove", this.mouseMove.bind(this)));
-            this.events.push(new DeskEvent(document, "mouseup", this.mouseUp.bind(this)));
-        } else if (evt.button === 2) {
+
+            this.events.push(new DeskEvent(document, "mousemove", (evt: MouseEvent) => this.mouseMove(evt)));
+            this.events.push(new DeskEvent(document, "mouseup", () => this.mouseUp()));
         }
     }
 
-    mouseMove(evt: any) {
+    mouseMove(evt: MouseEvent) {
         const body = this.body.getBoundingClientRect();
         if (evt.clientX > body.left && evt.clientX < body.right) {
             // If y is higher than top, top becomes y. If y is lower than bottom, bottom becomes y.
