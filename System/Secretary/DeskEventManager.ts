@@ -3,18 +3,14 @@
  */
 import { DeskEvent } from "./DeskEvent";
 
-class DeskEventItem {
-    id: number;
+interface DeskEventItem {
+    id: string;
     deskEvent: DeskEvent;
-    constructor(id: number, deskEvent: DeskEvent) {
-        this.id = id;
-        this.deskEvent = deskEvent;
-    }
 }
 
 class DeskEventInfo {
-    id: number;
-    constructor(id: number) {
+    id: string;
+    constructor(id: string) {
         this.id = id;
     }
 }
@@ -33,19 +29,21 @@ export class DeskEventManager {
         if (deskEvent) {
             return new DeskEventInfo(deskEvent.id);
         }
-        this.deskEventItems.push(new DeskEventItem(++this.lastIndex, new DeskEvent(target, method, evtFunc, true)));
-        return new DeskEventInfo(this.lastIndex);
+        const newId = `${++this.lastIndex}`;
+        const newItem: DeskEventItem = { id: newId, deskEvent: new DeskEvent(target, method, evtFunc, true) };
+        this.deskEventItems.push(newItem);
+        return new DeskEventInfo(newId);
     }
 
-    stop(id: number) {
+    stop(id: string) {
         this.deskEventItems.find((x) => x.id === id)?.deskEvent.stop();
     }
 
-    resume(id: number) {
+    resume(id: string) {
         this.deskEventItems.find((x) => x.id === id)?.deskEvent.resume();
     }
 
-    delete(id: number) {
+    delete(id: string) {
         const index = this.deskEventItems.findIndex((x) => x.id === id);
         if (0 <= index) {
             this.deskEventItems[index].deskEvent.delete();
