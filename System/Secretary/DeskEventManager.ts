@@ -8,11 +8,8 @@ interface DeskEventItem {
     deskEvent: DeskEvent;
 }
 
-class DeskEventInfo {
+export interface DeskEventInfo {
     id: string;
-    constructor(id: string) {
-        this.id = id;
-    }
 }
 
 export class DeskEventManager {
@@ -21,26 +18,55 @@ export class DeskEventManager {
      */
     private deskEventItems: DeskEventItem[] = [];
     private lastIndex: -1;
+    private readonly notFound: "Not found";
 
     add(target: Element | Document | Window, method: string, evtFunc: (this: Element, ev: any) => any): DeskEventInfo {
-        const deskEvent = this.deskEventItems.find(
-            (x) => x.deskEvent.target === target && x.deskEvent.method === method && x.deskEvent.evtFunc === evtFunc
-        );
-        if (deskEvent) {
-            return new DeskEventInfo(deskEvent.id);
-        }
         const newId = `${++this.lastIndex}`;
         const newItem: DeskEventItem = { id: newId, deskEvent: new DeskEvent(target, method, evtFunc, true) };
         this.deskEventItems.push(newItem);
-        return new DeskEventInfo(newId);
+        const info: DeskEventInfo = { id: newId };
+        return info;
+    }
+
+    upsert(target: Element | Document | Window, method: string, evtFunc: (this: Element, ev: any) => any): DeskEventInfo {
+        const info = this.findId(target, method, evtFunc);
+        return info.id === this.notFound ? this.add(target, method, evtFunc) : info;
+    }
+
+    findIdByDeskEvent(event: DeskEvent): DeskEventInfo {
+        return this.findId(event.target, event.method, event.evtFunc);
+    }
+
+    findId(target: Element | Document | Window, method: string, evtFunc: (this: Element, ev: any) => any): DeskEventInfo {
+        const deskEventItem = this.deskEventItems.find(
+            (x) => x.deskEvent.target === target && x.deskEvent.method === method && x.deskEvent.evtFunc === evtFunc
+        );
+        if (deskEventItem) {
+            const info: DeskEventInfo = { id: deskEventItem.id };
+            return info;
+        }
+        const infoNotFound: DeskEventInfo = { id: this.notFound };
+        return infoNotFound;
     }
 
     stop(id: string) {
         this.deskEventItems.find((x) => x.id === id)?.deskEvent.stop();
     }
 
+    stopAll() {
+        for (const eventItem of this.deskEventItems) {
+            eventItem.deskEvent.stop();
+        }
+    }
+
     resume(id: string) {
         this.deskEventItems.find((x) => x.id === id)?.deskEvent.resume();
+    }
+
+    resumeAll() {
+        for (const eventItem of this.deskEventItems) {
+            eventItem.deskEvent.resume();
+        }
     }
 
     delete(id: string) {
@@ -56,6 +82,5 @@ export class DeskEventManager {
             item.deskEvent.delete();
         }
         this.deskEventItems.length = 0;
-        this.lastIndex = -1;
     }
 }

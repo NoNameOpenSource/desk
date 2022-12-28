@@ -1,4 +1,4 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventInfo } from "../Secretary";
 import { DeskMenu } from "./DeskMenu";
 import { DIListViewCell } from "./DIListViewCell";
 import { DIListViewDataSource } from "./DIListViewDataSource";
@@ -14,11 +14,12 @@ export class DIListView extends DIView {
     dataSource: DIListViewDataSource;
     delegate: DeskMenu;
     cellClickType: number;
-    event: DeskEvent;
+    eventInfo: DeskEventInfo;
     cellHeight: number;
     selectedIndex: number;
     reloadTicket: number;
-    moveEvent: number;
+    moveEventInfo: DeskEventInfo;
+    upEventInfo: DeskEventInfo;
     selected: DIListViewCell;
     children: DIListViewCell[];
 
@@ -34,9 +35,9 @@ export class DIListView extends DIView {
         this.cellClickType = cellClickType;
         if (cellClickType === 0) {
         } else if (cellClickType === 1) {
-            this.event = new DeskEvent(this.body, "click", this.clicked.bind(this));
+            this.eventInfo = this.eventManager.add(this.body, "click", this.clicked);
         } else if (cellClickType === 2) {
-            this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+            this.eventManager.add(this.body, "mousedown", this.mouseDown);
         }
         this.cellHeight = 0;
         this.selectedIndex = -1;
@@ -47,24 +48,23 @@ export class DIListView extends DIView {
     }
 
     putInSleep() {
-        if (this.event) this.event.stop();
+        if (this.eventInfo) this.eventManager.stop(this.eventInfo.id);
         super.putInSleep();
     }
 
     wakeUp() {
-        if (this.event) this.event.resume();
+        if (this.eventInfo) this.eventManager.resume(this.eventInfo.id);
         super.wakeUp();
     }
 
     mouseDown(evt: any) {
         if (evt.button === 0) {
             this.highlightCellAtIndex(Math.floor((this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight));
-            this.moveEvent = this.events.length;
             // @ts-ignore TODO: not sure how to fix this
             document.documentElement.style["-webkit-user-select"] = "none";
             document.documentElement.style.cursor = "default";
-            this.events.push(new DeskEvent(document, "mousemove", this.mouseMove.bind(this)));
-            this.events.push(new DeskEvent(document, "mouseup", this.mouseUp.bind(this)));
+            this.moveEventInfo = this.eventManager.add(document, "mousemove", this.mouseMove);
+            this.upEventInfo = this.eventManager.add(document, "mouseup", this.mouseUp);
         } else if (evt.button === 2) {
         }
     }
@@ -80,12 +80,11 @@ export class DIListView extends DIView {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     mouseUp(evt: any) {
-        this.events[this.moveEvent].delete();
+        this.eventManager.delete(this.moveEventInfo.id);
         document.documentElement.style.cursor = "";
         // @ts-ignore TODO: not sure how to fix this
         document.documentElement.style["-webkit-user-select"] = "";
-        this.events[this.moveEvent + 1].delete();
-        this.events.splice(this.moveEvent, 2);
+        this.eventManager.delete(this.upEventInfo.id);
         this.didSelectRowAtIndex(this.selectedIndex);
     }
 
@@ -168,9 +167,8 @@ export class DIListView extends DIView {
 
     delete() {
         if (this.cellClickType === 1) {
-            if (this.event) {
-                this.event.delete();
-                this.event = null;
+            if (this.eventInfo) {
+                this.eventManager.delete(this.eventInfo.id);
             }
         }
         this.delegate = null;

@@ -153,7 +153,7 @@ export class Desk {
         this.deskMenu.width = 200;
         this.deskMenu.x = -1 * this.deskMenu.width;
         this.deskMenu.y = 28;
-        this.headerLogo.events.push(new DeskEvent(this.headerLogo.body, "click", this.launchDeskMenu.bind(this)));
+        this.headerLogo.eventManager.add(this.headerLogo.body, "click", this.launchDeskMenu);
         document.body.appendChild(this.deskMenu.body);
     }
 
@@ -213,7 +213,7 @@ export class Desk {
             // TODO: spelling
             // @ts-ignore
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const list = delegate.prepareContexMenu(body, evt.clientX, evt.clientY);
+            const list = delegate.prepareContextMenu(body, evt.clientX, evt.clientY);
             if (list) {
                 // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -450,30 +450,29 @@ export class Desk {
         alert.useTextArea(errorMsg);
         this.alerts.push(alert);
         // @ts-ignore window.body does not exist
-        alert.events.push(
-            new DeskEvent(
-                // @ts-ignore window.body does not exist
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                window.body,
-                "keydown",
-                (evt: KeyboardEvent) => {
-                    if (evt.keyCode === 13) {
-                        // enter key
-                        // @ts-ignore
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                        alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                    } else if (evt.keyCode === 27) {
-                        // esc
-                        // @ts-ignore
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                        alert.buttons[0].buttonBody.click();
-                    }
-                    // @ts-ignore TODO: do we want stopPropagation?
+        alert.eventManager.add(
+            // @ts-ignore window.body does not exist
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+            window.body,
+            "keydown",
+            (evt: KeyboardEvent) => {
+                if (evt.keyCode === 13) {
+                    // enter key
+                    // @ts-ignore
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                    evt.stopPropagate();
+                    alert.buttons[alert.buttons.length - 1].buttonBody.click();
+                } else if (evt.keyCode === 27) {
+                    // esc
+                    // @ts-ignore
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                    alert.buttons[0].buttonBody.click();
                 }
-            )
+                // @ts-ignore TODO: do we want stopPropagation?
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                evt.stopPropagate();
+            }
         );
+
         alert.addButton("Ok", () => {
             const i = this.alerts.indexOf(alert);
             this.alerts[i] = null;

@@ -2,6 +2,7 @@ export * from "./Application";
 export * from "./DeskAnimation";
 export * from "./DeskClipboard";
 export * from "./DeskEvent";
+export * from "./DeskEventManager";
 export * from "./DeskFile";
 export * from "./DeskFileUpload";
 export * from "./DrawerOpenPanel";

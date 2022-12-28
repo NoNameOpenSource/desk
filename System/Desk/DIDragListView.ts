@@ -1,4 +1,3 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
 import { DIListView } from "./DIListView";
 import { DIListViewCell } from "./DIListViewCell";
 import { DIView } from "./DIView";
@@ -10,7 +9,6 @@ import { DIView } from "./DIView";
  * -dataSource		: Object that will provide data to make list
  */
 export class DIDragListView extends DIListView {
-    events: DeskEvent[];
     body: HTMLElement;
     lastHighlightedCell: number;
     multipleSelection: boolean;
@@ -19,7 +17,7 @@ export class DIDragListView extends DIListView {
     constructor(dataSource: any, delegate: any, className: string, idName: string) {
         super(dataSource, delegate, -1, className, idName);
 
-        this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+        this.eventManager.add(this.body, "mousedown", this.mouseDown);
 
         // @ts-ignore TODO: bug - array instead of single item
         this.selected = [];
@@ -39,12 +37,11 @@ export class DIDragListView extends DIListView {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 evt.preventDefault();
                 this.highlightCellAtIndex(this.selectedIndex);
-                this.moveEvent = this.events.length;
                 // @ts-ignore TODO: not sure how to fix this
                 document.documentElement.style["-webkit-user-select"] = "none";
                 document.documentElement.style.cursor = "default";
-                this.events.push(new DeskEvent(document, "mousemove", this.mouseMove.bind(this)));
-                this.events.push(new DeskEvent(document, "mouseup", this.mouseUp.bind(this)));
+                this.moveEventInfo = this.eventManager.add(document, "mousemove", this.mouseMove);
+                this.upEventInfo = this.eventManager.add(document, "mouseup", this.mouseUp);
                 if (!this.multipleSelection) {
                     this.mouseUp(evt);
                 }
@@ -70,12 +67,11 @@ export class DIDragListView extends DIListView {
 
     mouseUp(evt: any) {
         if (evt.button === 0) {
-            this.events[this.moveEvent].delete();
+            this.eventManager.delete(this.moveEventInfo.id);
             document.documentElement.style.cursor = "";
             // @ts-ignore TODO: not sure how to fix this
             document.documentElement.style["-webkit-user-select"] = "";
-            this.events[this.moveEvent + 1].delete();
-            this.events.splice(this.moveEvent, 2);
+            this.eventManager.delete(this.upEventInfo.id);
 
             const body = this.body.getBoundingClientRect();
             const index = Math.floor((this.body.scrollTop + evt.clientY - body.top) / this.cellHeight);
@@ -200,9 +196,8 @@ export class DIDragListView extends DIListView {
         this.delegate = null;
         this.dataSource = null;
         if (this.cellClickType === 1) {
-            if (this.event) {
-                this.event.delete();
-                this.event = null;
+            if (this.eventInfo) {
+                this.eventManager.delete(this.eventInfo.id);
             }
         }
         super.delete();

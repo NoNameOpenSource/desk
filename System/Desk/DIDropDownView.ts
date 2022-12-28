@@ -1,8 +1,9 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventInfo } from "../Secretary";
 import { DIListView } from "./DIListView";
 
 export class DIDropDownView extends DIListView {
-    mouseEvent: number;
+    moveEventInfo: DeskEventInfo;
+    upEventInfo: DeskEventInfo;
 
     constructor(dataSource: any, delegate: any, cellClickType: any, className?: string, idName?: string) {
         if (!className) className = "DIListView";
@@ -10,19 +11,18 @@ export class DIDropDownView extends DIListView {
         if (dataSource) {
             this.dataSource = dataSource;
         }
-        this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
-        this.moveEvent = null;
+        this.eventManager.add(this.body, "mousedown", this.mouseDown);
+        this.moveEventInfo = null;
     }
 
     mouseDown(evt: MouseEvent) {
         evt.preventDefault();
         this.highlightCell(Math.floor((evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight));
-        this.moveEvent = this.events.length;
         document.documentElement.style.cursor = "default";
         // @ts-ignore TODO: not sure how to fix this
         document.documentElement.style["-webkit-user-select"] = "none";
-        this.events.push(new DeskEvent(document, "mousemove", this.mouseMove.bind(this)));
-        this.events.push(new DeskEvent(document, "mouseup", this.mouseUp.bind(this)));
+        this.moveEventInfo = this.eventManager.add(document, "mousemove", this.mouseMove);
+        this.upEventInfo = this.eventManager.add(document, "mouseup", this.mouseUp);
     }
 
     mouseMove(evt: any) {
@@ -35,13 +35,11 @@ export class DIDropDownView extends DIListView {
     }
 
     mouseUp() {
-        this.events[this.moveEvent].delete();
+        this.eventManager.delete(this.moveEventInfo.id);
         document.documentElement.style.cursor = "";
         // @ts-ignore TODO: not sure how to fix this
         document.documentElement.style["-webkit-user-select"] = "";
-        this.events[this.moveEvent + 1].delete();
-        // @ts-ignore TODO: bug
-        this.events.splice(this.mouseEvent, 2);
+        this.eventManager.delete(this.upEventInfo.id);
         // @ts-ignore TODO: bug TODO: maybe this.didSelectRowAtIndex()
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         didSelectRowAtIndex();

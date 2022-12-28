@@ -25,7 +25,7 @@ export class DINavigationViewController extends DIViewController {
         this.backwardButton = new DIView();
         this.titleField = new DILabel();
         this.navigationView.addChildView(this.backwardButton);
-        this.backwardButton.events.push(new DeskEvent(this.backwardButton.body, "onclick", this.backButtonTriggered.bind(this)));
+        this.backwardButton.eventManager.add(this.backwardButton.body, "onclick", this.backButtonTriggered);
         this.navigationView.addChildView(this.titleField);
         if (delegate) this.delegate = delegate;
     }
