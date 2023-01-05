@@ -130,8 +130,7 @@ export class WorkSpace {
     /**
      * @todo finish function or remove it
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setContextMenu(dataSource: any, delegate: any) {
+    setContextMenu(_dataSource: any, _delegate: any) {
         if (this.contextMenu) {
         }
     }
@@ -240,8 +239,9 @@ export class WorkSpace {
     /**
      * @todo finish function or remove it
      */
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    appWillClose(app: Application) {}
+    appWillClose(_app: Application) {
+        throw new Error("Method not implemented.");
+    }
 
     appDidClose(app: Application) {
         // check if the application have right boarder

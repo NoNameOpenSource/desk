@@ -476,8 +476,7 @@ export class FileManager {
                 return;
             }
             response = response.FileUploadRequest;
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const errors = [];
+
             for (let i = 0; i < response.fileIds.length; i++) {
                 if (response.fileIds[i] < 0) {
                     // name already exist

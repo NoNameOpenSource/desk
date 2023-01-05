@@ -93,8 +93,7 @@ export class RequestServer {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    callListeners(response: any, err: any) {
+    callListeners(response: any, _err: any) {
         for (const listener of this.listeners) {
             // @ts-ignore
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

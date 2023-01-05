@@ -158,8 +158,9 @@ export class Secretary {
     /**
      * @todo finish or remove this function
      */
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    loadScripts(appName: string) {}
+    loadScripts(_appName: string) {
+        throw new Error("Method not implemented.");
+    }
 
     setClipboard(clipboard: any) {
         if (this.clipboard) {
@@ -252,10 +253,13 @@ export class Secretary {
         req.send();
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    loadPlugins() {}
+    /**
+     * @todo remove or use this function
+     */
+    loadPlugins() {
+        throw new Error("Method not implemented.");
+    }
 
-    // eslint-disable-next-line class-methods-use-this
     checkESVersion() {
         try {
             const objects = { Gibson: "Les Paul", Fender: "Stratocaster" };
@@ -385,8 +389,7 @@ export class Secretary {
                     this.loadFileWithId(response.FileInFolder.file.id, onCompletion);
                 } else if (response.FileInFolder.status === 1) {
                     // 404 not found!
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const err = Object.freeze({ titleText: "File does not exist" });
+                    const _err = Object.freeze({ titleText: "File does not exist" });
                 }
             }
         });
@@ -396,18 +399,21 @@ export class Secretary {
     /**
      * @todo remove or use this function
      */
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    loadFileWithPath(path: string, onCompletion: () => void) {}
-
-    // eslint-disable-next-line class-methods-use-this
-    openDrawer(option: { drawerType: string }) {
-        option.drawerType = "openPanel";
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const drawer = this.loadApp("Drawer", option, null);
+    loadFileWithPath(_path: string, _onCompletion: () => void) {
+        throw new Error("Method not implemented.");
     }
 
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    receivedMessageFromServer(message: string) {}
+    openDrawer(option: { drawerType: string }) {
+        option.drawerType = "openPanel";
+        const _drawer = this.loadApp("Drawer", option, null);
+    }
+
+    /**
+     * @todo remove or use this function
+     */
+    receivedMessageFromServer(_message: string) {
+        throw new Error("Method not implemented.");
+    }
 
     /**
      * Upload file to the server
@@ -497,8 +503,9 @@ export class Secretary {
      * errorType
      *  1 : server error
      */
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    getUserInfo(userId: string, onCompletion: (errorType: number) => void) {}
+    getUserInfo(_userId: string, _onCompletion: (errorType: number) => void) {
+        throw new Error("Method not implemented.");
+    }
 }
 
 type File = {

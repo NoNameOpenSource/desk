@@ -153,8 +153,9 @@ export class DIDragListView extends DIListView {
      * @param name
      * @todo use or remove this function
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getCustomCellById(name: string) {}
+    getCustomCellById(_name: string) {
+        throw new Error("Method not implemented.");
+    }
 
     /**
      * This clears existing cells, and update it

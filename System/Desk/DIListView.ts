@@ -93,8 +93,7 @@ export class DIListView extends DIView {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    mouseUp(evt: any) {
+    mouseUp(_evt?: MouseEvent) {
         this.events[this.moveEvent].delete();
         document.documentElement.style.cursor = "";
         // @ts-ignore TODO: not sure how to fix this
@@ -139,8 +138,9 @@ export class DIListView extends DIView {
      *
      * @todo finish this method or remove it
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    static getCustomCellById(name: string) {}
+    static getCustomCellById(_name: string) {
+        throw new Error("Method not implemented.");
+    }
 
     /**
      * Clear existing cells, and update it

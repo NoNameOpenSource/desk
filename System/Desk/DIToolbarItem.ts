@@ -1,12 +1,8 @@
 import { DIButton } from "./DIButton";
 
 export class DIToolbarItem extends DIButton {
-    /**
-     * @todo remove className
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(text: string, icon: string, className?: string) {
-        super(text, "DIToolboaItem");
+    constructor(text: string, icon: string) {
+        super(text, "DIToolbarItem");
         // @ts-ignore TODO: bug
         this.body.removeChild(this.ocrButton.buttonBody);
         // @ts-ignore TODO: bug
