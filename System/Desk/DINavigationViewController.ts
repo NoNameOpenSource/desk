@@ -25,7 +25,7 @@ export class DINavigationViewController extends DIViewController {
         this.backwardButton = new DIView();
         this.titleField = new DILabel();
         this.navigationView.addChildView(this.backwardButton);
-        this.backwardButton.events.push(new DeskEvent(this.backwardButton.body, "onclick", this.backButtonTriggered.bind(this)));
+        this.backwardButton.events.push(new DeskEvent(this.backwardButton.body, "onclick", () => this.backButtonTriggered()));
         this.navigationView.addChildView(this.titleField);
         if (delegate) this.delegate = delegate;
     }
@@ -38,8 +38,7 @@ export class DINavigationViewController extends DIViewController {
     /**
      * @todo remove parameters or use them
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setCurrentView(view: any, titleString: string, saveOld?: boolean) {
+    setCurrentView(view: any, _titleString: string, _saveOld?: boolean) {
         if (this._currentView) {
             this.removeCurrentView();
         }
@@ -82,12 +81,12 @@ export class DINavigationViewController extends DIViewController {
         const tmp = new DeskEvent(
             newView.body,
             "animationend",
-            function () {
+            () => {
                 tmp.delete();
                 newView.body.className = originalName;
                 newView.wakeUp();
                 func();
-            }.bind(this)
+            }
         );
     }
 }

@@ -73,7 +73,7 @@ export class Drawer extends Application {
         this.listBackButton.buttonBody.className = "DINavigatorIcon";
         this.listBackButton.buttonBody.setAttribute("src", Desk.getInstance().getDeskUI.BackButton);
         this.listBackButton.body.appendChild(this.listBackButton.buttonBody);
-        this.listBackButton.setButtonEvent(this.navigateBack.bind(this));
+        this.listBackButton.setButtonEvent(() => this.navigateBack());
         this.listNavigator.addChildView(this.listBackButton);
         // Init add button
         this.listAddButton = new DIButton("Add", "DINavigatorAddButton");
@@ -826,7 +826,8 @@ export class Drawer extends Application {
                     this.listView.addCell(cell);
                 }
             },
-            this.updateUploadFile.bind(this),
+            // @ts-ignore
+            (file: DeskFile, loaded: boolean, total: number) => this.updateUploadFile(file, loaded / total),
             null
         );
     }

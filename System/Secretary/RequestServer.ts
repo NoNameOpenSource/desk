@@ -16,8 +16,7 @@ import { secretaryInstance } from "./Singleton";
  */
 export class RequestServer {
     useMultipart: boolean;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    formData: Object;
+    formData: any | FormData;
     dataBlock: any;
     ajax: XMLHttpRequest;
     url: string;
@@ -40,7 +39,6 @@ export class RequestServer {
 
     addData(name: string, value: any) {
         if (this.useMultipart)
-            // @ts-ignore TODO: maybe type formData as FormData and initialize it as FormData
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.formData.append(name, value);
         // @ts-ignore TODO: bug
@@ -103,10 +101,10 @@ export class RequestServer {
 
     send(sync = false) {
         this.ajax.open("POST", this.url, !sync);
-        this.ajax.addEventListener("load", this.responseFromServer.bind(this));
+        this.ajax.addEventListener("load", (evt: Event) => this.responseFromServer(evt));
+
         if (this.useMultipart) {
-            // @ts-ignore TODO: maybe type formData as FormData and initialize it as FormData
-            this.ajax.send(this.formData);
+            this.ajax.send(this.formData as FormData);
         } else {
             this.ajax.setRequestHeader("Content-Type", "application/json");
             this.ajax.send(JSON.stringify(this.formData));

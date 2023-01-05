@@ -113,7 +113,7 @@ export class WorkSpace {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     app.rightBorder.body,
                     "mousedown",
-                    function (evt: Event) {
+                    (evt: Event) => {
                         // @ts-ignore TODO: bug
                         if (evt.button === 0) {
                             evt.preventDefault();
@@ -121,7 +121,7 @@ export class WorkSpace {
                             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                             this.resizeWindow(evt.target.app, evt);
                         }
-                    }.bind(this)
+                    }
                 )
             );
         }

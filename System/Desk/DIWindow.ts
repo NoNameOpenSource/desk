@@ -66,25 +66,25 @@ export class DIWindow extends DIView {
             this.titleBar = new DIView("DIWindowTitleBar");
             this.titleBar.height = this.titleSize;
             this.body.appendChild(this.titleBar.body);
-            this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+            this.events.push(new DeskEvent(this.body, "mousedown", (evt: MouseEvent) => this.mouseDown(evt)));
             // Add title to titleBar
             if (titleBarOptions < 3) {
                 this.titleField = new DILabel(title, "DIWindowTitle");
                 this.titleBar.addChildView(this.titleField);
                 if (titleBarOptions < 2) {
                     this.closeButton = new DIImageView(deskInstance.getDeskUI["CloseButton"], "DIWindowButton");
-                    this.closeButton.events.push(new DeskEvent(this.closeButton.imageBody, "click", this.close.bind(this)));
+                    this.closeButton.events.push(new DeskEvent(this.closeButton.imageBody, "click", () => this.close()));
                     this.titleBar.addChildView(this.closeButton);
                     if (titleBarOptions < 1) {
                         this.minButton = new DIImageView(deskInstance.getDeskUI["MinimizeButton"], "DIWindowButton");
                         this.minButton.x = this.titleSize;
                         this.titleBar.addChildView(this.minButton);
-                        this.minButton.events.push(new DeskEvent(this.minButton.imageBody, "click", this.minimize.bind(this)));
+                        this.minButton.events.push(new DeskEvent(this.minButton.imageBody, "click", () => this.minimize()));
                         this.maxButton = new DIImageView(deskInstance.getDeskUI["MaximizeButton"], "DIWindowButton");
                         this.maxButton.y = this.titleSize;
                         this.titleBar.addChildView(this.maxButton);
                         this.maxButton.hidden = true;
-                        this.minButton.events.push(new DeskEvent(this.maxButton.imageBody, "click", this.maximize.bind(this)));
+                        this.minButton.events.push(new DeskEvent(this.maxButton.imageBody, "click", () => this.maximize()));
                     }
                 }
             }
@@ -113,6 +113,7 @@ export class DIWindow extends DIView {
         // Convert coord.
         const x = evt.clientX - this.x;
         const y = evt.clientY - this.y - 28;
+        // @ts-ignore
         deskInstance.bringWindowFront(this);
         if (this.resize && (x < 5 || x > this.width - 5)) {
             // Resizing window in X

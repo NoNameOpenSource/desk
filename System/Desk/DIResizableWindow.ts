@@ -55,7 +55,7 @@ export class DIResizableWindow extends DIWindow {
             this.titleBar = new DIView("DIWindowTitleBar");
             this.titleBar.height = 20;
             this.body.childNodes[0].appendChild(this.titleBar.body);
-            this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+            this.events.push(new DeskEvent(this.body, "mousedown", (evt: MouseEvent) => this.mouseDown(evt)));
             // Add title to titleBar
             if (titleBarOptions < 3) {
                 this.titleField = new DILabel(undefined, "DIWindowTitle");

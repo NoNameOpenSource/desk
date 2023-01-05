@@ -19,7 +19,7 @@ export class DIDragListView extends DIListView {
     constructor(dataSource: any, delegate: any, className: string, idName: string) {
         super(dataSource, delegate, -1, className, idName);
 
-        this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+        this.events.push(new DeskEvent(this.body, "mousedown", (evt: MouseEvent) => this.mouseDown(evt)));
 
         // @ts-ignore TODO: bug - array instead of single item
         this.selected = [];
@@ -43,8 +43,10 @@ export class DIDragListView extends DIListView {
                 // @ts-ignore TODO: not sure how to fix this
                 document.documentElement.style["-webkit-user-select"] = "none";
                 document.documentElement.style.cursor = "default";
-                this.events.push(new DeskEvent(document, "mousemove", this.mouseMove.bind(this)));
-                this.events.push(new DeskEvent(document, "mouseup", this.mouseUp.bind(this)));
+
+                this.events.push(new DeskEvent(document, "mousemove", (evt: MouseEvent) => this.mouseMove(evt)));
+                this.events.push(new DeskEvent(document, "mouseup", (evt: MouseEvent) => this.mouseUp(evt)));
+
                 if (!this.multipleSelection) {
                     this.mouseUp(evt);
                 }
@@ -57,7 +59,7 @@ export class DIDragListView extends DIListView {
         }
     }
 
-    mouseMove(evt: any) {
+    mouseMove(evt: MouseEvent) {
         if (evt.button === 0) {
             const body = this.body.getBoundingClientRect();
             if (evt.clientX > body.left && evt.clientX < body.right) {
@@ -68,7 +70,7 @@ export class DIDragListView extends DIListView {
         }
     }
 
-    mouseUp(evt: any) {
+    mouseUp(evt: MouseEvent) {
         if (evt.button === 0) {
             this.events[this.moveEvent].delete();
             document.documentElement.style.cursor = "";

@@ -65,7 +65,7 @@ export class DIComboBox extends DITextField {
     didMoveToDesk() {
         this._width = this.body.offsetWidth;
         this._height = this.body.offsetHeight;
-        this.events.push(new DeskEvent(this.textBody, "keydown", this.keyDown.bind(this)));
-        this.events.push(new DeskEvent(this.textBody, "input", this.searchHints.bind(this)));
+        this.events.push(new DeskEvent(this.textBody, "keydown", (evt: KeyboardEvent) => this.keyDown(evt)));
+        this.events.push(new DeskEvent(this.textBody, "input", () => this.searchHints()));
     }
 }
