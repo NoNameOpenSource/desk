@@ -54,6 +54,7 @@ export class DIMiniWindowView extends DIView {
         // Convert coord.
         const x = evt.clientX - this.x;
         const y = evt.clientY - this.y - 28;
+        // @ts-ignore
         deskInstance.bringWindowFront(this);
         if (this.resize && (x < 5 || x > this.width - 5)) {
             // Resizing window in X

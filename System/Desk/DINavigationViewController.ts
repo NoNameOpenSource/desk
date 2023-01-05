@@ -31,8 +31,9 @@ export class DINavigationViewController extends DIViewController {
     }
 
     backButtonTriggered() {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        if (this.delegate) this.delegate.backButtonTriggered();
+        if (this.delegate) {
+            this.delegate.backButtonTriggered();
+        }
     }
 
     /**

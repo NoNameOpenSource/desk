@@ -22,10 +22,12 @@ export class DIComboBox extends DITextField {
         this.oldString = "";
     }
 
-    keyDown(evt: Event) {
-        // @ts-ignore TODO: type evt better?
-        if (evt.keyCode === 8 || evt.keyCode === 42) this.deleteKey = true;
-        else this.deleteKey = false;
+    keyDown(evt: KeyboardEvent) {
+        if (evt.key === "Backspace" || evt.key === "Delete") {
+            this.deleteKey = true;
+        } else {
+            this.deleteKey = false;
+        }
     }
 
     searchHints() {

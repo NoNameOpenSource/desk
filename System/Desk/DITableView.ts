@@ -35,8 +35,10 @@ export class DITableView extends DIView {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.numberOfRows = this.dataSource.numberOfRows(this);
+
         for (let i = 0; i < this.numberOfRows; i++) {
             this.addRow();
+
             for (const column of this.columns) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const cell = this.dataSource.cellAtColRow(this, column, i);

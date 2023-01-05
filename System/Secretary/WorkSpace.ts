@@ -14,8 +14,7 @@ export class WorkSpace {
     appSettings: any;
     appList: string[];
     apps: Application[];
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    data: Object;
+    data: any;
     body: DIView;
     loaded: boolean;
     width: number;
@@ -52,7 +51,6 @@ export class WorkSpace {
             this.loaded = true;
             this.loadedMark = document.createElement("DIView");
             this.loadedMark.className = "WorkSpaceIconMark";
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.icon.body.appendChild(this.loadedMark);
         } else {
             let i = 0;
@@ -65,12 +63,9 @@ export class WorkSpace {
     }
 
     putInSleep() {
-        let i = 0;
-        for (; i < this.apps.length; i++) {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            this.apps[i].putInSleep();
-        }
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+        this.apps.forEach((app) => app.putInSleep());
     }
 
     loadApps() {

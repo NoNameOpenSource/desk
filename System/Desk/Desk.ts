@@ -381,7 +381,7 @@ export class Desk {
     bringWindowFront(window: DIResizableWindow) {
         if (window.deleted) return false;
         if (window === this.currentWindow) return false;
-        // TODO: do we mean "delete" instead of "deleted"?
+        /** @todo do we mean "delete" instead of "deleted"? */
         if (this.currentWindow && !this.currentWindow.deleted) this.currentWindow.putInSleep();
         window.z = this.windowsIndex;
         this.windowsIndex += 1;

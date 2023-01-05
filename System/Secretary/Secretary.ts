@@ -309,10 +309,10 @@ export class Secretary {
 
     urlForFile(file: File | number) {
         if (typeof file === "number") {
-            return this.urlForFileId(file);
+            return this.urlForFileId(file.toString());
         }
         if (file.id) {
-            return this.urlForFileId(file.id);
+            return this.urlForFileId(file.id.toString());
         }
         const components = file.path.split("/");
         if (components[0] === "~") {
@@ -327,22 +327,18 @@ export class Secretary {
         }
     }
 
-    urlForFileId(fileId: any) {
+    urlForFileId(fileId: string) {
         if (this.serverType === "php") {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/system/DataManager/DownloadBIN.php?file=".concat(fileId);
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/System/DownloadBIN?file=".concat(fileId);
         }
     }
 
-    urlForStream(fileId: any) {
+    urlForStream(fileId: string) {
         if (this.serverType === "php") {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/system/DataManager/Stream.php?file=".concat(fileId);
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/System/Stream?file=".concat(fileId);
         }
     }
@@ -383,6 +379,7 @@ export class Secretary {
             if (response.DataBlockStatus === 0) {
                 if (response.FileInFolder.status === 0) {
                     // file found
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     this.loadFileWithId(response.FileInFolder.file.id, onCompletion);
                 } else if (response.FileInFolder.status === 1) {
                     // 404 not found!

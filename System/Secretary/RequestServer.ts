@@ -29,10 +29,19 @@ export class RequestServer {
         this.url = secretaryInstance.dataManagerURL;
         this.ajax = new XMLHttpRequest();
         this.listeners = [];
-        if (useMultipart || secretaryInstance.serverType === "php") this.useMultipart = true;
-        else this.useMultipart = false;
-        if (this.useMultipart) this.formData = new FormData();
-        else this.formData = new Object();
+
+        if (useMultipart || secretaryInstance.serverType === "php") {
+            this.useMultipart = true;
+        } else {
+            this.useMultipart = false;
+        }
+
+        if (this.useMultipart) {
+            this.formData = new FormData();
+        } else {
+            this.formData = new Object();
+        }
+
         this.dataBlock = dataBlock;
         this.addData("dataBlock", dataBlock);
     }

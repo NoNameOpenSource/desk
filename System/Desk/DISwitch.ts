@@ -55,9 +55,7 @@ export class DISwitch extends DIView {
     }
 
     get width() {
-        // @ts-ignore TODO: this?
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return _width;
+        return this._width;
     }
 
     set width(value) {

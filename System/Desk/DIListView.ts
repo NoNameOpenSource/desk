@@ -95,11 +95,13 @@ export class DIListView extends DIView {
 
     mouseUp(_evt?: MouseEvent) {
         this.events[this.moveEvent].delete();
+
         document.documentElement.style.cursor = "";
-        // @ts-ignore TODO: not sure how to fix this
-        document.documentElement.style["-webkit-user-select"] = "";
+        document.documentElement.style.userSelect = "";
+
         this.events[this.moveEvent + 1].delete();
         this.events.splice(this.moveEvent, 2);
+
         this.didSelectRowAtIndex(this.selectedIndex);
     }
 
@@ -159,10 +161,13 @@ export class DIListView extends DIView {
     }
 
     clicked(evt: MouseEvent) {
-        // @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         evt.preventDefault();
-        this.didSelectRowAtIndex(Math.floor((this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight));
+
+        const top = this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top;
+        const index = Math.floor(top / this.cellHeight);
+
+        this.didSelectRowAtIndex(index);
+
         return false;
     }
 
@@ -191,5 +196,12 @@ export class DIListView extends DIView {
         this.delegate = null;
         this.dataSource = null;
         super.delete();
+    }
+
+    /**
+     * @todo: remove or implement
+     */
+    deselectAll() {
+        throw new Error("Method not implemented.");
     }
 }
