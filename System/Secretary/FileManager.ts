@@ -6,29 +6,24 @@ import { secretaryInstance } from "./Singleton";
 export class FileManager {
     constructor() {}
 
-    // eslint-disable-next-line class-methods-use-this
     get homeFolder() {
         const homeFolder = new DeskFile(0, "My Cloud", "DIR", secretaryInstance.currentUser.id);
         homeFolder.path = "~";
         return homeFolder;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     get trashcan() {
         const trash = new DeskFile(1, "휴지통", "RCB", secretaryInstance.currentUser.id);
         trash.path = "~/.Trash";
         return trash;
     }
 
-    // @ts-ignore
-    // eslint-disable-next-line class-methods-use-this
     get networkFolder() {
         const network = new DeskFile(2, "네트워크", "NWK");
         network.path = "/Networks";
         return network;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     isHomeFolder(folder: DeskFile) {
         if (folder.id !== null) {
             if (folder.id === "0") return true;
@@ -48,7 +43,6 @@ export class FileManager {
         return false;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     isSameFile(a: any, b: any) {
         if (a.id !== null) {
             return a.id === b.id;
@@ -64,7 +58,6 @@ export class FileManager {
      *
      * @param fileId id of the file
      */
-    // eslint-disable-next-line class-methods-use-this
     loadFileDataWithId(fileId: string, onCompletion: (data: Blob, error: any) => void) {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", secretaryInstance.urlForFileId(fileId));
@@ -105,7 +98,6 @@ export class FileManager {
      *
      * @param fileId id of the file
      */
-    // eslint-disable-next-line class-methods-use-this
     loadFileTextWithId(fileId: string, onCompletion: (data: Blob, error: any) => void) {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", secretaryInstance.urlForFileId(fileId));
@@ -145,7 +137,6 @@ export class FileManager {
      * @param fileName name of the file to find in the folder
      * @returns
      */
-    // eslint-disable-next-line class-methods-use-this
     loadFileInFolder(folderId: string, fileName: string, onCompletion: (file: Blob, error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("FileInFolder");
@@ -160,11 +151,11 @@ export class FileManager {
             if (response.DataBlockStatus === 0) {
                 if (response.FileInFolder.status === 0) {
                     // file found
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     secretaryInstance.loadFileWithId(response.FileInFolder.file.id, onCompletion);
                 } else if (response.FileInFolder.status === 1) {
                     // 404 not found!
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const err = Object.freeze({ type: 2, message: "File does not exist" });
+                    const _err = Object.freeze({ type: 2, message: "File does not exist" });
                 }
             }
         });
@@ -234,11 +225,13 @@ export class FileManager {
                     path = path.slice(0, path.length - 1);
                 }
             }
-            // eslint-disable-next-line @typescript-eslint/prefer-for-of
-            for (let i = 0; i < response.FileList.length; i++) {
+            for (const fileItem of response.FileList) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                const file = DeskFile.initWithFile(response.FileList[i]);
-                if (path) file.path = path + "/" + file.name;
+                const file = DeskFile.initWithFile(fileItem);
+
+                if (path) {
+                    file.path = path + "/" + file.name;
+                }
                 files.push(file);
             }
             onCompletion(files, location, null);
@@ -252,7 +245,6 @@ export class FileManager {
      * @param path path of the file
      * @returns
      */
-    // eslint-disable-next-line class-methods-use-this
     getFileByPath(path: string, onCompletion: (file: DeskFile, error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("FileByPath");
@@ -309,15 +301,16 @@ export class FileManager {
      * @param onCompletion callback function (addedFolderId, error)
      * @returns
      */
-    // eslint-disable-next-line class-methods-use-this
     addFolder(folder: any, folderName: string, onCompletion: (addedFolderId: string, error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("AddDirectory");
+
         if (folder.id === 2) {
             const err = Object.freeze({ type: 3, message: "Can not create folder in this location" });
             onCompletion(null, err);
             return;
         }
+
         req.addData("Name", folderName);
         req.addData("Location", folder.id);
         req.addEventListener("load", (response, responseErr) => {
@@ -409,14 +402,15 @@ export class FileManager {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const location = DeskFile.initWithFile(response.Location);
             location.path = this.networkFolder.path + "/" + location.name;
+
             const files = [];
-            // eslint-disable-next-line @typescript-eslint/prefer-for-of
-            for (let i = 0; i < response.FileList.length; i++) {
+            for (const fileItem of response.FileList) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                const file = DeskFile.initWithFile(response.FileList[i]);
+                const file = DeskFile.initWithFile(fileItem);
                 file.path = location.path + "/" + file.name;
                 files.push(file);
             }
+
             onCompletion(files, location, null);
         });
         req.send();
@@ -476,8 +470,7 @@ export class FileManager {
                 return;
             }
             response = response.FileUploadRequest;
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const errors = [];
+
             for (let i = 0; i < response.fileIds.length; i++) {
                 if (response.fileIds[i] < 0) {
                     // name already exist
@@ -509,7 +502,6 @@ export class FileManager {
      * @param onCompletion callback function (error)
      * @returns
      */
-    // eslint-disable-next-line class-methods-use-this
     renameFile(file: DeskFile, name: string, onCompletion: (error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("RenameFile");
@@ -558,7 +550,6 @@ export class FileManager {
      * @param onCompletion callback function (addedDeskFile, error)
      * @returns
      */
-    // eslint-disable-next-line class-methods-use-this
     touch(name: string, folder: any, onCompletion: (addedDeskFile: DeskFile, errorType: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("AddBlankFile");
@@ -603,16 +594,11 @@ export class FileManager {
      * @param onCompletion callback function (conflictedFiles, error)
      * @returns
      */
-    // eslint-disable-next-line class-methods-use-this
     copyFiles(files: any[], folder: any, onCompletion: (conflictedFiles: any[], error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("CopyFiles");
-        const fileIds = [];
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < files.length; i++) {
-            fileIds.push(files[i].id);
-        }
-        req.addData("FileList[]", fileIds);
+
+        req.addData("FileList[]", this.createFileIdList(files));
         req.addData("Location", folder.id);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
@@ -646,18 +632,18 @@ export class FileManager {
                 onCompletion(null, err);
                 return;
             }
+
             // check conflicted files
             const conflictedFiles = [];
-            // eslint-disable-next-line @typescript-eslint/prefer-for-of
-            for (let i = 0; i < response.ConflictFiles.length; i++) {
-                // eslint-disable-next-line @typescript-eslint/prefer-for-of
-                for (let j = 0; j < files.length; j++) {
-                    if (files[j].name === response.ConflictFiles[i].name) {
-                        conflictedFiles.push(files[j]);
+            for (const conflictedFile of response.ConflictedFiles) {
+                for (const file of files) {
+                    if (file.name === conflictedFile.name) {
+                        conflictedFiles.push(file);
                         break;
                     }
                 }
             }
+
             onCompletion(conflictedFiles, null);
         });
         req.send();
@@ -670,16 +656,11 @@ export class FileManager {
      * @param folder folder to paste the move
      * @param onCompletion callback function (conflictedFiles, error)
      */
-    // eslint-disable-next-line class-methods-use-this
     moveFiles(files: any[], folder: any, onCompletion: (conflictedFiles: any[], error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("MoveFiles");
-        const fileIds = [];
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < files.length; i++) {
-            fileIds.push(files[i].id);
-        }
-        req.addData("FileList[]", fileIds);
+
+        req.addData("FileList[]", this.createFileIdList(files));
         req.addData("Location", folder.id);
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
@@ -713,18 +694,18 @@ export class FileManager {
                 onCompletion(null, err);
                 return;
             }
+
             // check conflicted files
             const conflictedFiles = [];
-            // eslint-disable-next-line @typescript-eslint/prefer-for-of
-            for (let i = 0; i < response.ConflictFiles.length; i++) {
-                // eslint-disable-next-line @typescript-eslint/prefer-for-of
-                for (let j = 0; j < files.length; j++) {
-                    if (files[j].name === response.ConflictFiles[i].name) {
-                        conflictedFiles.push(files[j]);
+            for (const conflictedFile of response.ConflictedFiles) {
+                for (const file of files) {
+                    if (file.name === conflictedFile.name) {
+                        conflictedFiles.push(file);
                         break;
                     }
                 }
             }
+
             onCompletion(conflictedFiles, null);
         });
         req.send();
@@ -736,16 +717,11 @@ export class FileManager {
      * @param files DeskFile objects to throw into trash can
      * @param onCompletion callback function (errorType)
      */
-    // eslint-disable-next-line class-methods-use-this
     trashFiles(files: any[], onCompletion: (error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("TrashFiles");
-        const fileIds = [];
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < files.length; i++) {
-            fileIds.push(files[i].id);
-        }
-        req.addData("FileList[]", fileIds);
+
+        req.addData("FileList[]", this.createFileIdList(files));
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
                 const err = Object.freeze({
@@ -777,16 +753,11 @@ export class FileManager {
      * @param files DeskFile objects to delete
      * @param onCompletion callback function (error)
      */
-    // eslint-disable-next-line class-methods-use-this
     deleteFiles(files: any[], onCompletion: (error: any) => void) {
         if (!onCompletion) return;
         const req = new RequestServer("DeleteFiles");
-        const fileIds = [];
-        // eslint-disable-next-line @typescript-eslint/prefer-for-of
-        for (let i = 0; i < files.length; i++) {
-            fileIds.push(files[i].id);
-        }
-        req.addData("FileList[]", fileIds);
+
+        req.addData("FileList[]", this.createFileIdList(files));
         req.addEventListener("load", (response, responseErr) => {
             if (responseErr) {
                 const err = Object.freeze({
@@ -816,5 +787,10 @@ export class FileManager {
             onCompletion(null);
         });
         req.send();
+    }
+
+    private createFileIdList(files: any[]): any[] {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return files.map((file) => file.id);
     }
 }

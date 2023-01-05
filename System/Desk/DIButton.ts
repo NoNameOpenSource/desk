@@ -1,4 +1,4 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEvent, DeskEventListener } from "../Secretary/DeskEvent";
 import { DIView } from "./DIView";
 
 /**
@@ -28,9 +28,9 @@ export class DIButton extends DIView {
         super.wakeUp();
     }
 
-    setButtonEvent(evt: (this: Element, ev: DeskEvent) => any) {
+    setButtonEvent(listener: DeskEventListener) {
         if (this.event) this.event.delete();
-        this.event = new DeskEvent(this.buttonBody, "click", evt);
+        this.event = new DeskEvent(this.buttonBody, "click", listener);
     }
 
     get stringValue() {
@@ -41,11 +41,8 @@ export class DIButton extends DIView {
         this.buttonBody.textContent = value;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     get width() {
-        // @ts-ignore TODO: bug - maybe use this._width?
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return _width;
+        return this._width;
     }
 
     set width(value: number) {

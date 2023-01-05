@@ -1,4 +1,5 @@
 import * as Constrain from "@nonameopensource/constrain";
+import { ConstraintGroup } from "@nonameopensource/constrain/types/layout-engine";
 import { DeskAnimation, DeskEvent } from "../Secretary";
 import { DIViewController } from "./DIViewController";
 
@@ -120,8 +121,12 @@ export class DIView implements Constrain.DrawableObject {
         this.constraintGroup.constraints = [];
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    didMoveToParent() {}
+    /**
+     * @todo implement or remove
+     */
+    didMoveToParent() {
+        throw new Error("Method not implemented.");
+    }
 
     didMoveToDesk() {
         this.onDesk = true;
@@ -166,7 +171,6 @@ export class DIView implements Constrain.DrawableObject {
         this.constraintGroup.compute();
     }
 
-    // eslint-disable-next-line class-methods-use-this
     atLeastOneChildWillBeUpdated() {
         // always allow children to be updated for now
         return true;

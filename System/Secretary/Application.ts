@@ -69,22 +69,9 @@ export abstract class Application {
     }
 
     didMoveToDesk() {
-        // @ts-ignore TODO: remove this conditional block that unnecessarily checks for window being a DIView
-        if (this.window.child.view) {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            this.window.child.view.addChildView(this.alertScreen);
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            this.window.child.view.addChildView(this.loadingScreen);
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            this.window.child.view.addChildView(this.loadingAnimation);
-        } else {
-            this.window.child.addChildView(this.alertScreen);
-            this.window.child.addChildView(this.loadingScreen);
-            this.window.child.addChildView(this.loadingAnimation);
-        }
+        this.window.child.addChildView(this.alertScreen);
+        this.window.child.addChildView(this.loadingScreen);
+        this.window.child.addChildView(this.loadingAnimation);
         if (this._loading === undefined) {
             this._loading = true;
             this.loading = false;
@@ -198,9 +185,9 @@ export abstract class Application {
     abstract dragStart(arg0: any): void;
     abstract dragOn(x: number, y: number): void;
     abstract dragEnd(arg0: boolean, arg1?: any, x?: number, y?: number): void;
+    abstract dragLeft(): void;
 
     abstract resizeStart(): void;
-
     abstract resizeEnd(): void;
 
     resizeWidth(width: number) {

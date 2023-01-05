@@ -14,8 +14,7 @@ export class WorkSpace {
     appSettings: any;
     appList: string[];
     apps: Application[];
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    data: Object;
+    data: any;
     body: DIView;
     loaded: boolean;
     width: number;
@@ -52,7 +51,6 @@ export class WorkSpace {
             this.loaded = true;
             this.loadedMark = document.createElement("DIView");
             this.loadedMark.className = "WorkSpaceIconMark";
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.icon.body.appendChild(this.loadedMark);
         } else {
             let i = 0;
@@ -65,12 +63,9 @@ export class WorkSpace {
     }
 
     putInSleep() {
-        let i = 0;
-        for (; i < this.apps.length; i++) {
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            this.apps[i].putInSleep();
-        }
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+        this.apps.forEach((app) => app.putInSleep());
     }
 
     loadApps() {
@@ -113,7 +108,7 @@ export class WorkSpace {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     app.rightBorder.body,
                     "mousedown",
-                    function (evt: Event) {
+                    (evt: Event) => {
                         // @ts-ignore TODO: bug
                         if (evt.button === 0) {
                             evt.preventDefault();
@@ -121,7 +116,7 @@ export class WorkSpace {
                             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                             this.resizeWindow(evt.target.app, evt);
                         }
-                    }.bind(this)
+                    }
                 )
             );
         }
@@ -130,8 +125,7 @@ export class WorkSpace {
     /**
      * @todo finish function or remove it
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    setContextMenu(dataSource: any, delegate: any) {
+    setContextMenu(_dataSource: any, _delegate: any) {
         if (this.contextMenu) {
         }
     }
@@ -189,7 +183,7 @@ export class WorkSpace {
 
         this.resizeEnd = new DeskEvent(window, "mouseup", (evt: DeskEvent) => {
             // @ts-ignore
-            this.resizeEvent.evtFunc(evt);
+            this.resizeEvent.listener(evt);
             this.resizeEvent.delete();
             app.resizeEnd();
             // @ts-ignore
@@ -240,8 +234,9 @@ export class WorkSpace {
     /**
      * @todo finish function or remove it
      */
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    appWillClose(app: Application) {}
+    appWillClose(_app: Application) {
+        throw new Error("Method not implemented.");
+    }
 
     appDidClose(app: Application) {
         // check if the application have right boarder

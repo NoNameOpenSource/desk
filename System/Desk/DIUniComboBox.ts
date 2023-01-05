@@ -87,7 +87,7 @@ export class DIUniComboBox extends DIView {
         this.arrowBody.setAttribute("src", "/System/Desk/Resources/DIComboBoxArrow.svg");
         this.body.appendChild(this.arrowBody);
 
-        this.events.push(new DeskEvent(this.arrowBody, "click", this.triggerDropDownView.bind(this)));
+        this.events.push(new DeskEvent(this.arrowBody, "click", () => this.triggerDropDownView()));
     }
 
     focusIn() {
@@ -380,12 +380,12 @@ export class DIUniComboBox extends DIView {
         this.dropDownView.body.style.maxHeight = `${this.cellHeight * 5}px`;
         this.dropDownView.cellHeight = this.cellHeight;
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        this.event = new DeskEvent(this._window.body, "mousedown", this.mouseDown.bind(this));
+        this.event = new DeskEvent(this._window.body, "mousedown", (evt: MouseEvent) => this.mouseDown(evt));
         this.keyEvent = this.events.length;
-        this.events.push(new DeskEvent(this.body, "keydown", this.keyDown.bind(this)));
-        this.events.push(new DeskEvent(this.textBody, "input", this.searchHints.bind(this)));
-        this.events.push(new DeskEvent(this.textBody, "focus", this.focusIn.bind(this)));
+
+        this.events.push(new DeskEvent(this.body, "keydown", (evt: KeyboardEvent) => this.keyDown(evt)));
+        this.events.push(new DeskEvent(this.textBody, "input", () => this.searchHints()));
+        this.events.push(new DeskEvent(this.textBody, "focus", () => this.focusIn()));
     }
 
     get usingHint() {

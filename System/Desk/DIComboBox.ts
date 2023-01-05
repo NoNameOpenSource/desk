@@ -22,10 +22,12 @@ export class DIComboBox extends DITextField {
         this.oldString = "";
     }
 
-    keyDown(evt: Event) {
-        // @ts-ignore TODO: type evt better?
-        if (evt.keyCode === 8 || evt.keyCode === 42) this.deleteKey = true;
-        else this.deleteKey = false;
+    keyDown(evt: KeyboardEvent) {
+        if (evt.key === "Backspace" || evt.key === "Delete") {
+            this.deleteKey = true;
+        } else {
+            this.deleteKey = false;
+        }
     }
 
     searchHints() {
@@ -65,7 +67,7 @@ export class DIComboBox extends DITextField {
     didMoveToDesk() {
         this._width = this.body.offsetWidth;
         this._height = this.body.offsetHeight;
-        this.events.push(new DeskEvent(this.textBody, "keydown", this.keyDown.bind(this)));
-        this.events.push(new DeskEvent(this.textBody, "input", this.searchHints.bind(this)));
+        this.events.push(new DeskEvent(this.textBody, "keydown", (evt: KeyboardEvent) => this.keyDown(evt)));
+        this.events.push(new DeskEvent(this.textBody, "input", () => this.searchHints()));
     }
 }

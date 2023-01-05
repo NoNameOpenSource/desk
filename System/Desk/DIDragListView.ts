@@ -19,7 +19,7 @@ export class DIDragListView extends DIListView {
     constructor(dataSource: any, delegate: any, className: string, idName: string) {
         super(dataSource, delegate, -1, className, idName);
 
-        this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+        this.events.push(new DeskEvent(this.body, "mousedown", (evt: MouseEvent) => this.mouseDown(evt)));
 
         // @ts-ignore TODO: bug - array instead of single item
         this.selected = [];
@@ -29,35 +29,32 @@ export class DIDragListView extends DIListView {
     }
 
     mouseDown(evt: MouseEvent) {
-        //evt.preventDefault();
-        // @ts-ignore
         if (evt.button === 0) {
             this.deselectAll();
             this.selectedIndex = Math.floor((this.body.scrollTop + evt.clientY - this.body.getBoundingClientRect().top) / this.cellHeight);
             if (this.selectedIndex >= 0 && this.selectedIndex < this.children.length) {
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 evt.preventDefault();
+
                 this.highlightCellAtIndex(this.selectedIndex);
                 this.moveEvent = this.events.length;
-                // @ts-ignore TODO: not sure how to fix this
-                document.documentElement.style["-webkit-user-select"] = "none";
+
+                document.documentElement.style.userSelect = "none";
                 document.documentElement.style.cursor = "default";
-                this.events.push(new DeskEvent(document, "mousemove", this.mouseMove.bind(this)));
-                this.events.push(new DeskEvent(document, "mouseup", this.mouseUp.bind(this)));
+
+                this.events.push(new DeskEvent(document, "mousemove", (evt: MouseEvent) => this.mouseMove(evt)));
+                this.events.push(new DeskEvent(document, "mouseup", (evt: MouseEvent) => this.mouseUp(evt)));
+
                 if (!this.multipleSelection) {
                     this.mouseUp(evt);
                 }
             } else {
-                // 여기 때문에 빈공간에서 부터 드래그가 안됨 ;-;
-                // @ts-ignore
                 this.delegate.listDidHighlightedCells(this, this.selected);
             }
         } else if (evt.button === 2) {
         }
     }
 
-    mouseMove(evt: any) {
+    mouseMove(evt: MouseEvent) {
         if (evt.button === 0) {
             const body = this.body.getBoundingClientRect();
             if (evt.clientX > body.left && evt.clientX < body.right) {
@@ -68,24 +65,25 @@ export class DIDragListView extends DIListView {
         }
     }
 
-    mouseUp(evt: any) {
+    mouseUp(evt: MouseEvent) {
         if (evt.button === 0) {
             this.events[this.moveEvent].delete();
+
             document.documentElement.style.cursor = "";
-            // @ts-ignore TODO: not sure how to fix this
-            document.documentElement.style["-webkit-user-select"] = "";
+            document.documentElement.style.userSelect = "";
+
             this.events[this.moveEvent + 1].delete();
             this.events.splice(this.moveEvent, 2);
 
             const body = this.body.getBoundingClientRect();
             const index = Math.floor((this.body.scrollTop + evt.clientY - body.top) / this.cellHeight);
+
             if (index === this.selectedIndex) {
                 this.didSelectRowAtIndex(this.selectedIndex);
             } else {
-                let i = 0;
                 // @ts-ignore
                 this.selected.length = 0;
-                for (; i < this.children.length; i++) {
+                for (let i = 0; i < this.children.length; i++) {
                     // @ts-ignore TODO: bug - treated as array instead of single item
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (this.children[i].selected) this.selected.push(i);
@@ -153,8 +151,9 @@ export class DIDragListView extends DIListView {
      * @param name
      * @todo use or remove this function
      */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    getCustomCellById(name: string) {}
+    getCustomCellById(_name: string) {
+        throw new Error("Method not implemented.");
+    }
 
     /**
      * This clears existing cells, and update it

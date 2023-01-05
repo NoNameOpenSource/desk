@@ -26,7 +26,6 @@ export class DITableView extends DIView {
         this.numberOfRows = 0;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     clearTable() {}
 
     reloadData() {
@@ -36,8 +35,10 @@ export class DITableView extends DIView {
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.numberOfRows = this.dataSource.numberOfRows(this);
+
         for (let i = 0; i < this.numberOfRows; i++) {
             this.addRow();
+
             for (const column of this.columns) {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 const cell = this.dataSource.cellAtColRow(this, column, i);
@@ -75,9 +76,9 @@ export class DITableView extends DIView {
     }
 
     /**
-     * @todo finish function or remove
-     * @todo use or remove this function
+     * @todo remove or use this function
      */
-    // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
-    mouseDown(evt: any) {}
+    mouseDown(_evt: any) {
+        throw new Error("Method not implemented.");
+    }
 }

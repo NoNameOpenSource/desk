@@ -1,7 +1,6 @@
 import { secretaryInstance } from "../Secretary/Singleton";
 import { DeskMenuListViewCell } from "./DeskMenuListViewCell";
 import { DIDragListView } from "./DIDragListView";
-import { DIListView } from "./DIListView";
 import { DIView } from "./DIView";
 
 export class DeskMenu extends DIView {
@@ -55,23 +54,21 @@ export class DeskMenu extends DIView {
         }
     }
 
-    listDidSelectRowAtIndex(listView: DIListView, index: number) {
-        if (listView === this.listView) {
+    /**
+     *  @todo: Not DIListView, only DIDragView? -> listDidSelectRowAtIndex(listView: DIListView, index: number)
+     */
+    listDidSelectRowAtIndex(listView: DIDragListView, index: number) {
+        if (this.listView === listView) {
             if (index >= 0) {
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 listView.deselectAll();
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 secretaryInstance.mainWorkSpace.loadApp(secretaryInstance.appList[index], []);
             }
         }
     }
 
-    /**
-     * @todo remove this function or finish it
-     */
-    // eslint-disable-next-line @typescript-eslint/naming-convention,class-methods-use-this
-    listDidHighlightedCells(_listView: any, _selecte: DIView) {}
+    listDidHighlightedCells(_listView: any, _selected: DIView) {
+        throw new Error("Method not implemented.");
+    }
 
     get width() {
         if (!this._width) this._width = this.body.offsetWidth;

@@ -9,6 +9,7 @@ import { DIListView } from "./DIListView";
 import { DIListViewCell } from "./DIListViewCell";
 import { DIResizableWindow } from "./DIResizableWindow";
 import { DIView } from "./DIView";
+import { DIWindow } from "./DIWindow";
 import { DIWorkSpaceDock } from "./DIWorkSpaceDock";
 import * as DeskSingleton from "./Singleton";
 
@@ -29,28 +30,23 @@ export class Desk {
     headerHeight = 28;
     headerHide = false;
 
-    header;
-    body;
-    headerLogo;
+    header: DIView;
+    body: DIView;
+    headerLogo: DIImageView;
     topMenu: DIView;
 
-    windows: any[];
+    windows: DIWindow[];
     windowsIndex = 11;
     currentWindow: DIResizableWindow;
 
-    cursor;
+    cursor: string[];
 
-    dragPointX: any;
-    dragPointY: any;
-    dragPointA: any;
-    dragWindow: any;
+    screenHeight: number;
+    screenWidth: number;
 
-    screenHeight;
-    screenWidth;
-
-    alerts: any[];
-    alertScreen;
-    wallpaper;
+    alerts: DIAlertView[];
+    alertScreen: DIView;
+    wallpaper: DIImageView;
     workSpaceDock: DIWorkSpaceDock;
 
     contextMenu: DIListView;
@@ -64,8 +60,8 @@ export class Desk {
     contextEvent: DeskEvent;
 
     dragEnded: boolean;
-    lastDragApp: any;
-    currentDragApp: any;
+    lastDragApp: Application;
+    currentDragApp: Application;
     dragEvent: DeskEvent;
     dropEvent: DeskEvent;
     dropEsc: DeskEvent;
@@ -153,12 +149,13 @@ export class Desk {
         this.deskMenu.width = 200;
         this.deskMenu.x = -1 * this.deskMenu.width;
         this.deskMenu.y = 28;
-        this.headerLogo.events.push(new DeskEvent(this.headerLogo.body, "click", this.launchDeskMenu.bind(this)));
+
+        this.headerLogo.events.push(new DeskEvent(this.headerLogo.body, "click", () => this.launchDeskMenu()));
         document.body.appendChild(this.deskMenu.body);
     }
 
     //	Context Menu
-    showContextMenu(list: any, delegate: any, x: number, y: number) {
+    showContextMenu(list: string[], delegate: any, x: number, y: number) {
         this.contextList = list;
         this.contextMenu.delegate = delegate;
         this.contextMenu.reloadData();
@@ -168,7 +165,7 @@ export class Desk {
             this.contextEvent.delete();
             this.contextEvent = null;
         }
-        this.contextEvent = new DeskEvent(document.body, "mousedown", (evt: any) => {
+        this.contextEvent = new DeskEvent(document.body, "mousedown", (evt: MouseEvent) => {
             if (
                 !(
                     this.contextMenu.body.getBoundingClientRect().left <= evt.clientX &&
@@ -207,29 +204,22 @@ export class Desk {
         return false;
     }
 
-    setUpContextMenu(body: Element, delegate: any) {
-        return new DeskEvent(body, "contextmenu", (evt: Event) => {
+    setUpContextMenu(body: HTMLElement, delegate: any) {
+        return new DeskEvent(body, "contextmenu", (evt: MouseEvent) => {
             evt.preventDefault();
-            // TODO: spelling
-            // @ts-ignore
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            const list = delegate.prepareContexMenu(body, evt.clientX, evt.clientY);
+            const list = delegate.prepareContextMenu(body, evt.clientX, evt.clientY);
             if (list) {
-                // @ts-ignore
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 this.showContextMenu(list, delegate, evt.clientX, evt.clientY);
             }
         });
     }
 
+    // TODO: What is the clipboard type? - Bono
     startDrag(clipboard: any, view: DIView, x: number, y: number, originalX: number, originalY: number) {
-        let i = 0;
-        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
-            if (secretaryInstance.mainWorkSpace.apps[i].allowDrag) {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                secretaryInstance.mainWorkSpace.apps[i].dragStart(clipboard);
-            }
-        }
+        secretaryInstance.mainWorkSpace.apps.forEach((app) => app.allowDrag && app.dragStart(clipboard));
+
         this.dragEnded = false;
 
         document.body.appendChild(view.body);
@@ -243,11 +233,10 @@ export class Desk {
         this.lastDragApp = null;
         this.currentDragApp = null;
 
-        // TODO: use a fat arrow function instead of .bind(this)
         this.dragEvent = new DeskEvent(
             document.body,
             "mousemove",
-            (evt: { clientX: number; clientY: number }) => {
+            (evt: MouseEvent) => {
                 // find where the cursor is on
                 if (evt.clientY < this.headerHeight) {
                     // client on header
@@ -261,7 +250,6 @@ export class Desk {
                             app = secretaryInstance.mainWorkSpace.apps[i];
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
-                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                     app.dragOn(evt.clientX, evt.clientY);
                                 }
                             }
@@ -271,7 +259,6 @@ export class Desk {
                 view.x = evt.clientX + difX;
                 view.y = evt.clientY + difY;
                 if (this.currentDragApp !== this.lastDragApp) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (this.lastDragApp) this.lastDragApp.dragLeft();
                 }
                 this.lastDragApp = this.currentDragApp;
@@ -280,13 +267,12 @@ export class Desk {
             false
         );
 
-        this.dragEvent.target.addEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
+        this.dragEvent.target.addEventListener(this.dragEvent.method, this.dragEvent.listener, true);
 
-        // TODO: use a fat arrow function instead of .bind(this)
         this.dropEvent = new DeskEvent(
             document.body,
             "mouseup",
-            (evt: { clientX: number; clientY: number }) => {
+            (evt: MouseEvent) => {
                 // find where the cursor is on
                 // @ts-ignore TODO: bug
                 if (evt.clientY < this.instance.headerHeight) {
@@ -295,10 +281,7 @@ export class Desk {
                     if (evt.clientX < this.body.x) {
                         // client on dock
                     } else {
-                        let i = 0;
-                        let app;
-                        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
-                            app = secretaryInstance.mainWorkSpace.apps[i];
+                        secretaryInstance.mainWorkSpace.apps.forEach((app) => {
                             if (app.allowDrag) {
                                 if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
                                     app.dragEnd(true, clipboard, evt.clientX, evt.clientY);
@@ -306,7 +289,7 @@ export class Desk {
                                     app.dragEnd(false);
                                 }
                             }
-                        }
+                        });
                     }
                 }
 
@@ -317,7 +300,7 @@ export class Desk {
                     view.body.style.transition = "all .3s ease";
                     view.x = originalX;
                     view.y = originalY;
-                    setTimeout(function () {
+                    setTimeout(() => {
                         view.delete();
                         view = null;
                     }, 300);
@@ -328,11 +311,11 @@ export class Desk {
                 this.lastDragApp = null;
                 this.currentDragApp = null;
 
-                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
+                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.listener, true);
                 this.dragEvent.stopped = true;
                 this.dragEvent.delete();
                 this.dragEvent = null;
-                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
+                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.listener, false);
                 this.dropEvent.stopped = true;
                 this.dropEvent.delete();
                 this.dropEvent = null;
@@ -343,41 +326,37 @@ export class Desk {
             false
         ); // use bubbling instead of capturing
 
-        this.dropEvent.target.addEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
+        this.dropEvent.target.addEventListener(this.dropEvent.method, this.dropEvent.listener, false);
 
-        this.dropEsc = new DeskEvent(window, "keydown", (evt: any) => {
-            if (evt.keyCode === 27) {
-                // esc
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                if (this.currentDragApp !== null) this.currentDragApp.dragLeft();
+        this.dropEsc = new DeskEvent(window, "keydown", (evt: KeyboardEvent) => {
+            if (evt.key === "Escape") {
+                if (this.currentDragApp !== null) {
+                    this.currentDragApp.dragLeft();
+                }
+
                 if (this.currentDragApp !== this.lastDragApp) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     if (this.lastDragApp) this.lastDragApp.dragLeft();
                 }
-                let i = 0;
-                let app;
-                for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
-                    app = secretaryInstance.mainWorkSpace.apps[i];
-                    if (app.allowDrag) {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                        app.dragEnd(false);
-                    }
-                }
+
+                secretaryInstance.mainWorkSpace.apps.forEach((app) => app.allowDrag && app.dragEnd(false));
+
                 // canceling drag
                 view.body.style.transition = "all .3s ease";
                 view.x = originalX;
                 view.y = originalY;
-                setTimeout(function () {
+
+                setTimeout(() => {
                     view.delete();
                     view = null;
                 }, 300);
+
                 this.lastDragApp = null;
                 this.currentDragApp = null;
-                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
+                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.listener, true);
                 this.dragEvent.stopped = true;
                 this.dragEvent.delete();
                 this.dragEvent = null;
-                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
+                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.listener, false);
                 this.dropEvent.stopped = true;
                 this.dropEvent.delete();
                 this.dropEvent = null;
@@ -393,18 +372,16 @@ export class Desk {
         else return "/System/Desk/Resources/Icon/file.png";
     }
 
-    // eslint-disable-next-line class-methods-use-this
     closeWindow(window: DIResizableWindow) {
         if (window === this.currentWindow) this.currentWindow = null;
         window.delete();
         window = null;
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    bringWindowFront(window: any) {
+    bringWindowFront(window: DIResizableWindow) {
         if (window.deleted) return false;
         if (window === this.currentWindow) return false;
-        // @ts-ignore TODO: do we mean "delete" instead of "deleted"?
+        /** @todo do we mean "delete" instead of "deleted"? */
         if (this.currentWindow && !this.currentWindow.deleted) this.currentWindow.putInSleep();
         window.z = this.windowsIndex;
         this.windowsIndex += 1;
@@ -432,7 +409,7 @@ export class Desk {
         // load logo as inline svg file
         const ajax = new XMLHttpRequest();
         ajax.open("GET", this.headerLogo.imageSource);
-        ajax.addEventListener("load", (evt) => {
+        ajax.addEventListener("load", (evt: ProgressEvent<XMLHttpRequestEventTarget>) => {
             this.headerLogo.imageBody.remove();
             this.headerLogo.imageBody = document.createElement("SVG");
             this.headerLogo.body.appendChild(this.headerLogo.imageBody);
@@ -449,30 +426,17 @@ export class Desk {
         let alert = new DIAlertView(titleText, undefined, "DIAlertView");
         alert.useTextArea(errorMsg);
         this.alerts.push(alert);
-        // @ts-ignore window.body does not exist
         alert.events.push(
-            new DeskEvent(
-                // @ts-ignore window.body does not exist
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                window.body,
-                "keydown",
-                (evt: KeyboardEvent) => {
-                    if (evt.keyCode === 13) {
-                        // enter key
-                        // @ts-ignore
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                        alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                    } else if (evt.keyCode === 27) {
-                        // esc
-                        // @ts-ignore
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                        alert.buttons[0].buttonBody.click();
-                    }
-                    // @ts-ignore TODO: do we want stopPropagation?
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                    evt.stopPropagate();
+            // TODO: What is the body we want? body in Desk object attributes or body of HTML document - Bong-oh
+            new DeskEvent(document.body, "keydown", (evt: KeyboardEvent) => {
+                if (evt.key === "Enter") {
+                    alert.buttons[alert.buttons.length - 1].buttonBody.click();
+                } else if (evt.key === "Escape") {
+                    alert.buttons[0].buttonBody.click();
                 }
-            )
+                // TODO: Do we want stopPropagation?
+                evt.stopPropagation();
+            })
         );
         alert.addButton("Ok", () => {
             const i = this.alerts.indexOf(alert);
@@ -480,8 +444,14 @@ export class Desk {
             this.alerts.splice(i, 1);
             alert.delete();
             alert = null;
-            if (this.alerts.length < 1) this.alertScreen.hidden = true;
-            if (func) func();
+
+            if (this.alerts.length < 1) {
+                this.alertScreen.hidden = true;
+            }
+
+            if (func) {
+                func();
+            }
         });
         document.body.appendChild(alert.body);
         alert.didMoveToDesk();

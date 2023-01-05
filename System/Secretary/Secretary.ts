@@ -110,7 +110,6 @@ export class Secretary {
         this.registeredAppMap = apps;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     loadUserInfo() {
         const req = new RequestServer("UserInfo");
         req.addEventListener("load", function (response, err) {
@@ -158,8 +157,9 @@ export class Secretary {
     /**
      * @todo finish or remove this function
      */
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    loadScripts(appName: string) {}
+    loadScripts(_appName: string) {
+        throw new Error("Method not implemented.");
+    }
 
     setClipboard(clipboard: any) {
         if (this.clipboard) {
@@ -202,7 +202,6 @@ export class Secretary {
         req.send();
     }
 
-    // eslint-disable-next-line class-methods-use-this
     loadWorkSpaces() {
         if (this.clientMode === "SingleApplication") {
             const workSpace = new WorkSpace("main", null, [this.application], []);
@@ -252,10 +251,13 @@ export class Secretary {
         req.send();
     }
 
-    // eslint-disable-next-line class-methods-use-this
-    loadPlugins() {}
+    /**
+     * @todo remove or use this function
+     */
+    loadPlugins() {
+        throw new Error("Method not implemented.");
+    }
 
-    // eslint-disable-next-line class-methods-use-this
     checkESVersion() {
         try {
             const objects = { Gibson: "Les Paul", Fender: "Stratocaster" };
@@ -273,7 +275,6 @@ export class Secretary {
         return 6;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     checkBrowser() {
         const browser = <Browser>{};
         if (navigator.userAgent.indexOf("Chrome") !== -1) {
@@ -308,10 +309,10 @@ export class Secretary {
 
     urlForFile(file: File | number) {
         if (typeof file === "number") {
-            return this.urlForFileId(file);
+            return this.urlForFileId(file.toString());
         }
         if (file.id) {
-            return this.urlForFileId(file.id);
+            return this.urlForFileId(file.id.toString());
         }
         const components = file.path.split("/");
         if (components[0] === "~") {
@@ -326,51 +327,39 @@ export class Secretary {
         }
     }
 
-    urlForFileId(fileId: any) {
+    urlForFileId(fileId: string) {
         if (this.serverType === "php") {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/system/DataManager/DownloadBIN.php?file=".concat(fileId);
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/System/DownloadBIN?file=".concat(fileId);
         }
     }
 
-    urlForStream(fileId: any) {
+    urlForStream(fileId: string) {
         if (this.serverType === "php") {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/system/DataManager/Stream.php?file=".concat(fileId);
         } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             return "/System/Stream?file=".concat(fileId);
         }
     }
 
-    loadFileWithId(fileId: any, onCompletion: (data: Blob, error: any) => void, sync?: boolean) {
+    loadFileWithId(fileId: number, onCompletion: (data: Blob, error?: any) => void, sync?: boolean) {
         const xhr = new XMLHttpRequest();
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         xhr.open("GET", this.urlForFile(fileId), !sync);
-        xhr.addEventListener("load", function (evt) {
-            // @ts-ignore
-            if (evt.target.status === 200) {
-                // .OK
-                // @ts-ignore
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                onCompletion(evt.target.response);
-                // @ts-ignore
-            } else if (evt.target.status === 404) {
-                // .notFound
-                // @ts-ignore
-            } else if (evt.target.status === 400) {
-                // .badRequest
-                // @ts-ignore
-            } else if (evt.target.status === 500) {
-                // .internalServerError
-                // @ts-ignore
-            } else if (evt.target.status === 401) {
-                // .unauthorized
+        xhr.addEventListener("load", () => {
+            if (xhr.status === 200) {
+                // OK
+                onCompletion(xhr.response as Blob);
+            } else if (xhr.status === 404) {
+                // Not Found
+            } else if (xhr.status === 400) {
+                // Bad Request
+            } else if (xhr.status === 500) {
+                // InternalServerError
+            } else if (xhr.status === 401) {
+                // Unauthorized
             } else {
-                // .unknown error
+                // Unknown Error
             }
         });
         xhr.send();
@@ -390,11 +379,11 @@ export class Secretary {
             if (response.DataBlockStatus === 0) {
                 if (response.FileInFolder.status === 0) {
                     // file found
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                     this.loadFileWithId(response.FileInFolder.file.id, onCompletion);
                 } else if (response.FileInFolder.status === 1) {
                     // 404 not found!
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    const err = Object.freeze({ titleText: "File does not exist" });
+                    const _err = Object.freeze({ titleText: "File does not exist" });
                 }
             }
         });
@@ -404,18 +393,21 @@ export class Secretary {
     /**
      * @todo remove or use this function
      */
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    loadFileWithPath(path: string, onCompletion: () => void) {}
-
-    // eslint-disable-next-line class-methods-use-this
-    openDrawer(option: { drawerType: string }) {
-        option.drawerType = "openPanel";
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const drawer = this.loadApp("Drawer", option, null);
+    loadFileWithPath(_path: string, _onCompletion: () => void) {
+        throw new Error("Method not implemented.");
     }
 
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    receivedMessageFromServer(message: string) {}
+    openDrawer(option: { drawerType: string }) {
+        option.drawerType = "openPanel";
+        const _drawer = this.loadApp("Drawer", option, null);
+    }
+
+    /**
+     * @todo remove or use this function
+     */
+    receivedMessageFromServer(_message: string) {
+        throw new Error("Method not implemented.");
+    }
 
     /**
      * Upload file to the server
@@ -505,8 +497,9 @@ export class Secretary {
      * errorType
      *  1 : server error
      */
-    // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
-    getUserInfo(userId: string, onCompletion: (errorType: number) => void) {}
+    getUserInfo(_userId: string, _onCompletion: (errorType: number) => void) {
+        throw new Error("Method not implemented.");
+    }
 }
 
 type File = {

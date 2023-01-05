@@ -21,7 +21,7 @@ export class DrawerSavePanel extends DIView {
         this.drawerPanelContainer.x = 10;
         this.drawerPanelContainer.width = 340;
         // @ts-ignore TODO: what is Drawer?
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         this.drawer = new Drawer(secretaryInstance.mainWorkSpace, "DrawerPanel", { drawerType: "openPanel" });
         this.drawer.window.closeButton.hidden = true;
         this.drawer.window.minButton.hidden = true;

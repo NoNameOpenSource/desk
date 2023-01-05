@@ -9,20 +9,15 @@ export class DITableCell {
     blurEvent: DeskEvent;
     oldValue: any;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    constructor(className?: string, idName?: string) {
+    constructor(className?: string, _idName?: string) {
         if (!className) className = "DITableView";
         this.body = document.createElement("td");
         this.table;
         this.editable = true;
-        this.event = new DeskEvent(this.body, "dblclick", this.dblclick.bind(this));
+        this.event = new DeskEvent(this.body, "dblclick", () => this.dblclick());
     }
 
-    /**
-     * @todo remove or use evt
-     */
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    dblclick(evt: any) {
+    dblclick() {
         let result = true;
         if (this.table) {
             result = this.table.cellClicked(this);
@@ -33,7 +28,7 @@ export class DITableCell {
     }
 
     beginEdit() {
-        this.blurEvent = new DeskEvent(this.body, "blur", this.endEdit.bind(this));
+        this.blurEvent = new DeskEvent(this.body, "blur", () => this.endEdit());
         this.oldValue = this.text;
         this.body.setAttribute("contentEditable", undefined);
         this.body.focus();
