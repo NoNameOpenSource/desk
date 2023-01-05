@@ -110,7 +110,6 @@ export class Secretary {
         this.registeredAppMap = apps;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     loadUserInfo() {
         const req = new RequestServer("UserInfo");
         req.addEventListener("load", function (response, err) {
@@ -203,7 +202,6 @@ export class Secretary {
         req.send();
     }
 
-    // eslint-disable-next-line class-methods-use-this
     loadWorkSpaces() {
         if (this.clientMode === "SingleApplication") {
             const workSpace = new WorkSpace("main", null, [this.application], []);
@@ -277,7 +275,6 @@ export class Secretary {
         return 6;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     checkBrowser() {
         const browser = <Browser>{};
         if (navigator.userAgent.indexOf("Chrome") !== -1) {

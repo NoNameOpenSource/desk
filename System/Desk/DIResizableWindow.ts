@@ -112,7 +112,6 @@ export class DIResizableWindow extends DIWindow {
         return true;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     didMoveToParent() {}
 
     didMoveToDesk() {

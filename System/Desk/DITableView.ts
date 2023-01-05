@@ -26,7 +26,6 @@ export class DITableView extends DIView {
         this.numberOfRows = 0;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     clearTable() {}
 
     reloadData() {
@@ -75,9 +74,9 @@ export class DITableView extends DIView {
     }
 
     /**
-     * @todo finish function or remove
-     * @todo use or remove this function
+     * @todo remove or use this function
      */
-    // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
-    mouseDown(evt: any) {}
+    mouseDown(_evt: any) {
+        throw new Error("Method not implemented.");
+    }
 }

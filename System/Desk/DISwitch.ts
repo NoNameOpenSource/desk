@@ -54,7 +54,6 @@ export class DISwitch extends DIView {
         this.switchBody.firstChild.checked = value;
     }
 
-    // eslint-disable-next-line class-methods-use-this
     get width() {
         // @ts-ignore TODO: this?
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
