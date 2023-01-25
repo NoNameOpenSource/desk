@@ -69,6 +69,15 @@ export class DeskEventManager {
         }
     }
 
+    //fireEvent(id: string, element: Element, ev: any) {
+    //this.deskEventItems.find((x) => x.id === id)?.deskEvent.evtFunc(ev);
+    //}
+
+    //    fireEvent(id: string, element: Element, ev: any) {
+    //        let de = this.deskEventItems.find((x) => x.id === id);
+    //        de?.deskEvent.target.bind(de?.deskEvent.evtFunc), ev);
+    //    }
+
     delete(id: string) {
         const index = this.deskEventItems.findIndex((x) => x.id === id);
         if (0 <= index) {

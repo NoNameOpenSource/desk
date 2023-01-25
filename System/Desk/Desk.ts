@@ -1,5 +1,5 @@
 import { Application } from "../Secretary";
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventInfo, DeskEventManager } from "../Secretary/DeskEventManager";
 import { secretaryInstance } from "../Secretary/Singleton";
 import { DeskMenu } from "./DeskMenu";
 import { DIAlertView } from "./DIAlertView";
@@ -61,14 +61,15 @@ export class Desk {
 
     deskMenu: DeskMenu;
 
-    contextEvent: DeskEvent;
+    contextEvent: DeskEventInfo;
 
     dragEnded: boolean;
     lastDragApp: any;
     currentDragApp: any;
-    dragEvent: DeskEvent;
-    dropEvent: DeskEvent;
-    dropEsc: DeskEvent;
+    dragEvent: DeskEventInfo;
+    dropEvent: DeskEventInfo;
+    dropEsc: DeskEventInfo;
+    eventManager: DeskEventManager;
 
     public static getInstance() {
         if (!DeskSingleton.deskInstance) {
@@ -126,6 +127,7 @@ export class Desk {
         this.alertScreen = new DIView("DILoading");
         document.body.appendChild(this.alertScreen.body);
         this.alertScreen.hidden = true;
+        this.eventManager = new DeskEventManager();
     }
 
     hideTopMenuBar() {
@@ -165,10 +167,10 @@ export class Desk {
         this.contextMenu.x = x - this.body.x + this.body.body.scrollLeft;
         this.contextMenu.y = y - this.body.y;
         if (this.contextEvent) {
-            this.contextEvent.delete();
+            this.eventManager.delete(this.contextEvent.id);
             this.contextEvent = null;
         }
-        this.contextEvent = new DeskEvent(document.body, "mousedown", (evt: any) => {
+        this.contextEvent = this.eventManager.add(document.body, "mousedown", (evt: any) => {
             if (
                 !(
                     this.contextMenu.body.getBoundingClientRect().left <= evt.clientX &&
@@ -185,7 +187,7 @@ export class Desk {
 
     clearContextMenu() {
         if (this.contextEvent) {
-            this.contextEvent.delete();
+            this.eventManager.delete(this.contextEvent.id);
             this.contextEvent = null;
         }
         this.body.removeChildView(this.contextMenu);
@@ -207,8 +209,8 @@ export class Desk {
         return false;
     }
 
-    setUpContextMenu(body: Element, delegate: any) {
-        return new DeskEvent(body, "contextmenu", (evt: Event) => {
+    setUpContextMenu(eventManager: DeskEventManager, body: Element, delegate: any) {
+        return eventManager.add(body, "contextmenu", (evt: Event) => {
             evt.preventDefault();
             // TODO: spelling
             // @ts-ignore
@@ -244,108 +246,99 @@ export class Desk {
         this.currentDragApp = null;
 
         // TODO: use a fat arrow function instead of .bind(this)
-        this.dragEvent = new DeskEvent(
-            document.body,
-            "mousemove",
-            (evt: { clientX: number; clientY: number }) => {
-                // find where the cursor is on
-                if (evt.clientY < this.headerHeight) {
-                    // client on header
+        this.dragEvent = this.eventManager.add(document.body, "mousemove", (evt: { clientX: number; clientY: number }) => {
+            // find where the cursor is on
+            if (evt.clientY < this.headerHeight) {
+                // client on header
+            } else {
+                if (evt.clientX < this.body.x) {
+                    // client on dock
                 } else {
-                    if (evt.clientX < this.body.x) {
-                        // client on dock
-                    } else {
-                        let i = 0;
-                        let app: Application;
-                        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
-                            app = secretaryInstance.mainWorkSpace.apps[i];
-                            if (app.allowDrag) {
-                                if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
-                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                                    app.dragOn(evt.clientX, evt.clientY);
-                                }
+                    let i = 0;
+                    let app: Application;
+                    for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
+                        app = secretaryInstance.mainWorkSpace.apps[i];
+                        if (app.allowDrag) {
+                            if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                                app.dragOn(evt.clientX, evt.clientY);
                             }
                         }
                     }
                 }
-                view.x = evt.clientX + difX;
-                view.y = evt.clientY + difY;
-                if (this.currentDragApp !== this.lastDragApp) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                    if (this.lastDragApp) this.lastDragApp.dragLeft();
-                }
-                this.lastDragApp = this.currentDragApp;
-                this.currentDragApp = null;
-            },
-            false
-        );
+            }
+            view.x = evt.clientX + difX;
+            view.y = evt.clientY + difY;
+            if (this.currentDragApp !== this.lastDragApp) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                if (this.lastDragApp) this.lastDragApp.dragLeft();
+            }
+            this.lastDragApp = this.currentDragApp;
+            this.currentDragApp = null;
+        });
 
-        this.dragEvent.target.addEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
+        // Really struggling to understand the code as it was. The lines above constructed a
+        // DeskEvent with init false (which suppresses the actual addListener) and assigns it to DragEvent.
+        // Then the line below uses the same target, method and evtFunc from the DeskEvent that didn't call
+        // addEventListener and calls addEventListener.
+        // So I changed the code to just add the event 1 time.
+        //this.dragEvent.target.addEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
 
         // TODO: use a fat arrow function instead of .bind(this)
-        this.dropEvent = new DeskEvent(
-            document.body,
-            "mouseup",
-            (evt: { clientX: number; clientY: number }) => {
-                // find where the cursor is on
-                // @ts-ignore TODO: bug
-                if (evt.clientY < this.instance.headerHeight) {
-                    // client on header
+        this.dropEvent = this.eventManager.add(document.body, "mouseup", (evt: { clientX: number; clientY: number }) => {
+            // find where the cursor is on
+            // @ts-ignore TODO: bug
+            if (evt.clientY < this.instance.headerHeight) {
+                // client on header
+            } else {
+                if (evt.clientX < this.body.x) {
+                    // client on dock
                 } else {
-                    if (evt.clientX < this.body.x) {
-                        // client on dock
-                    } else {
-                        let i = 0;
-                        let app;
-                        for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
-                            app = secretaryInstance.mainWorkSpace.apps[i];
-                            if (app.allowDrag) {
-                                if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
-                                    app.dragEnd(true, clipboard, evt.clientX, evt.clientY);
-                                } else {
-                                    app.dragEnd(false);
-                                }
+                    let i = 0;
+                    let app;
+                    for (; i < secretaryInstance.mainWorkSpace.apps.length; i++) {
+                        app = secretaryInstance.mainWorkSpace.apps[i];
+                        if (app.allowDrag) {
+                            if (app.window.x + this.body.x < evt.clientX && app.window.x + app.window.width + this.body.x > evt.clientX) {
+                                app.dragEnd(true, clipboard, evt.clientX, evt.clientY);
+                            } else {
+                                app.dragEnd(false);
                             }
                         }
                     }
                 }
+            }
 
-                // gap -m-
+            // gap -m-
 
-                if (!this.dragEnded) {
-                    // non of the apps captured the drag
-                    view.body.style.transition = "all .3s ease";
-                    view.x = originalX;
-                    view.y = originalY;
-                    setTimeout(function () {
-                        view.delete();
-                        view = null;
-                    }, 300);
-                } else {
+            if (!this.dragEnded) {
+                // non of the apps captured the drag
+                view.body.style.transition = "all .3s ease";
+                view.x = originalX;
+                view.y = originalY;
+                setTimeout(function () {
                     view.delete();
                     view = null;
-                }
-                this.lastDragApp = null;
-                this.currentDragApp = null;
+                }, 300);
+            } else {
+                view.delete();
+                view = null;
+            }
+            this.lastDragApp = null;
+            this.currentDragApp = null;
 
-                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
-                this.dragEvent.stopped = true;
-                this.dragEvent.delete();
-                this.dragEvent = null;
-                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
-                this.dropEvent.stopped = true;
-                this.dropEvent.delete();
-                this.dropEvent = null;
+            this.eventManager.delete(this.dragEvent?.id);
+            this.dragEvent = null;
+            this.eventManager.delete(this.dropEvent?.id);
+            this.dropEvent = null;
 
-                this.dropEsc.delete();
-                this.dropEsc = null;
-            },
-            false
-        ); // use bubbling instead of capturing
+            this.eventManager.delete(this.dropEsc?.id);
+            this.dropEsc = null;
+        }); // use bubbling instead of capturing
 
-        this.dropEvent.target.addEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
+        // this.dropEvent.target.addEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
 
-        this.dropEsc = new DeskEvent(window, "keydown", (evt: any) => {
+        this.dropEsc = this.eventManager.add(window, "keydown", (evt: any) => {
             if (evt.keyCode === 27) {
                 // esc
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -373,16 +366,12 @@ export class Desk {
                 }, 300);
                 this.lastDragApp = null;
                 this.currentDragApp = null;
-                this.dragEvent.target.removeEventListener(this.dragEvent.method, this.dragEvent.evtFunc, true);
-                this.dragEvent.stopped = true;
-                this.dragEvent.delete();
+                this.eventManager.delete(this.dragEvent?.id);
                 this.dragEvent = null;
-                this.dropEvent.target.removeEventListener(this.dropEvent.method, this.dropEvent.evtFunc, false);
-                this.dropEvent.stopped = true;
-                this.dropEvent.delete();
+                this.eventManager.delete(this.dropEvent?.id);
                 this.dropEvent = null;
 
-                this.dropEsc.delete();
+                this.eventManager.delete(this.dropEsc?.id);
                 this.dropEsc = null;
             }
         });

@@ -1,5 +1,4 @@
 import { Application } from "../Secretary";
-import { DeskEvent } from "../Secretary/DeskEvent";
 import { DILabel } from "./DILabel";
 import { DIView } from "./DIView";
 import { DIWindow } from "./DIWindow";
@@ -11,7 +10,6 @@ import { deskInstance } from "./Singleton";
 export class DIResizableWindow extends DIWindow {
     child: DIView;
     parent: DIView;
-    events: DeskEvent[];
     deleted: boolean;
     resize: boolean;
     cursor: number;
@@ -30,7 +28,6 @@ export class DIResizableWindow extends DIWindow {
         super();
         this.child;
         this.parent;
-        this.events = [];
         this._x = 0;
         this._y = 0;
         this._z = 0;
@@ -55,7 +52,7 @@ export class DIResizableWindow extends DIWindow {
             this.titleBar = new DIView("DIWindowTitleBar");
             this.titleBar.height = 20;
             this.body.childNodes[0].appendChild(this.titleBar.body);
-            this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+            this.eventManager.add(this.body, "mousedown", this.mouseDown);
             // Add title to titleBar
             if (titleBarOptions < 3) {
                 this.titleField = new DILabel(undefined, "DIWindowTitle");
@@ -236,10 +233,7 @@ export class DIResizableWindow extends DIWindow {
             this.titleBar.delete();
             this.titleBar = null;
         }
-        for (const event of this.events) {
-            event.delete();
-        }
-        this.events.length = 0;
+        this.eventManager.deleteAll();
         this.child.delete();
         this.body.remove();
         this.body = null;

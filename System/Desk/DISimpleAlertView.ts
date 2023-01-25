@@ -1,4 +1,4 @@
-import { DeskEvent } from "../Secretary";
+import { DeskEventInfo } from "../Secretary/DeskEventManager";
 import { DIAlertView } from "./DIAlertView";
 import { DIButton } from "./DIButton";
 import { DIImageView } from "./DIImageView";
@@ -16,7 +16,7 @@ export class DISimpleAlertView extends DIAlertView {
     textArea: DIView;
 
     constructor(text: string, icon: string, className?: string, idName?: string) {
-        if (!className) className = "DISmallAlertView";
+        if (!className) className = "DISimpleAlertView";
         super(className, idName);
         this.buttons = [];
         // Add alert content
@@ -51,9 +51,9 @@ export class DISimpleAlertView extends DIAlertView {
         }
     }
 
-    addButton(text: string, evt: (this: Element, ev: DeskEvent) => any) {
+    addButton(text: string, evt: (this: Element, ev: DeskEventInfo) => any) {
         const id = this.buttons.length;
-        this.buttons.push(new DIButton(text, "DISmallAlertViewButton"));
+        this.buttons.push(new DIButton(text, "DISimpleAlertViewButton"));
         this.buttons[id].body.style.width = "50%";
         // @ts-ignore
         this.buttons[id].setButtonEvent(evt);

@@ -2,7 +2,7 @@ import { Desk } from "../Desk/Desk";
 import { DIImageView } from "../Desk/DIImageView";
 import { DIView } from "../Desk/DIView";
 import { Application } from "./Application";
-import { DeskEvent } from "./DeskEvent";
+import { DeskEventInfo, DeskEventManager } from "./DeskEventManager";
 import { secretaryInstance } from "./Singleton";
 
 /**
@@ -22,8 +22,10 @@ export class WorkSpace {
     loadedMark: HTMLElement;
     contextMenu: any;
     lastWidth: any;
-    resizeEvent: DeskEvent;
-    resizeEnd: DeskEvent;
+    eventManager: DeskEventManager;
+    resizeEventInfo: DeskEventInfo;
+    resizeEventFunc: any;
+    resizeEndInfo: DeskEventInfo;
     desk: Desk;
 
     constructor(spaceName: string, iconName: string, appList: string[], appSettings?: any[]) {
@@ -107,22 +109,20 @@ export class WorkSpace {
             app.rightBorder.body.app = app;
             // @ts-ignore
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-            app.rightBorder.events.push(
-                new DeskEvent(
-                    // @ts-ignore
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                    app.rightBorder.body,
-                    "mousedown",
-                    function (evt: Event) {
+            this.eventManager.add(
+                // @ts-ignore
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+                app.rightBorder.body,
+                "mousedown",
+                (evt: Event) => {
+                    // @ts-ignore TODO: bug
+                    if (evt.button === 0) {
+                        evt.preventDefault();
                         // @ts-ignore TODO: bug
-                        if (evt.button === 0) {
-                            evt.preventDefault();
-                            // @ts-ignore TODO: bug
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                            this.resizeWindow(evt.target.app, evt);
-                        }
-                    }.bind(this)
-                )
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                        this.resizeWindow(evt.target.app, evt);
+                    }
+                }
             );
         }
     }
@@ -151,7 +151,7 @@ export class WorkSpace {
         this.body.width = this.width;
     }
 
-    resizeWindow(app: Application, evt: DeskEvent) {
+    resizeWindow(app: Application, evt: any) {
         if (app.window.minButton.hidden) {
             // window is minimized
             return;
@@ -166,8 +166,7 @@ export class WorkSpace {
             this.apps[i].window.body.style.transition = "none";
         }
         app.resizeStart();
-
-        this.resizeEvent = new DeskEvent(document, "mousemove", (evt: DeskEvent) => {
+        this.resizeEventFunc = (evt: any) => {
             // @ts-ignore TODO: bug
             const width = app.resizeWidth(this.desk.body.body.scrollLeft + evt.clientX - this.desk.body.x - app.window.x + diff);
             if (width !== false) {
@@ -185,12 +184,13 @@ export class WorkSpace {
                 this.body.width += change;
                 this.lastWidth = width;
             }
-        });
+        };
+        this.resizeEventInfo = this.eventManager.add(document, "mousemove", this.resizeEventFunc);
 
-        this.resizeEnd = new DeskEvent(window, "mouseup", (evt: DeskEvent) => {
+        this.resizeEndInfo = this.eventManager.add(window, "mouseup", (evt: any) => {
             // @ts-ignore
-            this.resizeEvent.evtFunc(evt);
-            this.resizeEvent.delete();
+            this.resizeEventFunc(evt);
+            this.eventManager.delete(this.resizeEventInfo?.id);
             app.resizeEnd();
             // @ts-ignore
             app.rightBorder.x = app.window.x + app.window.width;
@@ -198,9 +198,9 @@ export class WorkSpace {
             for (; i < this.apps.length; i++) {
                 this.apps[i].window.body.style.transition = "";
             }
-            this.resizeEnd.delete();
-            this.resizeEvent = null;
-            this.resizeEnd = null;
+            this.eventManager.delete(this.resizeEndInfo?.id);
+            this.resizeEventInfo = null;
+            this.resizeEndInfo = null;
         });
     }
 

@@ -1,5 +1,16 @@
 import { Desk, DIAlertView, DIButton, DIDragListView, DIImageView, DILabel, DIListViewCell, DITextField, DIView } from "../Desk";
-import { Application, DeskClipboard, DeskEvent, DeskFile, FileManager, JsonMap, RequestServer, Secretary, WorkSpace } from "../Secretary";
+import {
+    Application,
+    DeskClipboard,
+    DeskEventInfo,
+    DeskEventManager,
+    DeskFile,
+    FileManager,
+    JsonMap,
+    RequestServer,
+    Secretary,
+    WorkSpace,
+} from "../Secretary";
 import { DrawerListViewCell } from "./DrawerListViewCell";
 import { DrawerUploadViewCell } from "./DrawerUploadViewCell";
 
@@ -14,6 +25,11 @@ interface DataInfo {
     oldName: string;
     FileName: string;
     FileType: string; // todo make enum
+}
+
+interface CurrentAnimationInfo {
+    oldViewElement: Element;
+    deskEventInfo: DeskEventInfo;
 }
 
 export class Drawer extends Application {
@@ -41,6 +57,7 @@ export class Drawer extends Application {
     currentHierarchy: any[];
     currentAnimation: number;
     currentAnimationFunc: any;
+    currentAnimationInfo: DeskEventInfo;
     uploadingFiles: any[];
     allowDrag: boolean;
     alertView: DIAlertView;
@@ -49,6 +66,7 @@ export class Drawer extends Application {
     useLocation: any;
     categoryId: number;
     locationData: any;
+    eventManager: DeskEventManager;
 
     constructor(workSpace: WorkSpace, appName: string, appSetting: JsonMap) {
         super(workSpace, appName, appSetting, "DrawerWindow", 0);
@@ -207,10 +225,9 @@ export class Drawer extends Application {
         this.window.child.addChildView(this.grayLayer);
 
         this.currentAnimation = -1;
-        this.currentAnimationFunc = null;
+        this.currentAnimationInfo = null;
 
         this.uploadingFiles = [];
-
         // Init icon drag
         this.allowDrag = true;
         this.listViewContainer.eventManager.add(
@@ -271,17 +288,17 @@ export class Drawer extends Application {
                 }
             }
         );
-        const context = Desk.getInstance().setUpContextMenu(this.listViewContainer.body, this);
-        this.listViewContainer.eventManager.add(context.target, context.method, context.evtFunc);
+        Desk.getInstance().setUpContextMenu(this.listViewContainer.eventManager, this.listViewContainer.body, this);
         this.loading = true;
+        this.eventManager = new DeskEventManager();
     }
 
     wakeUp() {
         if (this.currentAnimation >= 0) {
             if (this.currentAnimation === 0) {
-                this.currentAnimationFunc.evtFunc();
+                this.currentAnimationFunc();
             } else if (this.currentAnimation === 1) {
-                this.currentAnimationFunc.evtFunc();
+                this.currentAnimationFunc();
             }
         }
         this.window.wakeUp();
@@ -1099,17 +1116,18 @@ export class Drawer extends Application {
                 }
                 this.listViewContainer.addChildView(this.listView);
                 this.currentAnimation = 0;
-                this.currentAnimationFunc = new DeskEvent(this.listView.body, "animationend", () => {
+                this.currentAnimationFunc = () => {
                     if (this.currentAnimation === 0) {
                         this.listView.body.classList.remove("SlideInAnimation");
                         oldView.delete();
                         oldView = null;
-                        this.currentAnimationFunc.delete();
-                        this.currentAnimationFunc = null;
+                        this.eventManager.delete(this.currentAnimationInfo?.id);
+                        this.currentAnimationInfo = null;
                         this.currentAnimation = -1;
                         this.listView.wakeUp();
                     }
-                });
+                };
+                this.currentAnimationInfo = this.eventManager.add(this.listView.body, "animationend", this.currentAnimationFunc);
             });
         } else {
             // Back Arrow
@@ -1132,18 +1150,19 @@ export class Drawer extends Application {
                     this.listViewContainer.addChildView(this.listView);
                     oldView.body.classList.add("SlideOutAnimation");
                     this.currentAnimation = 1;
-                    this.currentAnimationFunc = new DeskEvent(oldView.body, "animationend", () => {
+                    this.currentAnimationFunc = () => {
                         if (this.currentAnimation === 1) {
                             this.listView.body.style.width = "100%";
                             this.listView.body.classList.remove("CutInAnimation");
                             oldView.delete();
                             oldView = null;
-                            this.currentAnimationFunc.delete();
-                            this.currentAnimationFunc = null;
+                            this.eventManager.delete(this.currentAnimationInfo?.id);
+                            this.currentAnimationInfo = null;
                             this.currentAnimation = -1;
                             this.listView.wakeUp();
                         }
-                    });
+                    };
+                    this.currentAnimationInfo = this.eventManager.add(oldView.body, "animationend", this.currentAnimationFunc);
                 });
             }
         }

@@ -1,4 +1,4 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventInfo } from "../Secretary/DeskEventManager";
 import { DIButton } from "./DIButton";
 
 /**
@@ -6,7 +6,7 @@ import { DIButton } from "./DIButton";
  */
 export class DIUploadButton extends DIButton {
     inputBody: HTMLInputElement;
-    buttonEvent: DeskEvent;
+    buttonEventInfo: DeskEventInfo;
 
     constructor(text: string, className?: string, idName?: string) {
         super(text, className, idName);
@@ -14,20 +14,19 @@ export class DIUploadButton extends DIButton {
         this.inputBody.setAttribute("type", "file");
         this.inputBody.style.display = "none";
         this.body.appendChild(this.inputBody);
-        this.buttonEvent = new DeskEvent(this.buttonBody, "click", () => {
+        this.buttonEventInfo = this.eventManager.add(this.buttonBody, "click", () => {
             this.inputBody.click();
         });
     }
 
     setButtonEvent(evt: (this: Element, ev: any) => any) {
-        if (this.event) this.event.delete();
-        this.event = new DeskEvent(this.inputBody, "change", evt);
+        this.eventManager.delete(this.eventInfo?.id);
+        this.eventInfo = this.eventManager.add(this.inputBody, "change", evt);
     }
 
     delete() {
         this.inputBody.remove();
-        this.buttonEvent.delete();
-        this.buttonEvent = null;
+        this.eventManager.delete(this.buttonEventInfo?.id);
         super.delete();
     }
 }

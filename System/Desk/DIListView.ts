@@ -167,9 +167,7 @@ export class DIListView extends DIView {
 
     delete() {
         if (this.cellClickType === 1) {
-            if (this.eventInfo) {
-                this.eventManager.delete(this.eventInfo.id);
-            }
+            this.eventManager.delete(this.eventInfo?.id);
         }
         this.delegate = null;
         this.dataSource = null;
