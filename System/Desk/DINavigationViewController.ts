@@ -1,5 +1,5 @@
 import { Application } from "../Secretary";
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventManager } from "../Secretary/DeskEventManager";
 import { DILabel } from "./DILabel";
 import { DIView } from "./DIView";
 import { DIViewController } from "./DIViewController";
@@ -11,6 +11,7 @@ export class DINavigationViewController extends DIViewController {
     titleField: DILabel;
     delegate: Application;
     oldView: DIView;
+    eventManager: DeskEventManager;
 
     /**
      * @todo remove idName
@@ -25,8 +26,9 @@ export class DINavigationViewController extends DIViewController {
         this.backwardButton = new DIView();
         this.titleField = new DILabel();
         this.navigationView.addChildView(this.backwardButton);
-        this.backwardButton.events.push(new DeskEvent(this.backwardButton.body, "onclick", this.backButtonTriggered.bind(this)));
+        this.backwardButton.eventManager.add(this.backwardButton.body, "onclick", this.backButtonTriggered);
         this.navigationView.addChildView(this.titleField);
+        this.eventManager = new DeskEventManager();
         if (delegate) this.delegate = delegate;
     }
 
@@ -79,15 +81,11 @@ export class DINavigationViewController extends DIViewController {
         }
         oldTitle.body.className = "NavBackPushIn";
         // this.newView.putInSleep();
-        const tmp = new DeskEvent(
-            newView.body,
-            "animationend",
-            function () {
-                tmp.delete();
-                newView.body.className = originalName;
-                newView.wakeUp();
-                func();
-            }.bind(this)
-        );
+        const tmp = this.eventManager.add(newView.body, "animationend", () => {
+            this.eventManager.delete(tmp.id);
+            newView.body.className = originalName;
+            newView.wakeUp();
+            func();
+        });
     }
 }

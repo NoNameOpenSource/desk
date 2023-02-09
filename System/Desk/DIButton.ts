@@ -1,11 +1,11 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventInfo } from "../Secretary/DeskEventManager";
 import { DIView } from "./DIView";
 
 /**
  * This is simple button for the system
  */
 export class DIButton extends DIView {
-    event: DeskEvent;
+    eventInfo: DeskEventInfo;
     buttonBody: HTMLImageElement;
     public input: HTMLInputElement;
 
@@ -13,7 +13,7 @@ export class DIButton extends DIView {
         if (!className) className = "DIButton";
         super(className, idName);
         this.canHaveChild = false;
-        this.event;
+        this.eventInfo;
         this.buttonBody = document.createElement("img");
         if (text) this.buttonBody.textContent = text;
         this.body.appendChild(this.buttonBody);
@@ -28,9 +28,9 @@ export class DIButton extends DIView {
         super.wakeUp();
     }
 
-    setButtonEvent(evt: (this: Element, ev: DeskEvent) => any) {
-        if (this.event) this.event.delete();
-        this.event = new DeskEvent(this.buttonBody, "click", evt);
+    setButtonEvent(evt: (this: Element, ev: DeskEventInfo) => any) {
+        this.eventManager.delete(this.eventInfo?.id);
+        this.eventInfo = this.eventManager.add(this.buttonBody, "click", evt);
     }
 
     get stringValue() {
@@ -55,10 +55,7 @@ export class DIButton extends DIView {
 
     delete() {
         // Remove EventListener
-        if (this.event) {
-            this.event.delete();
-            this.event = null;
-        }
+        this.eventManager.delete(this.eventInfo?.id);
         this.buttonBody.remove();
         super.delete();
     }

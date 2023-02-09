@@ -1,13 +1,13 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventInfo, DeskEventManager } from "../Secretary/DeskEventManager";
 import { DITableView } from "./DITableView";
 
 export class DITableCell {
     body: HTMLTableCellElement;
     table: DITableView;
     editable: boolean;
-    event: any;
-    blurEvent: DeskEvent;
+    blurEventInfo: DeskEventInfo;
     oldValue: any;
+    eventManager: DeskEventManager;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     constructor(className?: string, idName?: string) {
@@ -15,7 +15,8 @@ export class DITableCell {
         this.body = document.createElement("td");
         this.table;
         this.editable = true;
-        this.event = new DeskEvent(this.body, "dblclick", this.dblclick.bind(this));
+        this.eventManager = new DeskEventManager();
+        this.eventManager.add(this.body, "dblclick", this.dblclick);
     }
 
     /**
@@ -33,15 +34,14 @@ export class DITableCell {
     }
 
     beginEdit() {
-        this.blurEvent = new DeskEvent(this.body, "blur", this.endEdit.bind(this));
+        this.blurEventInfo = this.eventManager.add(this.body, "blur", this.endEdit);
         this.oldValue = this.text;
         this.body.setAttribute("contentEditable", undefined);
         this.body.focus();
     }
 
     endEdit() {
-        this.blurEvent.delete();
-        this.blurEvent = null;
+        this.eventManager.delete(this.blurEventInfo?.id);
         this.body.removeAttribute("contentEditable");
 
         if (!this.table && this.oldValue === this.text) {

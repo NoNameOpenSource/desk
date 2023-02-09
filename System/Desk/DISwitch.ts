@@ -1,11 +1,11 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventInfo } from "../Secretary/DeskEventManager";
 import { DIView } from "./DIView";
 
 /**
  * This is simple button for the system
  */
 export class DISwitch extends DIView {
-    event: DeskEvent;
+    eventInfo: DeskEventInfo;
     switchBody: HTMLLabelElement & { firstChild: FirstChild };
     buttonBody: any;
 
@@ -16,7 +16,7 @@ export class DISwitch extends DIView {
         }
         super(className, idName);
         this.canHaveChild = false;
-        this.event;
+        this.eventInfo = null;
 
         const switchBody = document.createElement("label");
         switchBody.appendChild(document.createElement("input"));
@@ -41,9 +41,9 @@ export class DISwitch extends DIView {
     }
 
     setSwitchEvent(evt: (this: Element, ev: any) => any) {
-        if (this.event) this.event.delete();
+        this.eventManager.delete(this.eventInfo?.id);
         // @ts-ignore TODO: make DeskEvent accept a Pick containing only the properties it needs
-        this.event = new DeskEvent(this.switchBody.firstChild, "change", evt);
+        this.event = this.eventManager.add(this.switchBody.firstChild, "change", evt);
     }
 
     get value() {
@@ -68,10 +68,7 @@ export class DISwitch extends DIView {
 
     delete() {
         // Remove EventListener
-        if (this.event) {
-            this.event.delete();
-            this.event = null;
-        }
+        this.eventManager.delete(this.eventInfo?.id);
         this.switchBody.remove();
         super.delete();
     }

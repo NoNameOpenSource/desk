@@ -1,4 +1,3 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
 import { DITextField } from "./DITextField";
 
 /**
@@ -65,7 +64,7 @@ export class DIComboBox extends DITextField {
     didMoveToDesk() {
         this._width = this.body.offsetWidth;
         this._height = this.body.offsetHeight;
-        this.events.push(new DeskEvent(this.textBody, "keydown", this.keyDown.bind(this)));
-        this.events.push(new DeskEvent(this.textBody, "input", this.searchHints.bind(this)));
+        this.eventManager.add(this.textBody, "keydown", this.keyDown);
+        this.eventManager.add(this.textBody, "input", this.searchHints);
     }
 }

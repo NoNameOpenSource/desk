@@ -1,4 +1,4 @@
-import { DeskEvent } from "../Secretary";
+import { DeskEventInfo } from "../Secretary";
 import { DIButton } from "./DIButton";
 import { DIImageView } from "./DIImageView";
 import { DILabel } from "./DILabel";
@@ -59,7 +59,7 @@ export class DIAlertView extends DIView {
         }
     }
 
-    addButton(text: string, evt: (this: Element, ev: DeskEvent) => any) {
+    addButton(text: string, evt: (this: Element, ev: DeskEventInfo) => any) {
         const id = this.buttons.length;
         this.buttons.push(new DIButton(text, "DIAlertViewButton"));
         this.buttons[id].setButtonEvent(evt);

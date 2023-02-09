@@ -1,4 +1,4 @@
-import { DeskEvent } from "../Secretary/DeskEvent";
+import { DeskEventInfo } from "../Secretary";
 import { DIListView } from "./DIListView";
 import { DIPopUpCell } from "./DIPopUpCell";
 import { DIView } from "./DIView";
@@ -25,8 +25,9 @@ export class DIUniComboBox extends DIView {
     english: boolean;
     useDataSource: any;
     /** @todo rename to keyEventCode or something that doesn't make this sound like an event itself */
-    keyEvent: number;
-    event: DeskEvent;
+    keyDownEvent: DeskEventInfo;
+    keyInputEvent: DeskEventInfo;
+    eventInfo: DeskEventInfo;
     _window: any;
     _editable: boolean;
 
@@ -87,7 +88,7 @@ export class DIUniComboBox extends DIView {
         this.arrowBody.setAttribute("src", "/System/Desk/Resources/DIComboBoxArrow.svg");
         this.body.appendChild(this.arrowBody);
 
-        this.events.push(new DeskEvent(this.arrowBody, "click", this.triggerDropDownView.bind(this)));
+        this.eventManager.add(this.arrowBody, "click", this.triggerDropDownView);
     }
 
     focusIn() {
@@ -363,16 +364,16 @@ export class DIUniComboBox extends DIView {
         }
         this.usingHint = false;
         if (this.editable) {
-            this.events[this.keyEvent].stop();
-            this.events[this.keyEvent + 1].stop();
+            this.eventManager.stop(this.keyDownEvent.id);
+            this.eventManager.stop(this.keyInputEvent.id);
         }
     }
 
     wakeUp() {
         this._inSleep = false;
         if (this.editable) {
-            this.events[this.keyEvent].resume();
-            this.events[this.keyEvent + 1].resume();
+            this.eventManager.resume(this.keyDownEvent.id);
+            this.eventManager.resume(this.keyInputEvent.id);
         }
     }
 
@@ -381,11 +382,10 @@ export class DIUniComboBox extends DIView {
         this.dropDownView.cellHeight = this.cellHeight;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        this.event = new DeskEvent(this._window.body, "mousedown", this.mouseDown.bind(this));
-        this.keyEvent = this.events.length;
-        this.events.push(new DeskEvent(this.body, "keydown", this.keyDown.bind(this)));
-        this.events.push(new DeskEvent(this.textBody, "input", this.searchHints.bind(this)));
-        this.events.push(new DeskEvent(this.textBody, "focus", this.focusIn.bind(this)));
+        this.eventInfo = this.eventManager.add(this._window.body, "mousedown", this.mouseDown);
+        this.keyDownEvent = this.eventManager.add(this.body, "keydown", this.keyDown);
+        this.keyInputEvent = this.eventManager.add(this.textBody, "input", this.searchHints);
+        this.eventManager.add(this.textBody, "focus", this.focusIn);
     }
 
     get usingHint() {
@@ -412,18 +412,18 @@ export class DIUniComboBox extends DIView {
     set editable(value) {
         this._editable = value;
         if (value) {
-            if (this.event) {
-                this.event.resume();
+            if (this.eventInfo) {
+                this.eventManager.resume(this.eventInfo.id);
             }
             if (!this._inSleep && this.onDesk) {
-                this.events[this.keyEvent].resume();
-                this.events[this.keyEvent + 1].resume();
+                this.eventManager.resume(this.keyDownEvent.id);
+                this.eventManager.resume(this.keyInputEvent.id);
             }
             this.textBody.setAttribute("contenteditable", "true");
             this.arrowBody.hidden = false;
         } else {
-            if (this.event) {
-                this.event.stop();
+            if (this.eventInfo) {
+                this.eventManager.stop(this.eventInfo.id);
             }
             if (this.dropDownViewTriggered) this.triggerDropDownView();
             if (this.usingHint) {
@@ -436,8 +436,8 @@ export class DIUniComboBox extends DIView {
             }
             this.usingHint = false;
             if (!this._inSleep && this.onDesk) {
-                this.events[this.keyEvent].stop();
-                this.events[this.keyEvent + 1].stop();
+                this.eventManager.stop(this.keyDownEvent.id);
+                this.eventManager.stop(this.keyInputEvent.id);
             }
             this.textBody.setAttribute("contenteditable", "false");
             this.arrowBody.hidden = true;
@@ -464,8 +464,6 @@ export class DIUniComboBox extends DIView {
     }
 
     delete() {
-        this.event.delete();
-        this.event = null;
-        super.delete();
+        this.eventManager.delete(this.eventInfo.id);
     }
 }

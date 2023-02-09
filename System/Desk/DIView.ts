@@ -1,5 +1,5 @@
 import * as Constrain from "@nonameopensource/constrain";
-import { DeskAnimation, DeskEvent } from "../Secretary";
+import { DeskAnimation, DeskEventManager } from "../Secretary";
 import { DIViewController } from "./DIViewController";
 
 /**
@@ -14,7 +14,7 @@ export class DIView implements Constrain.DrawableObject {
     onDesk = false;
     /** Body of the view as HTML element */
     body: HTMLElement;
-    events: DeskEvent[];
+    eventManager: DeskEventManager;
     animations: DeskAnimation[];
     deleted: boolean;
     _controller: DIViewController;
@@ -38,7 +38,6 @@ export class DIView implements Constrain.DrawableObject {
         if (className) this.body.className = className;
         if (idName) this.body.id = idName;
         this.children = [];
-        this.events = [];
         this.animations = [];
         this._hidden = false;
         this._inSleep = false;
@@ -78,27 +77,19 @@ export class DIView implements Constrain.DrawableObject {
         this.children.length = 0;
     }
 
-    deleteEvent(event: DeskEvent) {
-        const i = this.events.indexOf(event);
-        if (i === -1) return;
-        event.delete();
-        this.events[i] = null;
-        this.events.splice(i, 1);
+    deleteEvent(eventId: string) {
+        this.eventManager.delete(eventId);
     }
 
     clearEvents() {
-        for (const event of this.events) {
-            event.delete();
-        }
-
-        this.events.length = 0;
+        this.eventManager.deleteAll();
     }
 
     clearAnimations() {
         for (const animation of this.animations) {
             animation.delete();
         }
-        this.events.length = 0;
+        this.eventManager.deleteAll();
     }
 
     addConstraint(constraint: Constrain.Constraint) {
@@ -134,9 +125,7 @@ export class DIView implements Constrain.DrawableObject {
 
     putInSleep() {
         this._inSleep = true;
-        for (const event of this.events) {
-            event.stop();
-        }
+        this.eventManager.stopAll();
         for (const child of this.children) {
             child.putInSleep();
         }
@@ -144,9 +133,7 @@ export class DIView implements Constrain.DrawableObject {
 
     wakeUp() {
         this._inSleep = false;
-        for (const event of this.events) {
-            event.resume();
-        }
+        this.eventManager.resumeAll();
         for (const child of this.children) {
             child.wakeUp();
         }
@@ -226,7 +213,7 @@ export class DIView implements Constrain.DrawableObject {
     delete() {
         this.deleted = true;
         this.clearChildViews();
-        this.clearEvents();
+        this.eventManager.deleteAll();
         this.clearAnimations();
         if (this.parent) this.parent.removeChildView(this);
         this.body.remove();

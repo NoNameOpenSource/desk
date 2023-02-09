@@ -1,5 +1,16 @@
 import { Desk, DIAlertView, DIButton, DIDragListView, DIImageView, DILabel, DIListViewCell, DITextField, DIView } from "../Desk";
-import { Application, DeskClipboard, DeskEvent, DeskFile, FileManager, JsonMap, RequestServer, Secretary, WorkSpace } from "../Secretary";
+import {
+    Application,
+    DeskClipboard,
+    DeskEventInfo,
+    DeskEventManager,
+    DeskFile,
+    FileManager,
+    JsonMap,
+    RequestServer,
+    Secretary,
+    WorkSpace,
+} from "../Secretary";
 import { DrawerListViewCell } from "./DrawerListViewCell";
 import { DrawerUploadViewCell } from "./DrawerUploadViewCell";
 
@@ -14,6 +25,11 @@ interface DataInfo {
     oldName: string;
     FileName: string;
     FileType: string; // todo make enum
+}
+
+interface CurrentAnimationInfo {
+    oldViewElement: Element;
+    deskEventInfo: DeskEventInfo;
 }
 
 export class Drawer extends Application {
@@ -41,6 +57,7 @@ export class Drawer extends Application {
     currentHierarchy: any[];
     currentAnimation: number;
     currentAnimationFunc: any;
+    currentAnimationInfo: DeskEventInfo;
     uploadingFiles: any[];
     allowDrag: boolean;
     alertView: DIAlertView;
@@ -49,6 +66,7 @@ export class Drawer extends Application {
     useLocation: any;
     categoryId: number;
     locationData: any;
+    eventManager: DeskEventManager;
 
     constructor(workSpace: WorkSpace, appName: string, appSetting: JsonMap) {
         super(workSpace, appName, appSetting, "DrawerWindow", 0);
@@ -73,7 +91,7 @@ export class Drawer extends Application {
         this.listBackButton.buttonBody.className = "DINavigatorIcon";
         this.listBackButton.buttonBody.setAttribute("src", Desk.getInstance().getDeskUI.BackButton);
         this.listBackButton.body.appendChild(this.listBackButton.buttonBody);
-        this.listBackButton.setButtonEvent(this.navigateBack.bind(this));
+        this.listBackButton.setButtonEvent(this.navigateBack);
         this.listNavigator.addChildView(this.listBackButton);
         // Init add button
         this.listAddButton = new DIButton("Add", "DINavigatorAddButton");
@@ -105,15 +123,13 @@ export class Drawer extends Application {
         this.uploadButton.body.appendChild(this.uploadButton.input);
         this.uploadButton.input.style.display = "none";
         this.listNavigator.addChildView(this.uploadButton);
-        this.uploadButton.events.push(
-            new DeskEvent(this.uploadButton.input, "change", (evt: { target: { files: any; value: string } }) => {
-                const files = evt.target.files;
-                this.uploadFiles(files, this.currentLocation, () => {
-                    // fileManager.uploadFiles(files, this.currentLocation.id, function(file, error) {
-                    evt.target.value = "";
-                });
-            })
-        );
+        this.uploadButton.eventManager.add(this.uploadButton.input, "change", (evt: { target: { files: any; value: string } }) => {
+            const files = evt.target.files;
+            this.uploadFiles(files, this.currentLocation, () => {
+                // fileManager.uploadFiles(files, this.currentLocation.id, function(file, error) {
+                evt.target.value = "";
+            });
+        });
 
         // Init search field (view)
         this.searchView = new DIView("DIListSearchView");
@@ -121,49 +137,43 @@ export class Drawer extends Application {
         this.searchView.addChildView(this.searchField);
         this.searchImage = new DIImageView(Desk.getInstance().getDeskUI.SearchIcon, "DIListSearchImage");
         this.searchView.addChildView(this.searchImage);
-        this.searchView.events.push(
-            new DeskEvent(this.searchView.body, "click", () => {
-                this.searchImage.hidden = true;
-                this.searchField.editable = true;
-                this.searchField.textBody.focus();
-                this.activateSearch();
+        this.searchView.eventManager.add(this.searchView.body, "click", () => {
+            this.searchImage.hidden = true;
+            this.searchField.editable = true;
+            this.searchField.textBody.focus();
+            this.activateSearch();
 
-                this.searchField.events.push(
-                    new DeskEvent(this.searchField.body, "keydown", (evt: { keyCode: number }) => {
-                        if (evt.keyCode === 27) {
-                            this.searchField.stringValue = "";
-                            this.searchField.textBody.blur();
-                        }
-                    })
-                );
-
-                this.searchField.events.push(
-                    new DeskEvent(this.searchField.body, "input", (evt: any) => {
-                        if (!this.grayLayer.hidden) {
-                            // searchField was empty
-                            this.grayLayer.hidden = true;
-                            this.searchFiles(this.searchField.stringValue, 0, () => {
-                                this.listView.reloadData();
-                            });
-                        } else {
-                            this.searchFiles(this.searchField.stringValue, 0, () => {
-                                this.listView.reloadData();
-                            });
-                        }
-                    })
-                );
-            })
-        );
-        this.searchView.events.push(
-            new DeskEvent(this.searchField.body, "blur", () => {
-                if (this.searchField.stringValue === "") {
-                    this.searchImage.hidden = false;
-                    this.searchField.editable = false;
-                    this.deactivateSearch();
+            this.searchField.eventManager.add(this.searchField.body, "keydown", (evt: { keyCode: number }) => {
+                if (evt.keyCode === 27) {
+                    this.searchField.stringValue = "";
+                    this.searchField.textBody.blur();
                 }
-                this.searchField.clearEvents();
-            })
-        );
+            });
+
+            this.searchField.eventManager.add(this.searchField.body, "input", () => {
+                if (!this.grayLayer.hidden) {
+                    // searchField was empty
+                    this.grayLayer.hidden = true;
+                    this.searchFiles(this.searchField.stringValue, 0, () => {
+                        this.listView.reloadData();
+                    });
+                } else {
+                    this.searchFiles(this.searchField.stringValue, 0, () => {
+                        this.listView.reloadData();
+                    });
+                }
+            });
+        });
+
+        this.searchView.eventManager.add(this.searchField.body, "blur", () => {
+            if (this.searchField.stringValue === "") {
+                this.searchImage.hidden = false;
+                this.searchField.editable = false;
+                this.deactivateSearch();
+            }
+            this.searchField.clearEvents();
+        });
+
         // this.searchView.events.push(new DeskEvent(this.searchField.body, "input", this.searchStudents.bind(this)));
 
         // Init list view
@@ -215,41 +225,54 @@ export class Drawer extends Application {
         this.window.child.addChildView(this.grayLayer);
 
         this.currentAnimation = -1;
-        this.currentAnimationFunc = null;
+        this.currentAnimationInfo = null;
 
         this.uploadingFiles = [];
-
         // Init icon drag
         this.allowDrag = true;
-        this.listViewContainer.events.push(
-            new DeskEvent(
-                this.listViewContainer.body,
-                "mousedown",
-                (evt: { button: number; clientX: number; clientY: any; preventDefault: () => void; stopPropagation: () => void }) => {
-                    if (evt.button === 0) {
-                        // drag works only with primary button
-                        const left = this.listViewContainer.body.getBoundingClientRect().left;
-                        if (evt.clientX - 10 > left && evt.clientX < left + 42) {
-                            const index = this.listView.getIndex(evt.clientY);
-                            if (index < this.listView.children.length && index >= 0) {
-                                evt.preventDefault();
-                                evt.stopPropagation();
-                                if (this.listView.selected.indexOf(index) !== -1) {
-                                    let i = 0;
-                                    const files = [];
-                                    const view = new DIView();
-                                    for (; i < this.listView.selected.length; i++) {
-                                        const thisIndex = this.listView.selected[i];
-                                        if (this.currentLocation.id === "0" && this.listData[thisIndex].type === "RCB") return;
-                                        files.push(this.listData[thisIndex]);
-                                        const icon = new DIImageView(this.listView.children[thisIndex].icon.imageSource);
-                                        icon.imageBody.style.width = "32px";
-                                        icon.body.style.height = "32px";
-                                        icon.y = (thisIndex - index) * this.listView.cellHeight;
-                                        icon.body.className = "DrawerFileMerge";
-                                        view.addChildView(icon);
-                                    }
-                                    const clip = new DeskClipboard("application/Drawer", JSON.stringify(files));
+        this.listViewContainer.eventManager.add(
+            this.listViewContainer.body,
+            "mousedown",
+            (evt: { button: number; clientX: number; clientY: any; preventDefault: () => void; stopPropagation: () => void }) => {
+                if (evt.button === 0) {
+                    // drag works only with primary button
+                    const left = this.listViewContainer.body.getBoundingClientRect().left;
+                    if (evt.clientX - 10 > left && evt.clientX < left + 42) {
+                        const index = this.listView.getIndex(evt.clientY);
+                        if (index < this.listView.children.length && index >= 0) {
+                            evt.preventDefault();
+                            evt.stopPropagation();
+                            if (this.listView.selected.indexOf(index) !== -1) {
+                                let i = 0;
+                                const files = [];
+                                const view = new DIView();
+                                for (; i < this.listView.selected.length; i++) {
+                                    const thisIndex = this.listView.selected[i];
+                                    if (this.currentLocation.id === "0" && this.listData[thisIndex].type === "RCB") return;
+                                    files.push(this.listData[thisIndex]);
+                                    const icon = new DIImageView(this.listView.children[thisIndex].icon.imageSource);
+                                    icon.imageBody.style.width = "32px";
+                                    icon.body.style.height = "32px";
+                                    icon.y = (thisIndex - index) * this.listView.cellHeight;
+                                    icon.body.className = "DrawerFileMerge";
+                                    view.addChildView(icon);
+                                }
+                                const clip = new DeskClipboard("application/Drawer", JSON.stringify(files));
+                                Desk.getInstance().startDrag(
+                                    clip,
+                                    view,
+                                    evt.clientX,
+                                    evt.clientY,
+                                    this.listView.children[index].icon.body.getBoundingClientRect().left,
+                                    this.listView.children[index].icon.body.getBoundingClientRect().top
+                                );
+                            } else {
+                                if (this.listData[index].type !== "RCB") {
+                                    const clip = new DeskClipboard("application/Drawer", `${[this.listData[index]]}`);
+                                    clip.addData("text/plain", this.listData[index].name);
+                                    const view = new DIImageView(this.listView.children[index].icon.imageSource);
+                                    view.imageBody.style.width = "32px";
+                                    view.body.style.height = "32px";
                                     Desk.getInstance().startDrag(
                                         clip,
                                         view,
@@ -258,41 +281,24 @@ export class Drawer extends Application {
                                         this.listView.children[index].icon.body.getBoundingClientRect().left,
                                         this.listView.children[index].icon.body.getBoundingClientRect().top
                                     );
-                                } else {
-                                    if (this.listData[index].type !== "RCB") {
-                                        const clip = new DeskClipboard("application/Drawer", `${[this.listData[index]]}`);
-                                        clip.addData("text/plain", this.listData[index].name);
-                                        const view = new DIImageView(this.listView.children[index].icon.imageSource);
-                                        view.imageBody.style.width = "32px";
-                                        view.body.style.height = "32px";
-                                        Desk.getInstance().startDrag(
-                                            clip,
-                                            view,
-                                            evt.clientX,
-                                            evt.clientY,
-                                            this.listView.children[index].icon.body.getBoundingClientRect().left,
-                                            this.listView.children[index].icon.body.getBoundingClientRect().top
-                                        );
-                                    }
                                 }
                             }
                         }
                     }
                 }
-            )
+            }
         );
-
-        this.listViewContainer.events.push(Desk.getInstance().setUpContextMenu(this.listViewContainer.body, this));
-
+        Desk.getInstance().setUpContextMenu(this.listViewContainer.eventManager, this.listViewContainer.body, this);
         this.loading = true;
+        this.eventManager = new DeskEventManager();
     }
 
     wakeUp() {
         if (this.currentAnimation >= 0) {
             if (this.currentAnimation === 0) {
-                this.currentAnimationFunc.evtFunc();
+                this.currentAnimationFunc();
             } else if (this.currentAnimation === 1) {
-                this.currentAnimationFunc.evtFunc();
+                this.currentAnimationFunc();
             }
         }
         this.window.wakeUp();
@@ -345,17 +351,16 @@ export class Drawer extends Application {
         this.alertView = new DIAlertView("Enter a name for this folder.", "false", "DrawerRenameView");
         this.alertView.autoHeight = false;
         this.alertView.textField = new DITextField(folderName, true, "DrawerRenameField");
-        this.alertView.events.push(
-            new DeskEvent(this.window.child.body, "keydown", (evt: { keyCode: number }) => {
-                if (evt.keyCode === 13) {
-                    // enter key
-                    this.alertView.buttons[0].buttonBody.click();
-                } else if (evt.keyCode === 27) {
-                    // esc
-                    this.alertView.buttons[1].buttonBody.click();
-                }
-            })
-        );
+        this.alertView.eventManager.add(this.window.child.body, "keydown", (evt: { keyCode: number }) => {
+            if (evt.keyCode === 13) {
+                // enter key
+                this.alertView.buttons[0].buttonBody.click();
+            } else if (evt.keyCode === 27) {
+                // esc
+                this.alertView.buttons[1].buttonBody.click();
+            }
+        });
+
         this.alertView.addButton("Create", () => {
             this.addDirectory(this.alertView.textField.stringValue);
             this.alertView.textField = null;
@@ -383,17 +388,15 @@ export class Drawer extends Application {
             let originalName = file.name;
             if (file.ext) originalName = originalName.concat(".", file.ext);
             this.alertView.textField = new DITextField(originalName, true, "DrawerRenameField");
-            this.alertView.events.push(
-                new DeskEvent(this.window.child.body, "keydown", (evt: { keyCode: number }) => {
-                    if (evt.keyCode === 13) {
-                        // enter key
-                        this.alertView.buttons[0].buttonBody.click();
-                    } else if (evt.keyCode === 27) {
-                        // esc
-                        this.alertView.buttons[1].buttonBody.click();
-                    }
-                })
-            );
+            this.alertView.eventManager.add(this.window.child.body, "keydown", (evt: { keyCode: number }) => {
+                if (evt.keyCode === 13) {
+                    // enter key
+                    this.alertView.buttons[0].buttonBody.click();
+                } else if (evt.keyCode === 27) {
+                    // esc
+                    this.alertView.buttons[1].buttonBody.click();
+                }
+            });
             this.alertView.addButton("Done", () => {
                 const name = this.alertView.textField.stringValue;
                 this.alertView.textField = null;
@@ -1113,17 +1116,18 @@ export class Drawer extends Application {
                 }
                 this.listViewContainer.addChildView(this.listView);
                 this.currentAnimation = 0;
-                this.currentAnimationFunc = new DeskEvent(this.listView.body, "animationend", () => {
+                this.currentAnimationFunc = () => {
                     if (this.currentAnimation === 0) {
                         this.listView.body.classList.remove("SlideInAnimation");
                         oldView.delete();
                         oldView = null;
-                        this.currentAnimationFunc.delete();
-                        this.currentAnimationFunc = null;
+                        this.eventManager.delete(this.currentAnimationInfo?.id);
+                        this.currentAnimationInfo = null;
                         this.currentAnimation = -1;
                         this.listView.wakeUp();
                     }
-                });
+                };
+                this.currentAnimationInfo = this.eventManager.add(this.listView.body, "animationend", this.currentAnimationFunc);
             });
         } else {
             // Back Arrow
@@ -1146,18 +1150,19 @@ export class Drawer extends Application {
                     this.listViewContainer.addChildView(this.listView);
                     oldView.body.classList.add("SlideOutAnimation");
                     this.currentAnimation = 1;
-                    this.currentAnimationFunc = new DeskEvent(oldView.body, "animationend", () => {
+                    this.currentAnimationFunc = () => {
                         if (this.currentAnimation === 1) {
                             this.listView.body.style.width = "100%";
                             this.listView.body.classList.remove("CutInAnimation");
                             oldView.delete();
                             oldView = null;
-                            this.currentAnimationFunc.delete();
-                            this.currentAnimationFunc = null;
+                            this.eventManager.delete(this.currentAnimationInfo?.id);
+                            this.currentAnimationInfo = null;
                             this.currentAnimation = -1;
                             this.listView.wakeUp();
                         }
-                    });
+                    };
+                    this.currentAnimationInfo = this.eventManager.add(oldView.body, "animationend", this.currentAnimationFunc);
                 });
             }
         }

@@ -1,4 +1,4 @@
-import { DeskEvent, WorkSpace } from ".";
+import { WorkSpace } from ".";
 import { DIApplicationDelegate } from "../Desk";
 import { DIAlertView } from "../Desk/DIAlertView";
 import { DISimpleAlertView } from "../Desk/DISimpleAlertView";
@@ -100,17 +100,15 @@ export abstract class Application {
         if (this.window.width > 500) {
             alert.body.style.left = "calc(50% - 230px)";
         }
-        alert.events.push(
-            new DeskEvent(window, "keydown", (evt: any) => {
-                if (evt.keyCode === 13) {
-                    // enter key
-                    alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                } else if (evt.keyCode === 27) {
-                    // esc
-                    alert.buttons[0].buttonBody.click();
-                }
-            })
-        );
+        alert.eventManager.add(window, "keydown", (evt: any) => {
+            if (evt.keyCode === 13) {
+                // enter key
+                alert.buttons[alert.buttons.length - 1].buttonBody.click();
+            } else if (evt.keyCode === 27) {
+                // esc
+                alert.buttons[0].buttonBody.click();
+            }
+        });
         alert.addButton("Ok", () => {
             const i = this.alerts.indexOf(alert);
             this.alerts[i] = null;
@@ -131,17 +129,15 @@ export abstract class Application {
         if (this.window.width < 330) {
             alert = new DISimpleAlertView(text, undefined, className);
             this.alerts.push(alert);
-            alert.events.push(
-                new DeskEvent(window, "keydown", (evt: any) => {
-                    if (evt.keyCode === 13) {
-                        // enter key
-                        alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                    } else if (evt.keyCode === 27) {
-                        // esc
-                        alert.buttons[0].buttonBody.click();
-                    }
-                })
-            );
+            alert.eventManager.add(window, "keydown", (evt: any) => {
+                if (evt.keyCode === 13) {
+                    // enter key
+                    alert.buttons[alert.buttons.length - 1].buttonBody.click();
+                } else if (evt.keyCode === 27) {
+                    // esc
+                    alert.buttons[0].buttonBody.click();
+                }
+            });
             alert.addButton(frstTitle, () => {
                 const i = this.alerts.indexOf(alert);
                 this.alerts[i] = null;
@@ -171,17 +167,15 @@ export abstract class Application {
         let alert = new DIAlertView(titleText, undefined, className);
         if (errorMsg) alert.useTextArea(errorMsg);
         this.alerts.push(alert);
-        alert.events.push(
-            new DeskEvent(this.window.child.body, "keydown", (evt: any) => {
-                if (evt.keyCode === 13) {
-                    // enter key
-                    alert.buttons[alert.buttons.length - 1].buttonBody.click();
-                } else if (evt.keyCode === 27) {
-                    // esc
-                    alert.buttons[0].buttonBody.click();
-                }
-            })
-        );
+        alert.eventManager.add(this.window.child.body, "keydown", (evt: any) => {
+            if (evt.keyCode === 13) {
+                // enter key
+                alert.buttons[alert.buttons.length - 1].buttonBody.click();
+            } else if (evt.keyCode === 27) {
+                // esc
+                alert.buttons[0].buttonBody.click();
+            }
+        });
         alert.addButton("Ok", () => {
             const i = this.alerts.indexOf(alert);
             this.alerts[i] = null;

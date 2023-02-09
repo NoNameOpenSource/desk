@@ -1,5 +1,4 @@
 import { Application } from "../Secretary";
-import { DeskEvent } from "../Secretary/DeskEvent";
 import { secretaryInstance } from "../Secretary/Singleton";
 import { DIImageView } from "./DIImageView";
 import { DILabel } from "./DILabel";
@@ -14,7 +13,6 @@ export class DIWindow extends DIView {
     /** This view's child view */
     child: DIView;
     parent: any;
-    events: DeskEvent[];
     deleted: boolean;
     resize: boolean;
     cursor: number;
@@ -45,7 +43,6 @@ export class DIWindow extends DIView {
 
         this.child;
         this.parent;
-        this.events = [];
         this._x = 0;
         this._y = 0;
         this._z = 0;
@@ -66,25 +63,25 @@ export class DIWindow extends DIView {
             this.titleBar = new DIView("DIWindowTitleBar");
             this.titleBar.height = this.titleSize;
             this.body.appendChild(this.titleBar.body);
-            this.events.push(new DeskEvent(this.body, "mousedown", this.mouseDown.bind(this)));
+            this.eventManager.add(this.body, "mousedown", this.mouseDown);
             // Add title to titleBar
             if (titleBarOptions < 3) {
                 this.titleField = new DILabel(title, "DIWindowTitle");
                 this.titleBar.addChildView(this.titleField);
                 if (titleBarOptions < 2) {
                     this.closeButton = new DIImageView(deskInstance.getDeskUI["CloseButton"], "DIWindowButton");
-                    this.closeButton.events.push(new DeskEvent(this.closeButton.imageBody, "click", this.close.bind(this)));
+                    this.closeButton.eventManager.add(this.closeButton.imageBody, "click", this.close);
                     this.titleBar.addChildView(this.closeButton);
                     if (titleBarOptions < 1) {
                         this.minButton = new DIImageView(deskInstance.getDeskUI["MinimizeButton"], "DIWindowButton");
                         this.minButton.x = this.titleSize;
                         this.titleBar.addChildView(this.minButton);
-                        this.minButton.events.push(new DeskEvent(this.minButton.imageBody, "click", this.minimize.bind(this)));
+                        this.minButton.eventManager.add(this.minButton.imageBody, "click", this.minimize);
                         this.maxButton = new DIImageView(deskInstance.getDeskUI["MaximizeButton"], "DIWindowButton");
                         this.maxButton.y = this.titleSize;
                         this.titleBar.addChildView(this.maxButton);
                         this.maxButton.hidden = true;
-                        this.minButton.events.push(new DeskEvent(this.maxButton.imageBody, "click", this.maximize.bind(this)));
+                        this.minButton.eventManager.add(this.maxButton.imageBody, "click", this.maximize);
                     }
                 }
             }
@@ -293,10 +290,7 @@ export class DIWindow extends DIView {
             this.titleBar.delete();
             this.titleBar = null;
         }
-        for (const event of this.events) {
-            event.delete();
-        }
-        this.events.length = 0;
+        this.eventManager.deleteAll();
         this.child.delete();
         this.child = null;
         this.body.remove();
