@@ -453,8 +453,8 @@ export class DIUniComboBox extends DIView {
     }
 
     get height() {
-        if (!this._height) this._height = this.body.offsetHeight;
-        return this._height;
+        if (!this.rect.height) this.rect.height = this.body.offsetHeight;
+        return this.rect.height;
     }
 
     set height(value) {

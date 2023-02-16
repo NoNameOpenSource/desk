@@ -29,7 +29,7 @@ export class DISwitch extends DIView {
         if (small) this.switchBody.children[1].className = "DISmallSwitchSlider";
         else this.switchBody.children[1].className = "DISwitchSlider";
         this.body.appendChild(this.switchBody);
-        this._width = 290;
+        this.rect.width = 290;
     }
 
     putInSleep() {
@@ -62,7 +62,7 @@ export class DISwitch extends DIView {
     }
 
     set width(value) {
-        this._width = value;
+        this.rect.width = value;
         this.buttonBody.style.width = `${value}px`;
     }
 

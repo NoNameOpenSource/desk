@@ -34,21 +34,21 @@ export class DIVideoPlayer extends DIView {
     }
 
     get width() {
-        return this._width;
+        return this.rect.width;
     }
 
     set width(value) {
         super.width = value;
-        this.videoBody.width = this._width;
+        this.videoBody.width = this.rect.width;
     }
 
     get height() {
-        return this._height;
+        return this.rect.height;
     }
 
     set height(value) {
         super.height = value;
-        this.videoBody.height = this._height;
+        this.videoBody.height = this.rect.height;
     }
 
     get videoSource() {

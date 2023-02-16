@@ -1,4 +1,5 @@
 import * as Constrain from "@nonameopensource/constrain";
+import { Rect } from "@nonameopensource/constrain/types/Rect";
 import { DeskAnimation, DeskEventManager } from "../Secretary";
 import { DIViewController } from "./DIViewController";
 
@@ -19,13 +20,8 @@ export class DIView implements Constrain.DrawableObject {
     deleted: boolean;
     _controller: DIViewController;
     constraintGroup: Constrain.LayoutEngine.ConstraintGroup;
+    rect: Rect;
 
-    /** x coordinate */
-    protected _x = 0;
-    /** y coordinate */
-    protected _y = 0;
-    protected _width: number;
-    protected _height: number;
     protected _inSleep: boolean;
 
     private _hidden: boolean;
@@ -42,6 +38,7 @@ export class DIView implements Constrain.DrawableObject {
         this._hidden = false;
         this._inSleep = false;
         this.constraintGroup = new Constrain.LayoutEngine.ConstraintGroup(this, []);
+        this.rect = new Rect(0, 0, 0, 0);
     }
 
     addChildView(child: DIView) {
@@ -95,7 +92,7 @@ export class DIView implements Constrain.DrawableObject {
     addConstraint(constraint: Constrain.Constraint) {
         this.constraintGroup.constraints.push(constraint);
         this.constraintGroup.computeOrder();
-        this.constraintGroup.compute();
+        this.constraintGroup.compute(this.rect);
     }
 
     addConstraints(constraints: Constrain.Constraint[]): void;
@@ -104,7 +101,7 @@ export class DIView implements Constrain.DrawableObject {
         const cs = constraints as Constrain.Constraint[];
         this.constraintGroup.constraints.push(...cs);
         this.constraintGroup.computeOrder();
-        this.constraintGroup.compute();
+        this.constraintGroup.compute(this.rect);
     }
 
     clearConstraints() {
@@ -116,8 +113,6 @@ export class DIView implements Constrain.DrawableObject {
 
     didMoveToDesk() {
         this.onDesk = true;
-        if (!this._width) this._width = this.body.offsetWidth;
-        if (!this._height) this._height = this.body.offsetHeight;
         for (const child of this.children) {
             child.didMoveToDesk();
         }
@@ -139,18 +134,18 @@ export class DIView implements Constrain.DrawableObject {
         }
     }
 
-    async update(rect: Constrain.LayoutDefinition) {
-        this._x = rect.x;
-        this._y = rect.y;
-        this._width = rect.width;
-        this._height = rect.height;
+    async update(definition: Constrain.LayoutDefinition) {
+        this.x = definition.x;
+        this.y = definition.y;
+        this.width = definition.width;
+        this.height = definition.height;
 
         // TODO: should we perform the DOM update here?
         // TODO: how should we deal with the units?
 
         // update children
         this.constraintGroup.computeOrder();
-        this.constraintGroup.compute();
+        this.constraintGroup.compute(this.rect);
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -159,41 +154,47 @@ export class DIView implements Constrain.DrawableObject {
         return true;
     }
 
+    /** @deprecated */
     get x() {
-        return this._x;
+        return this.rect.x;
     }
 
+    /** @deprecated */
     set x(value) {
-        this._x = value;
+        this.rect.x = value;
         this.body.style.left = `${value}px`;
     }
 
+    /** @deprecated */
     get y() {
-        return this._y;
+        return this.rect.y;
     }
 
+    /** @deprecated */
     set y(value) {
-        this._y = value;
+        this.rect.y = value;
         this.body.style.top = `${value}px`;
     }
 
+    /** @deprecated */
     get width() {
-        if (!this._width) this._width = this.body.offsetWidth;
-        return this._width;
+        return this.rect.width;
     }
 
+    /** @deprecated */
     set width(value) {
-        this._width = value;
+        this.rect.width = value;
         this.body.style.width = `${value}px`;
     }
 
+    /** @deprecated */
     get height() {
-        if (!this._height) this._height = this.body.offsetHeight;
-        return this._height;
+        return this.rect.height;
     }
 
+    /** @deprecated */
     set height(value) {
-        this._height = value;
+        this.rect.height = value;
         this.body.style.height = `${value}px`;
     }
 
