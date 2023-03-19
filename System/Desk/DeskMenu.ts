@@ -74,12 +74,12 @@ export class DeskMenu extends DIView {
     listDidHighlightedCells(_listView: any, _selecte: DIView) {}
 
     get width() {
-        if (!this._width) this._width = this.body.offsetWidth;
-        return this._width;
+        if (!this.rect.width) this.rect.width = this.body.offsetWidth;
+        return this.rect.width;
     }
 
     set width(value: number) {
-        this._width = value;
+        this.rect.width = value;
         this.body.style.width = `${value}px`;
         let i = 0;
         const width = value - 32;

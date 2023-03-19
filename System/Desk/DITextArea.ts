@@ -32,8 +32,8 @@ export class DITextArea extends DIView {
     }
 
     didMoveToDesk() {
-        this._width = this.body.offsetWidth;
-        this._height = this.body.offsetHeight;
+        this.rect.width = this.body.offsetWidth;
+        this.rect.height = this.body.offsetHeight;
     }
 
     get editable() {
@@ -55,11 +55,11 @@ export class DITextArea extends DIView {
     }
 
     get width() {
-        return this._width;
+        return this.rect.width;
     }
 
     set width(value) {
-        this._width = value;
+        this.rect.width = value;
         this.body.style.width = `${value}px`;
         this.textBody.style.width = this.body.style.width;
     }
@@ -73,11 +73,11 @@ export class DITextArea extends DIView {
     }
 
     get height() {
-        return this._height;
+        return this.rect.height;
     }
 
     set height(value) {
-        this._height = value;
+        this.rect.height = value;
         this.body.style.height = `${value}px`;
         this.textBody.style.height = this.body.style.height;
     }

@@ -132,8 +132,8 @@ export class DIWorkSpaceDock extends DIView {
     }
 
     didMoveToDesk() {
-        this._width = this.body.offsetWidth;
-        this._height = this.body.offsetHeight;
+        this.rect.width = this.body.offsetWidth;
+        this.rect.height = this.body.offsetHeight;
     }
 
     get stringValue() {
@@ -145,11 +145,11 @@ export class DIWorkSpaceDock extends DIView {
     }
 
     get width() {
-        return this._width;
+        return this.rect.width;
     }
 
     set width(value) {
-        this._width = value;
+        this.rect.width = value;
         this.body.style.width = `${value}px`;
     }
 

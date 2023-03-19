@@ -17,7 +17,7 @@ export class DIButton extends DIView {
         this.buttonBody = document.createElement("img");
         if (text) this.buttonBody.textContent = text;
         this.body.appendChild(this.buttonBody);
-        this._width = 290;
+        this.rect.width = 290;
     }
 
     putInSleep() {
@@ -49,7 +49,7 @@ export class DIButton extends DIView {
     }
 
     set width(value: number) {
-        this._width = value;
+        this.rect.width = value;
         this.buttonBody.style.width = `${value}px`;
     }
 
